@@ -4,7 +4,7 @@
 \name{sporeg-package}
 \alias{sporeg}
 \alias{sporeg-package}
-\title{sporeg: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process.}
+\title{sporeg: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process}
 \description{
 This package is the corresponding code for the Methods in Ecology and Evolution article, "A novel process to infer the reliability of ecological information derived from passive acoustic telemetry track reconstruction". The intended workflow is to simulate tracks inside a specified polygon, calculate quadrat counts inside grid cells, derive passive detection data from the simulated tracks using geolocations of listening stations, reconstruct the tracks using continuous-time correlated random walk models, re-route any spurious track intersections with a specified boundary, calculate quadrat counts of reconstructed tracks within grid cells, and compare quadrat counts between simulated and reconstructed tracks. This process is designed to be iterated to achieve statistical power. The user can then proceed with modeling the relationship between environmental variables and a desirable result (i.e., a good fit) to determine what environmental variables affect the odds of a good fit in grid cells.
 }

@@ -1,33 +1,39 @@
 Package: sporeg
-Title: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process.
+Title: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process
 Version: 0.1.0
 Authors@R: 
     person("Mary E.", "Bowers", , "mebowers5@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5823-186X"))
 Description: This package is the corresponding code for the Methods in Ecology and Evolution article, "A novel process to infer the reliability of ecological information derived from passive acoustic telemetry track reconstruction". The intended workflow is to simulate tracks inside a specified polygon, calculate quadrat counts inside grid cells, derive passive detection data from the simulated tracks using geolocations of listening stations, reconstruct the tracks using continuous-time correlated random walk models, re-route any spurious track intersections with a specified boundary, calculate quadrat counts of reconstructed tracks within grid cells, and compare quadrat counts between simulated and reconstructed tracks. This process is designed to be iterated to achieve statistical power. The user can then proceed with modeling the relationship between environmental variables and a desirable result (i.e., a good fit) to determine what environmental variables affect the odds of a good fit in grid cells.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests: 
     knitr,
-    rmarkdown
-VignetteBuilder: knitr
-Imports: 
+    rmarkdown,
     car,
-    dplyr,
     geosphere,
-    glatos (>= 0.7.3),
     mapview,
     oceanmap,
     parallel,
+    sp
+VignetteBuilder: knitr
+Imports: 
+    dplyr,
+    glatos (>= 0.7.3),
     pathroutr (>= 0.2.1),
     sf (>= 1.0-12),
-    sp
+    lubridate,
+    momentuHMM,
+    purrr,
+    tibble,
+    tidyr,
+    units,
+    magrittr
 Remotes: 
     jmlondon/pathroutr,
     ocean-tracking-network/glatos
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
 LazyData: true

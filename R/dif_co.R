@@ -15,21 +15,21 @@
 #'                                by = "resolution") %>%
 #'                                  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
-dif_co <- function(df) {
+dif_co <- function(df, depth_limit) {
 
   tot <- df %>%
     as.data.frame() %>%
     dplyr::select(-x) %>%
     dplyr::filter(mean_depth <= depth_limit) %>%
-    count() %>%
-    rename(tot = n)
+    dplyr::count() %>%
+    dplyr::rename(tot = n)
 
   df <- df %>%
     dplyr::filter(mean_depth <= depth_limit & g_fit == 1) %>%
-    count()
+    dplyr::count()
 
   df <- merge(tot, df) %>%
-    mutate(perc = n/tot*100)
+    dplyr::mutate(perc = n/tot*100)
 
   return(df)
 }

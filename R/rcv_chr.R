@@ -18,8 +18,8 @@ rcv_chr <- function(df) {
     as.data.frame() %>%
     dplyr::select(-x) %>%
     dplyr::filter(p_a == 1) %>%
-    mutate(d_shore_km = d_shore/1000) %>%
-    summarise(tot = n(),
+    dplyr::mutate(d_shore_km = d_shore/1000) %>%
+    dplyr::summarise(tot = n(),
               dpth_200_800 = sum(na.omit(mean_depth >= 200 & mean_depth <= 800)),
               depth_200_500 = sum(na.omit(mean_depth >= 200 & mean_depth <= 500)),
               min_dpth = min(na.omit(mean_depth)),

@@ -4,7 +4,7 @@
 \alias{dif_co}
 \title{Different cut off}
 \usage{
-dif_co(df)
+dif_co(df, depth_limit)
 }
 \arguments{
 \item{df}{data frame object consisting of results from iterative reconstruction process}

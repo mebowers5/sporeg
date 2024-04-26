@@ -17,18 +17,18 @@ gps_fld <- function(df) {
 
   tot <- df %>%
     dplyr::filter(p_a == 0) %>%
-    count() %>%
-    rename(tot = n)
+    dplyr::count() %>%
+    dplyr::rename(tot = n)
 
   df <- df %>%
     as.data.frame() %>%
     dplyr::select(-x) %>%
     dplyr::filter(g_fit == 1 & p_a == 0) %>%
-    count() %>%
+    dplyr::count() %>%
     merge(., tot)
 
   perc <- df %>%
-    mutate(perc = n/tot*100)
+    dplyr::mutate(perc = n/tot*100)
 
   return(perc)
 }

@@ -23,7 +23,7 @@ This function creates a grid inside a specified polygon.
 }
 \examples{
 site_depth <- sf::st_read("Bathy500m.shp") \%>\% sf::st_transform(4269)
-# NOTE: The study site must be in a projected coordinate system (WGS 84; EPSG: 3857) when it is initially fed into the function grid_res 
-site_depth <- site_depth \%>\% sf::st_transform(., 3857) 
+# NOTE: The study site must be in a projected coordinate system (WGS 84; EPSG: 3857) when it is initially fed into the function grid_res
+site_depth <- site_depth \%>\% sf::st_transform(., 3857)
 HS_100km_grid <- grid_res(100, site_depth, 4269, "polygons")
 }

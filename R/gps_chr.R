@@ -16,8 +16,8 @@ gps_chr <- function(df) {
 
   df <- df %>%
     dplyr::filter(g_fit == 1 & p_a == 0) %>%
-    mutate(d_shore_km = d_shore/1000) %>%
-    summarise(max_dpth = max(na.omit(mean_depth)),
+    dplyr::mutate(d_shore_km = d_shore/1000) %>%
+    dplyr::summarise(max_dpth = max(na.omit(mean_depth)),
               min_dpth = min(na.omit(mean_depth)),
               avg_depth = mean(na.omit(mean_depth)),
               max_d = max(na.omit(d_shore_km)),

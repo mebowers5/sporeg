@@ -1,0 +1,253 @@
+# --------------------------------------------
+# CITATION file created with {cffr} R package
+# See also: https://docs.ropensci.org/cffr/
+# --------------------------------------------
+
+cff-version: 1.2.0
+message: 'To cite package "sporeg" in publications use:'
+type: software
+title: 'sporeg: A package to reconstruct sporadic passive tracking data and measure
+  the bias and uncertainty incurred through the process.'
+version: 0.1.0
+abstract: This package is the corresponding code for the Methods in Ecology and Evolution
+  article, "A novel process to infer the reliability of ecological information derived
+  from passive acoustic telemetry track reconstruction". The intended workflow is
+  to simulate tracks inside a specified polygon, calculate quadrat counts inside grid
+  cells, derive passive detection data from the simulated tracks using geolocations
+  of listening stations, reconstruct the tracks using continuous-time correlated random
+  walk models, re-route any spurious track intersections with a specified boundary,
+  calculate quadrat counts of reconstructed tracks within grid cells, and compare
+  quadrat counts between simulated and reconstructed tracks. This process is designed
+  to be iterated to achieve statistical power. The user can then proceed with modeling
+  the relationship between environmental variables and a desirable result (i.e., a
+  good fit) to determine what environmental variables affect the odds of a good fit
+  in grid cells.
+authors:
+- family-names: Bowers
+  given-names: Mary E.
+  email: mebowers5@gmail.com
+  orcid: https://orcid.org/0000-0002-5823-186X
+contact:
+- family-names: Bowers
+  given-names: Mary E.
+  email: mebowers5@gmail.com
+  orcid: https://orcid.org/0000-0002-5823-186X
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.10198495
+date-released: 2024-04-26
+references:
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2024'
+- type: software
+  title: rmarkdown
+  abstract: 'rmarkdown: Dynamic Documents for R'
+  notes: Suggests
+  url: https://pkgs.rstudio.com/rmarkdown/
+  repository: https://CRAN.R-project.org/package=rmarkdown
+  authors:
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@posit.co
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: Dervieux
+    given-names: Christophe
+    email: cderv@posit.co
+    orcid: https://orcid.org/0000-0003-4474-2498
+  - family-names: McPherson
+    given-names: Jonathan
+    email: jonathan@posit.co
+  - family-names: Luraschi
+    given-names: Javier
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevin@posit.co
+  - family-names: Atkins
+    given-names: Aron
+    email: aron@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Cheng
+    given-names: Joe
+    email: joe@posit.co
+  - family-names: Chang
+    given-names: Winston
+    email: winston@posit.co
+  - family-names: Iannone
+    given-names: Richard
+    email: rich@posit.co
+    orcid: https://orcid.org/0000-0003-3925-190X
+  year: '2024'
+- type: software
+  title: car
+  abstract: 'car: Companion to Applied Regression'
+  notes: Imports
+  url: https://CRAN.R-project.org/package=car
+  repository: https://CRAN.R-project.org/package=car
+  authors:
+  - family-names: Fox
+    given-names: John
+    email: jfox@mcmaster.ca
+  - family-names: Weisberg
+    given-names: Sanford
+    email: sandy@umn.edu
+  - family-names: Price
+    given-names: Brad
+    email: brad.price@mail.wvu.edu
+  year: '2024'
+- type: software
+  title: dplyr
+  abstract: 'dplyr: A Grammar of Data Manipulation'
+  notes: Imports
+  url: https://dplyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=dplyr
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: François
+    given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Müller
+    given-names: Kirill
+    orcid: https://orcid.org/0000-0002-1416-3412
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
+    orcid: https://orcid.org/0000-0003-4777-038X
+  year: '2024'
+- type: software
+  title: geosphere
+  abstract: 'geosphere: Spherical Trigonometry'
+  notes: Imports
+  url: https://github.com/rspatial/geosphere/issues/
+  repository: https://CRAN.R-project.org/package=geosphere
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+  year: '2024'
+- type: software
+  title: glatos
+  abstract: 'glatos: A package for the Great Lakes Acoustic Telemetry Observation
+    System'
+  notes: Imports
+  url: https://github.com/ocean-tracking-network/glatos
+  authors:
+  - family-names: Holbrook
+    given-names: Christopher
+    email: cholbrook@usgs.gov
+  - family-names: Hayden
+    given-names: Todd
+  - family-names: Binder
+    given-names: Thomas
+  - family-names: Pye
+    given-names: Jon
+  year: '2024'
+  version: '>= 0.7.3'
+- type: software
+  title: mapview
+  abstract: 'mapview: Interactive Viewing of Spatial Data in R'
+  notes: Imports
+  url: https://github.com/r-spatial/mapview
+  repository: https://CRAN.R-project.org/package=mapview
+  authors:
+  - family-names: Appelhans
+    given-names: Tim
+    email: tim.appelhans@gmail.com
+  - family-names: Detsch
+    given-names: Florian
+    email: fdetsch@web.de
+  - family-names: Reudenbach
+    given-names: Christoph
+    email: reudenbach@geo.uni-marburg.de
+  - family-names: Woellauer
+    given-names: Stefan
+    email: stephan.woellauer@geo.uni-marburg.de
+  year: '2024'
+- type: software
+  title: oceanmap
+  abstract: 'oceanmap: A Plotting Toolbox for 2D Oceanographic Data'
+  notes: Imports
+  repository: https://CRAN.R-project.org/package=oceanmap
+  authors:
+  - family-names: Bauer
+    given-names: Robert K.
+  year: '2024'
+- type: software
+  title: parallel
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: pathroutr
+  abstract: 'pathroutr: An R Package for (Re-)Routing Paths Around Barriers'
+  notes: Imports
+  authors:
+  - family-names: London
+    given-names: Josh
+    email: josh.london@noaa.gov
+    orcid: https://orcid.org/0000-0002-3647-5046
+  year: '2024'
+  version: '>= 0.2.1'
+- type: software
+  title: sf
+  abstract: 'sf: Simple Features for R'
+  notes: Imports
+  url: https://r-spatial.github.io/sf/
+  repository: https://CRAN.R-project.org/package=sf
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2024'
+  version: '>= 1.0-12'
+- type: software
+  title: sp
+  abstract: 'sp: Classes and Methods for Spatial Data'
+  notes: Imports
+  url: https://github.com/edzer/sp/
+  repository: https://CRAN.R-project.org/package=sp
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+  - family-names: Bivand
+    given-names: Roger
+    email: Roger.Bivand@nhh.no
+  year: '2024'
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  url: https://www.R-project.org/
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+  version: '>= 2.10'
+

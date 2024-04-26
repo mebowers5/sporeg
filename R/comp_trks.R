@@ -18,14 +18,14 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # Maintain detailed time info in lines to derive acoustic telemetry detection data later
   mod_trks <- sim_trks %>%
     tidyr::unnest(data) %>%
-    mutate(x = sf::st_sfc(x)) %>%
+    dplyr::mutate(x = sf::st_sfc(x)) %>%
     sf::st_as_sf(sf_column_name = 'x', crs = 3857)
 
   #Unite geometries by AnimalID's so that you have complete tracks/lines summarized by ID for the grid cell count later
   sim_trks <- sim_trks %>%
-    mutate(
+    dplyr::mutate(
       data = purrr::map(data,
-                        ~ mutate(.x, x = sf::st_sfc(x))),
+                        ~ dplyr::mutate(.x, x = sf::st_sfc(x))),
       x = purrr::map(data, ~ sf::st_union(sf::st_set_geometry(.x, 'x'))), ##Preserves order
       x = purrr::map(x, ~ sf::st_cast(.x, 'MULTILINESTRING'))
     ) %>%
@@ -50,11 +50,11 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   #In real data, problem caused by the zero movement between locations at the same acoustic receiver, close together in time - solved by averaging daily locations
   #Average daily locations
   mod_trks <- mod_trks %>%
-    arrange(ID, time) %>%
-    group_by(ID, time) %>%
-    summarize(mean_pos = sf::st_combine(x)) %>%
+    dplyr::arrange(ID, time) %>%
+    dplyr::group_by(ID, time) %>%
+    dplyr::summarize(mean_pos = sf::st_combine(x)) %>%
     sf::st_centroid() %>%
-    mutate(time = as.POSIXct(time),
+    dplyr::mutate(time = as.POSIXct(time),
            x = sf::st_coordinates(mean_pos)[,1],
            y = sf::st_coordinates(mean_pos)[,2],
            locType = "o") %>% # Obtain x and y coordinates so that you can merge with predicted locations later
@@ -82,7 +82,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   #Turn crwPredict product into data frame
   mod_trks <- mod_trks %>%
     dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
-    mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
+    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
     as.data.frame
 
   # Read in the track data; here, I'm filtering to just include the predicted locations
@@ -101,7 +101,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # there are multiple paths identified by ID; we'll group and nest for a proper
   # tidyverse/list-column workflow
   mod_trks <- mod_trks %>%
-    group_by(ID) %>%
+    dplyr::group_by(ID) %>%
     tidyr::nest()
 
   # Clear cache
@@ -112,13 +112,13 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # the track cannot start or end within the land barrier; prt_trim() trims those out
   mod_trks <- mod_trks %>%
     rowwise() %>%
-    mutate(trim_data = list(pathroutr::prt_trim(data, land_barrier)))
+    dplyr::mutate(trim_data = list(pathroutr::prt_trim(data, land_barrier)))
 
   # here, we create our re-routed points; the return is a two column data frame with the
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
-    mutate(rrt_pts = list(prt_reroute(trim_data, land_barrier, vis_graph)))
+    dplyr::mutate(rrt_pts = list(prt_reroute(trim_data, land_barrier, vis_graph)))
 
   # Clear cache
   gc()
@@ -128,7 +128,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
-    mutate(path_pts = list(prt_update_points(rrt_pts, trim_data)),
+    dplyr::mutate(path_pts = list(prt_update_points(rrt_pts, trim_data)),
            path_lines = list(path_pts %>% summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
 
   # Clear cache
@@ -144,7 +144,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   #Convert from rowwise_df to sf object
   mod_trks <- mod_trks %>%
     rowwise() %>%
-    mutate(geom = sf::st_geometry(geom)) %>%
+    dplyr::mutate(geom = sf::st_geometry(geom)) %>%
     dplyr::select(ID, geom) %>%
     ungroup() %>%
     sf::st_as_sf(., sf_column_name = "geom")
@@ -152,17 +152,17 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   ### Count distinct AnimalIDs in each grid cell
   # Count IDs per grid cell for derived data
   mod_count <- sf::st_join(HSgrid, mod_trks, join = sf::st_intersects) %>%
-    distinct(gid, ID, geometry)
+    dplyr::distinct(gid, ID, geometry)
 
   mod_count <- aggregate(ID ~ gid, data = mod_count, FUN = length) %>%
-    rename(mod_count = ID)
+    dplyr::rename(mod_count = ID)
 
   # Count IDs per grid cell for complete data
   sim_count <- sf::st_join(HSgrid, sim_trks, join =sf::st_intersects)%>%
-    distinct(gid, ID, geometry)
+    dplyr::distinct(gid, ID, geometry)
 
   sim_count <- aggregate(ID ~ gid, data = sim_count, FUN = length) %>%
-    rename(sim_count = ID)
+    dplyr::rename(sim_count = ID)
 
   #Make a new table with all gid's to create a basis by which tables should be merged
   gid <- seq(1:max(HSgrid$gid))  #Create a range of every grid cell
@@ -171,19 +171,19 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   #Now that we have every combination of gid and Iteration in one variable, merge one of the count files to it - doesn't really matter which on but we'll use the complete data one here
   # Note: Is the above comment wrong or is the code wrong? I think the comment is wrong - leftover from when iterations were assigned instead of looped.
   tc <- left_join(all, sim_count, by = "gid") %>%
-    mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
+    dplyr::mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
 
   #Join derived count to data frame
   tc <- left_join(tc, mod_count, by = "gid") %>%
-    mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
+    dplyr::mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
 
   #Calculate differences in each grid cell by iteration and gid
   tc <- tc %>%
     dplyr::select(gid, sim_count, mod_count) %>%
-    mutate(sim_count = as.double(sim_count),
+    dplyr::mutate(sim_count = as.double(sim_count),
            mod_count = as.double(mod_count),
            dif = sim_count - mod_count) %>%
-    arrange(gid) %>%
+    dplyr::arrange(gid) %>%
     dplyr::select(gid, sim_count, mod_count, dif) %>%
     as.data.frame
 
@@ -193,12 +193,12 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # Maintain detailed time info in lines to derive acoustic telemetry detection data later
   mod_trks <- sim_trks %>%
     tidyr::unnest(data) %>%
-    mutate(x = sf::st_sfc(x)) %>%
+    dplyr::mutate(x = sf::st_sfc(x)) %>%
     sf::st_as_sf(sf_column_name = 'x', crs = 3857)
 
   #Unite geometries by AnimalID's so that you have complete tracks/lines summarized by ID for the grid cell count later
   sim_trks <- sim_trks %>%
-    mutate(
+    dplyr::mutate(
       data = purrr::map(data,
                         ~ mutate(.x, x = sf::st_sfc(x))),
       x = purrr::map(data, ~ sf::st_union(sf::st_set_geometry(.x, 'x'))), ##Preserves order
@@ -227,11 +227,11 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   #In real data, problem caused by the zero movement between locations at the same acoustic receiver, close together in time - solved by averaging daily locations
   #Average daily locations
   mod_trks <- mod_trks %>%
-    arrange(ID, time) %>%
-    group_by(ID, time) %>%
-    summarize(mean_pos = sf::st_combine(x)) %>%
+    dplyr::arrange(ID, time) %>%
+    dplyr::group_by(ID, time) %>%
+    dplyr::summarize(mean_pos = sf::st_combine(x)) %>%
     sf::st_centroid() %>%
-    mutate(time = as.POSIXct(time),
+    dplyr::mutate(time = as.POSIXct(time),
            x = sf::st_coordinates(mean_pos)[,1],
            y = sf::st_coordinates(mean_pos)[,2],
            locType = "o") %>% # Obtain x and y coordinates so that you can merge with predicted locations later
@@ -244,11 +244,6 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
                                       theta = c(8,0),
                                    attempts = 100, retrySD = 5, retryFits = 5,
                                    ncores = 2, retryParallel = TRUE)
-
-  # plot(mod_trks)
-
-  # Clear cache
-  gc()
 
   #Continue with movement model data products
   #Get the data.frame of predicted locations
@@ -276,28 +271,28 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # there are multiple paths identified by ID; we'll group and nest for a proper
   # tidyverse/list-column workflow
   mod_trks <- mod_trks %>%
-    group_by(ID) %>%
+    dplyr::group_by(ID) %>%
     tidyr::nest()
 
   library(sf)
 
   # the track cannot start or end within the land barrier; prt_trim() trims those out
   mod_trks <- mod_trks %>%
-    rowwise() %>%
-    mutate(trim_data = list(pathroutr::prt_trim(data, land_barrier)))
+    dplyr::rowwise() %>%
+    dplyr::mutate(trim_data = list(pathroutr::prt_trim(data, land_barrier)))
 
   # here, we create our re-routed points; the return is a two column data frame with the
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
-    mutate(rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph)))
+    dplyr::mutate(rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph)))
 
   # NOTE: previous versions of prt_update_points() had the argument order reversed from
   # what it now requires. The updated geometry points are passed first (here, `rrt_pts`)
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
-    mutate(path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
+    dplyr::mutate(path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
            path_lines = list(path_pts %>% summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
 
   # we need to rbind all of our lines and points into single objects that can be plotted
@@ -309,10 +304,10 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   ### Create grid that maintains row for each grid cell
   #Convert from rowwise_df to sf object
   mod_trks <- mod_trks %>%
-    rowwise() %>%
-    mutate(geom = sf::st_geometry(geom)) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(geom = sf::st_geometry(geom)) %>%
     dplyr::select(ID, geom) %>%
-    ungroup() %>%
+    dplyr::ungroup() %>%
     sf::st_as_sf(., sf_column_name = "geom")
 
 
@@ -324,17 +319,17 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   ### Count distinct AnimalIDs in each grid cell
   # Count IDs per grid cell for derived data
   mod_count <- sf::st_join(HSgrid, mod_trks, join = sf::st_intersects) %>%
-    distinct(gid, ID, geometry)
+    dplyr::distinct(gid, ID, geometry)
 
   mod_count <- aggregate(ID ~ gid, data = mod_count, FUN = length) %>%
-    rename(mod_count = ID)
+    dplyr::rename(mod_count = ID)
 
   # Count IDs per grid cell for complete data
   sim_count <- sf::st_join(HSgrid, sim_trks, join =sf::st_intersects)%>%
-    distinct(gid, ID, geometry)
+    dplyr::distinct(gid, ID, geometry)
 
   sim_count <- aggregate(ID ~ gid, data = sim_count, FUN = length) %>%
-    rename(sim_count = ID)
+    dplyr::rename(sim_count = ID)
 
   #Make a new table with all gid's to create a basis by which tables should be merged
   gid <- seq(1:max(HSgrid$gid))  #Create a range of every grid cell
@@ -342,20 +337,20 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
 
   #Now that we have every combination of gid and Iteration in one variable, merge one of the count files to it - doesn't really matter which on but we'll use the complete data one here
   # Note: Is the above comment wrong or is the code wrong? I think the comment is wrong - leftover from when iterations were assigned instead of looped.
-  tc <- left_join(all, sim_count, by = "gid") %>%
-    mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
+  tc <- dplyr::left_join(all, sim_count, by = "gid") %>%
+    dplyr::mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
 
   #Join derived count to data frame
-  tc <- left_join(tc, mod_count, by = "gid") %>%
-    mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
+  tc <- dplyr::left_join(tc, mod_count, by = "gid") %>%
+    dplyr::mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
 
   #Calculate differences in each grid cell by iteration and gid
   tc <- tc %>%
     dplyr::select(gid, sim_count, mod_count) %>%
-    mutate(sim_count = as.double(sim_count),
+    dplyr::mutate(sim_count = as.double(sim_count),
            mod_count = as.double(mod_count),
            dif = sim_count - mod_count) %>%
-    arrange(gid) %>%
+    dplyr::arrange(gid) %>%
     dplyr::select(gid, sim_count, mod_count, dif) %>%
     as.data.frame
 
