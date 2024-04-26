@@ -7,3 +7,5 @@
 ^doc$
 ^Meta$
 ^\.github$
+^vignettes/_sporeg_workflow\.Rmd$
+^vignettes/precompile\.R$
