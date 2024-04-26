@@ -4,7 +4,7 @@
 \alias{d_shore_rcvs}
 \title{Distance to shore and density of receivers}
 \usage{
-d_shore_rcvs(km, study_site, land_barrier, epsg)
+d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
 }
 \arguments{
 \item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
@@ -14,6 +14,8 @@ d_shore_rcvs(km, study_site, land_barrier, epsg)
 \item{land_barrier}{simple feature (multi)polygon object to route tracks around}
 
 \item{epsg}{epsg code for desired coordinated system transformation}
+
+\item{sts_pts}{a simple feature (multi)point object representing receiver locations}
 }
 \value{
 A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities

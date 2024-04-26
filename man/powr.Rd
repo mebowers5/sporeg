@@ -24,8 +24,8 @@ A data frame object
 This is a wrapper function for running a power analysis on iterative simulation and reconstruction methods process.
 }
 \examples{
-df_var <- zero_var(df) 
-pow_stat <- df_var \%>\% 
+df_var <- zero_var(df)
+pow_stat <- df_var \%>\%
 group_by(res_name, gid) \%>\%
 summarise(sd = sd(dif)) \%>\%
 ungroup() \%>\%

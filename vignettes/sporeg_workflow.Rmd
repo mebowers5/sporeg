@@ -1,0 +1,1167 @@
+---
+title: "sporeg Intended Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sporeg Intended Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(sporeg)
+```
+
+## Objective
+
+This vignette is a step by step guide to the methods in "Full Disclosure:...". It will show you how to simulate semi-random tracks, derive acoustic telemetry data from those tracks, model/reconstruct tracks from those derived detection data, re-route them off land, summarize distribution information, and compare the simulated and modeled summarizations. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
+
+Let's begin by clearing our environment.
+
+```{r}
+#| label: Clear-environment
+#| include: true
+
+rm(list=ls())
+```
+
+And clearing any cache we may have remaining from previous work.
+
+```{r}
+#| label: Clear-cache
+#| include: true
+
+gc()
+```
+
+Next, let's load the packages that we will need to run the steps in this vignette.
+
+```{r}
+#| label: load-packages
+#| include: true
+
+library(sporeg)
+library(dplyr)
+library(sf)
+library(sp)
+library(pathroutr) 
+
+# To install pathroutr, use the following code: 
+# install.packages("remotes") # If necessary, install remotes package first using: 
+# remotes::install_github("jmlondon/pathroutr") 
+
+library(parallel)
+library(geosphere)
+library(mapview)
+library(oceanmap)
+library(car)
+```
+
+## Get the objects required for simulating tracks
+
+Get the study site and set the projected coordinate system.
+
+```{r}
+#| label: study-site
+#| include: true
+
+load(system.file("extdata", "study_site.Rda", 
+                            package = "sporeg"))
+```
+
+Get the release site.
+
+```{r}
+#| label: release-site
+#| include: true
+
+load(system.file("extdata", "rel_site.Rda", 
+                            package = "sporeg"))
+```
+
+## Create the objects required for summarizing distribution information
+
+Make the different resolution grid cells and put them all in a list.
+
+```{r}
+#| label: grids
+#| include: true
+
+HS_10km_grid <- grid_res(10, study_site, 3857, what = "polygons")
+HS_25km_grid <- grid_res(25, study_site, 3857, what = "polygons")
+HS_50km_grid <- grid_res(50, study_site, 3857, what = "polygons")
+HS_100km_grid <- grid_res(100, study_site, 3857, what = "polygons")
+
+HSgrid <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
+```
+
+## Get the objects required for deriving acoustic telemetry data
+
+Get the stations.
+
+```{r}
+#| label: stations
+#| include: true
+
+load(system.file("extdata", "stations.Rda", 
+                            package = "sporeg"))
+```
+
+## Get the objects required for re-routing tracks
+
+Get the land barrier.
+
+```{r}
+#| label: land-barrier
+#| include: true
+
+load(system.file("extdata", "land_barrier.Rda", 
+                            package = "sporeg")) 
+
+land_barrier <- land_barrier %>%
+  sf::st_transform(3857) %>%
+  sf::st_collection_extract('POLYGON') %>%
+  sf::st_cast('POLYGON')
+```
+
+Create a visibility graph from the land barrier object.
+
+```{r}
+#| label: visibility-graph
+#| include: true
+
+vis_graph <- pathroutr::prt_visgraph(land_barrier)
+```
+
+## Set the parameters values
+
+For simulating tracks:
+
+```{r}
+#| label: track-params
+#| include: true
+
+# Number of animals
+anims <- 3
+# Number of years
+yr <- 1       
+# Turning angle - standard deviation of body flexion from blacktip kinematics study
+theta <- c(0, 1.74)  
+# Lower bound of mean recorded velocity for animal in m/s (ex: blacktip shark) (average - standard deviation)
+vmin <- 0.98  
+# Upper bound of mean recorded velocity for animal in m/s (ex: blacktip shark) (average + standard deviation)
+vmax <- 1.58  
+# Intersection of bounding box of release site(s) and study site
+rel_site <- rel_site 
+
+# Study site must be an sp object for the track simulations
+study_site <- study_site 
+
+# Name the epsg of the coordinate system for study_site
+crs <- 3857
+
+# Number of days animal is tracked
+n_days <- 365*yr 
+# Initial heading of animal
+initHeading <- 0  
+```
+
+For the iterations:
+
+```{r}
+#| label: parallel-params
+#| include: true
+
+total_iterations <- 10 # Total number of iterations desired
+reps <- 2 # Number of replicates that will result in desired iterations given reps
+runs <- 1:(total_iterations/reps) # Interval at which outputs should be written to file
+```
+
+## Create a cluster
+
+This will allow us to run these processes in parallel. Here, we find out how many cores we have, not including logical cores, and create a cluster
+
+```{r}
+#| label: create-cluster
+#| include: true
+
+numCores <- detectCores(logical = F)
+numCores
+
+cl <- makeCluster(numCores-4, outfile = "cluster_out")
+```
+
+Creating a cluster will create multiple instances of R on your computer. Now, we need to upload all of the libraries that each R instance will need to run the iterations. Notice that we have omitted the parallel library.
+
+```{r}
+#| label: cluster-libraries
+#| include: true
+
+clusterEvalQ(cl, {
+  
+  library(sporeg)
+  library(sf)
+  library(sp)
+  library(glatos) 
+  # To install glatos, use remotes::install_github("ocean-tracking-network/glatos")
+  library(dplyr)
+  library(momentuHMM)
+  library(crawl)
+  library(lubridate)
+  library(pathroutr)
+  # To install pathroutr, use remotes::install_github("jmlondon/pathroutr")
+  library(sfnetworks)
+  library(tidyverse)
+  library(stplanr)
+  library(future)
+  library(doFuture)
+  
+})
+```
+
+Let's create an output file where our results will go. We only want to create this file once, otherwise we will overwrite our previous results. Thus, you will need to un-comment the lines to create it the first time. We want to assign the file name every time we run iterations, however.
+
+```{r}
+#| label: empty-list
+#| include: true
+
+
+# Create empty list object and save it
+# results <- list()
+
+# Assign the filename
+filename <- "results.Rdata"
+
+# Save the empty list object to the filename
+# save(results, file = filename)
+```
+
+Let's remove any unnecessary objects we may have created before we load the environment up to the cluster
+
+```{r}
+#| label: clear-unneeded-objects
+#| include: true
+
+rm(list = c("HS_100km_grid", "HS_50km_grid", "HS_25km_grid", "HS_10km_grid"))
+```
+
+Now we're ready to mirror our global environment to the cluster cores.
+
+```{r}
+#| label: cluster-environment
+#| include: true
+
+parallel::clusterExport(cl, varlist = ls(envir = .GlobalEnv))
+```
+
+## Run the iterations
+
+We should now have everything in place to iterate our methods. Here, we are using `base::replicate` to decide how often to save the iterations we have made. We are using `parallel::parLapply` to create the iterations. So, if we decided to use `reps <- 10` and `runs <- 100`, we would create 1,000 total iterations and save them every 100 iterations.
+
+```{r}
+#| label: iterate-methods
+#| include: true
+
+base::replicate(n = reps, expr = {
+    
+    # Clear cache
+    gc()
+    
+    iterated_results <- parallel::parLapply(cl, runs, fun = function(I) {
+      
+      # Simulate tracks 
+      df <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)
+      
+      # Compare summary distribution info of simulated and modeled tracks across multiple grid cell resolutions
+      df <- comp_trks(df, stations, land_barrier, vis_graph, HSgrid, multi.grid = TRUE, snap_tolerance = 650)
+      
+      return(df)
+    }
+    )
+    # Load the previous results
+    load(system.file("data", filename, package = "sporeg")) 
+    
+    # Append the new results to the previous results
+    results <- append(results, iterated_results)
+    
+    # Overwrite the results with both the new and previous results combined
+    save(results, file = system.file("data", filename, package = "sporeg"))
+    
+    # Clear cache
+    gc()
+    
+    return(df)
+  }
+  )
+```
+
+## Stop the cluster
+
+You always want to stop the cluster when you are finished using it.
+
+```{r}
+#| label: stop-cluster
+#| include: true
+
+parallel::stopCluster(cl)
+```
+
+## Check the results
+
+The number of iterations we want depends on how variable our results are so let's do a power analysis after we've run a few hundred iterations.
+
+First, let's load the results.
+
+```{r}
+#| label: view-results
+#| include: true
+
+load(system.file("data", filename, package = "sporeg")) 
+```
+
+Hmm... these are hard to look at. Let's turn them into a data frame instead.
+
+```{r}
+#| label: flatten-results
+#| include: true
+
+# Bind the lists by grid cell resolution
+results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
+
+# Bind the bound resolution by iteration
+results <- data.table::rbindlist(results, idcol = 'iteration')
+```
+
+## Remove zero inflation
+
+Remove any cases where both `sim_count` and `mod_count` were zero for all iterations within a grid resolution. First, let's merge grid resolution size names to the main data frame.
+
+```{r}
+#| label: prep-power
+#| include: true
+
+results <- results %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") 
+```
+
+Test for zero variance.
+
+```{r}
+#| label: remove-zeroes
+#| include: true
+
+# Remove grid cells with zero variance
+df_var <- zero_var(results) 
+
+# Find the grid cell with zero variance
+df_zero_var <- anti_join(results, df_var, by = c("res_name", "gid")) %>%
+  distinct(res_name, gid)
+```
+
+### Prep for power analysis
+
+Prep the results for a power analysis by setting some parameters for our power analysis. We previously set our number of animals, but it's likely that we've stepped away to work on other things before all these iterations finished so we can run it again here by un-commenting `anims <- 30` if we need to. Whatever variable you are interested in here, you set as `NULL`. So, if I want to know how many iterations I will need to achieve a power of 80% and an effect size within 1% of the total number of animals at a 95% significance level, I will leave `n <- NULL`.
+
+```{r}
+#| label: power-params
+#| include: true
+
+# The number of animals
+anims <- anims
+
+# The power that we want to achieve
+power <- 0.8
+
+# The effect size we want to achieve
+delta <- anims*0.01 # a delta within 1% of the total number of animals
+
+# The level of significance that we want to achieve
+sig.level <- 0.95
+
+# The number of iterations we will need to run to achieve the other parameters that we set
+n <- NULL
+```
+
+The parameters `power,` `delta,` `sig.level`, and `n` will need to be chosen based on the study itself. In the past, this [statistics book](https://www.macmillanlearning.com/college/us/product/The-Analysis-of-Biological-Data/p/131922623X?searchText=whitlock) has served as a useful resource to me. It also comes with [R code resources](https://whitlockschluter3e.zoology.ubc.ca).
+
+[![Useful statistics textbook.](https://prod-cat-files.macmillan.cloud/MediaResources/Jackets/258W/9781319226237.jpg){width="225"}](https://www.macmillanlearning.com/college/us/product/The-Analysis-of-Biological-Data/p/131922623X?searchText=whitlock)
+
+Let's calculate standard deviation by grid resolution. Now we're ready to run our power analysis. We need to run one for each grid cell resolution. So, we'll do that by setting another variable called `res` and filtering for the grid cell resolution of interest in the results that we prepped for this power analysis.
+
+```{r}
+#| label: power-analysis
+#| include: true
+
+pow_stat <- df_var %>% 
+  group_by(res_name, gid) %>%
+  summarise(sd = sd(dif)) %>%
+  ungroup() %>%
+  group_by(res_name)
+
+res <- pow_stat %>% dplyr::filter(res_name == "100km")
+pwr_100km <- powr(res, sig.level, power, delta)
+print("Grid cell resolution: 100 km x 100 km")
+pwr_100km
+
+res <- pow_stat %>% dplyr::filter(res_name == "50km")
+pwr_50km <- powr(res, sig.level, power, delta)
+print("Grid cell resolution: 50 km x 50 km")
+pwr_50km
+
+res <- pow_stat %>% dplyr::filter(res_name == "25km")
+pwr_25km <- powr(res, sig.level, power, delta)
+print("Grid cell resolution: 25 km x 25 km")
+pwr_25km
+
+
+res <- pow_stat %>% dplyr::filter(res_name == "10km")
+pwr_10km <- powr(res, sig.level, power, delta)
+print("Grid cell resolution: 10 km x 10 km")
+pwr_10km
+
+```
+
+## Sanity check
+
+Do we really need THAT few/many iterations?! Let's do a sanity check here and see how variable our worst grid cell results were. We can also compare these `max_sd` results to the `sd =` printout results from the above power analyses.
+
+```{r}
+#| label: sanity-check
+#| include: true
+
+max_sd <- pow_stat %>%
+  ungroup() %>%
+  group_by(res_name) %>%
+  summarise(max_sd = max(sd))
+max_sd
+```
+
+## Decisions, decisions
+
+Here, we need to decide whether we are satisfied with the number of iterations we've run so far or if we need to run more iterations to achieve our desired power. If you want to run more iterations, you will return to the "[Create a cluster]" section. If you're satisfied, let's move on to the next section, [Satisfaction].
+
+## Satisfaction
+
+If you're satisfied with the results of the power analysis for your simulated acoustic detection data, let's summarize the differences between simulated and modeled tracks by grid cell within each grid resolution.
+
+If we ran too many iterations, we can filter for the number required for each iteration, as indicated by our previous power analysis.
+
+```{r}
+#| label: results-summary
+#| include: true
+new_df <- df_var %>%
+  dplyr::filter(res_name == "100km" & iteration <= 119 |
+                  res_name == "50km" & iteration <= 128 |
+                  res_name == "25km" & iteration <= 128 |
+                  res_name == "10km" & iteration <= 144)
+
+results <- new_df %>%
+  group_by(res_name, gid) %>%
+  summarise(avg_dif = mean(dif),
+            se = plotrix::std.error(dif)) 
+results
+```
+
+## Check the methods performance
+
+Let's create a table that shows how closely the modeled tracks compared to the reconstructed tracks for each grid resolution. Here, we compare counts of grid cells within a certain difference from `sim_count` divided by the total number of grid cells.
+
+```{r}
+#| label: results-table
+#| tbl-cap: Results of iterative methods
+#| warning: false
+#| include: true
+
+# Counts
+how_well_ct <- results %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
+         wn_0 = ifelse(avg_dif >= -1*0.3 & avg_dif <= 0.3, 1, 0),
+         wn_1 = ifelse(avg_dif >= -1*1 & avg_dif <= 1, 1, 0), 
+         wn_2 = ifelse(avg_dif >= -1*2 & avg_dif <= 2, 1, 0), 
+         wn_3 = ifelse(avg_dif >= -1*3 & avg_dif <= 3, 1, 0), 
+         wn_4 = ifelse(avg_dif >= -1*4 & avg_dif <= 4, 1, 0), 
+         wn_5 = ifelse(avg_dif >= -1*5 & avg_dif <= 5, 1, 0)) %>%
+    group_by(res_name) %>%
+  summarise(maxgid = n(),
+            tot_wn_0 = sum(wn_0),
+            tot_wn_1 = sum(wn_1),
+            tot_wn_2 = sum(wn_2),
+            tot_wn_3 = sum(wn_3),
+            tot_wn_4 = sum(wn_4),
+            tot_wn_5 = sum(wn_5)) %>%
+  distinct()
+
+# Percentages
+how_well <- results %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
+         wn_0 = ifelse(avg_dif >= -1*0.3 & avg_dif <= 0.3, 1, 0),
+         wn_1 = ifelse(avg_dif >= -1*1 & avg_dif <= 1, 1, 0), 
+         wn_2 = ifelse(avg_dif >= -1*2 & avg_dif <= 2, 1, 0), 
+         wn_3 = ifelse(avg_dif >= -1*3 & avg_dif <= 3, 1, 0), 
+         wn_4 = ifelse(avg_dif >= -1*4 & avg_dif <= 4, 1, 0), 
+         wn_5 = ifelse(avg_dif >= -1*5 & avg_dif <= 5, 1, 0)) %>%
+    group_by(res_name) %>%
+  summarise(maxgid = n(),
+            tot_wn_0 = sum(wn_0)/maxgid*100,
+            tot_wn_1 = sum(wn_1)/maxgid*100,
+            tot_wn_2 = sum(wn_2)/maxgid*100,
+            tot_wn_3 = sum(wn_3)/maxgid*100,
+            tot_wn_4 = sum(wn_4)/maxgid*100,
+            tot_wn_5 = sum(wn_5)/maxgid*100) %>%
+  distinct()
+```
+
+## Track Reconstruction Issue
+
+We had a problem in the track reconstruction where some iterations did not reconstruct tracks for all `anims`. Let's find out how many track reconstructions were successful across all the iterations for each grid cell resolution.
+
+```{r}
+#| label: recon-info
+#| warning: false
+#| include: true
+
+recon <- df_var %>%
+  group_by(res_name, iteration) %>%
+  summarise(max_recon = max(mod_count)) %>%
+  ungroup() %>%
+  group_by(res_name) %>%
+  summarise(max_30 = length(which(max_recon >= 30))/max(iteration)*100,
+            max_29 = length(which(max_recon >= 29))/max(iteration)*100,
+            max_28 = length(which(max_recon >= 28))/max(iteration)*100,
+            max_27 = length(which(max_recon >= 27))/max(iteration)*100,
+            max_26 = length(which(max_recon >= 26))/max(iteration)*100,
+            max_25 = length(which(max_recon >= 25))/max(iteration)*100)
+  
+```
+
+## Additional Bias
+
+Because some tracks were not re-constructed by the movement model, we may have introduced unnecessary bias. Let's see how the model performance changes if we isolate iterations where all `anims` tracks were reconstructed. First, let's see how many iterations actually reconstructed all `anims` tracks.
+
+```{r}
+#| label: recon-results
+#| warning: false
+#| include: true
+
+recon_res <- df_var %>%
+  group_by(res_name, iteration) %>%
+  summarise(max_mod = max(mod_count)) %>%
+  dplyr::filter(max_mod == anims) %>%
+  ungroup() %>%
+  group_by(res_name) %>%
+  count()
+```
+
+Let's re-number these iterations where all `anims` were re-constructed.
+
+```{r}
+#| label: new-iterations
+#| warning: false
+#| include: true
+
+new_iters <- df_var %>%
+  group_by(res_name, iteration) %>%
+  summarise(max_mod = max(mod_count)) %>%
+  dplyr::filter(max_mod == 30) %>%
+  ungroup() %>%
+  distinct(iteration) %>%
+  mutate(new_iter = seq_along(iteration))
+```
+
+Now we can see how our results would change if we had selected only iterations in which all `anims` were re-constructed.
+
+```{r}
+#| label: new-results
+#| warning: false
+#| include: true
+
+new_iters_df <- merge(new_iters, df_var) %>%
+  dplyr::filter(res_name == "100km" & new_iter <= 119 |
+                  res_name == "50km" & new_iter <= 128 |
+                  res_name == "25km" & new_iter <= 128 |
+                  res_name == "10km" & new_iter <= 144)
+
+new_results <- new_iters_df %>%
+  group_by(res_name, gid) %>%
+  summarise(avg_dif = mean(dif),
+            se = plotrix::std.error(dif)) 
+new_results
+
+new_how_well <- new_results %>%
+  group_by(res_name) %>%
+  mutate(maxgid = max(gid),
+         res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
+         wn_0 = ifelse(avg_dif >= -1*0.1 & avg_dif <= 0.1, 1, 0),
+         wn_1 = ifelse(avg_dif >= -1*1 & avg_dif <= 1, 1, 0), 
+         wn_2 = ifelse(avg_dif >= -1*2 & avg_dif <= 2, 1, 0), 
+         wn_3 = ifelse(avg_dif >= -1*3 & avg_dif <= 3, 1, 0), 
+         wn_4 = ifelse(avg_dif >= -1*4 & avg_dif <= 4, 1, 0), 
+         wn_5 = ifelse(avg_dif >= -1*5 & avg_dif <= 5, 1, 0)) %>%
+  summarise(tot_wn_0 = sum(wn_0)/maxgid*100,
+            tot_wn_1 = sum(wn_1)/maxgid*100,
+            tot_wn_2 = sum(wn_2)/maxgid*100,
+            tot_wn_3 = sum(wn_3)/maxgid*100,
+            tot_wn_4 = sum(wn_4)/maxgid*100,
+            tot_wn_5 = sum(wn_5)/maxgid*100) %>%
+  distinct()
+
+new_how_well
+```
+
+## Gather more information
+
+In this section, we want to find out why the results are the way they are. Can we derive some information about the grid cells that tell us what contributes to a better result?
+
+First, let's gather information on the depth in each grid cell. For this example, I have logged onto the National Oceanic and Atmospheric Administration (NOAA) [ERDDAP server](https://coastwatch.pfeg.noaa.gov/erddap/search/advanced.html?page=1&itemsPerPage=1000) and gathered depth information for the bounding box of the study site, which must be in a geographic coordinate system (e.g., NAD 1983). Let's get the bounding box of our study site.[^1]
+
+[^1]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with a false origin and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
+
+```{r}
+#| label: get-bbox
+#| include: true
+
+# Objects required for iterations to run
+load(system.file("extdata", "site_depth.Rda", package = "sporeg")) 
+
+site_depth <- site_depth %>%
+  sf::st_as_sf() %>%
+  sf::st_transform(4269)
+
+sf::st_bbox(site_depth)
+```
+
+We will use the `xmin` (Min Longitude), `ymin` (Min Latitude), `xmax` (Max Longitude), and `ymax` (Max Latitude) to search for relevant depth (altitude) data in the ERDDAP server.
+
+![NOAA ERDDAP server advanced search parameters for depth measurements in study site.](images/figure1.png)
+
+We are going to use the `DatasetID: etopo180`
+
+![](images/figure2.png)
+
+![ERDDAP search results](images/figure3.png){width="229"}
+
+Click on `graph` and then click on `Download the Data or an Image`
+
+![How to get the ERDDAP data](images/figure4.png)
+
+Save the export.
+
+```{r}
+#| label: gather-depth
+#| include: true
+
+load(system.file("extdata", "atlcoast.Rda", package = "sporeg")) 
+
+atlcoast <- atlcoast %>%
+  sf::st_transform(4269)
+```
+
+Read in depth data. For now, we will load the demonstration depth_data file. Here, we also filter the depth data to only be those depths found inside the study site - right now, it's everything inside the grid bounding box.
+
+```{r}
+#| label: depth-data
+#| warning: false
+#| include: true
+
+load(system.file("extdata", "depth_data.Rda", package = "sporeg"))
+
+depth_data <- depth_data %>%
+  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4269)
+
+depth_data <- sf::st_filter(depth_data, site_depth) %>% 
+  mutate(uid = seq_along(geometry)) 
+```
+
+We also need to re-create the grids without the false origin.[^2] The study site must be in a projected coordinate system (WGS 84; EPSG: 3857) when it is initially fed into the function `grid_res`.
+
+[^2]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with a false origin and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
+
+```{r}
+#| label: true-grids
+#| warning: false
+#| include: true
+
+site_depth <- site_depth %>%
+  sf::st_transform(., 3857)
+
+HS_100km_grid <- grid_res(100, site_depth, 4269, "polygons")
+HS_50km_grid <- grid_res(50, site_depth, 4269, "polygons")
+HS_25km_grid <- grid_res(25, site_depth, 4269, "polygons")
+HS_10km_grid <- grid_res(10, site_depth, 4269, "polygons")
+```
+
+Merge depth data with different grid cell resolutions.
+
+```{r}
+#| label: true-depth
+#| warning: false
+#| include: true
+
+HS_100km_grid <- depth_data(HS_100km_grid, depth_data)
+HS_50km_grid <- depth_data(HS_50km_grid, depth_data)
+HS_25km_grid <- depth_data(HS_25km_grid, depth_data)
+HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
+
+rm(depth)
+gc()
+```
+
+Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
+
+```{r}
+#| label: other-variables
+#| warning: false
+#| include: true
+
+load(system.file("extdata", "fo_sts_pts.Rda", package = "sporeg")) 
+
+fo_sts_pts <- fo_sts_pts %>%
+  sf::st_centroid()
+
+load(system.file("extdata", "fo_study_site.Rda", package = "sporeg")) 
+  
+load(system.file("extdata", "fo_land_barrier.Rda", package = "sporeg")) 
+
+fo_land_barrier <- fo_land_barrier %>%
+  sf::st_transform(3857) %>%
+  sf::st_collection_extract('POLYGON') %>%
+  sf::st_cast('POLYGON') %>%
+  sf::st_union() %>%
+  sf::st_as_sf()
+
+epsg = 3857
+
+HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+  sf::st_as_sf() 
+
+HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+  sf::st_as_sf()
+
+HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+  sf::st_as_sf()
+
+HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+  sf::st_as_sf()
+```
+
+Let's find out how many grid cells lacked receivers.
+
+```{r}
+#| label: rcv-absence
+#| warning: false
+#| include: true
+
+grids <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
+
+grids <- sf::st_as_sf(data.table::rbindlist(grids, idcol = 'resolution')) %>%
+  left_join(tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")), by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+
+no_rcv <- grids %>%
+  group_by(res_name) %>%
+  summarise(n_zeroes = sum(p_a == "0"),
+            perc_zeroes = n_zeroes/max(gid)*100) %>%
+  as.data.frame %>%
+  dplyr::select(-x)
+```
+
+Merge the results to these grid cell metadata and determine which grid cells exhibited a good fit.
+
+```{r}
+#| label: results-vars
+#| warning: false
+#| include: true
+
+results <- results %>%
+  mutate(g_fit = ifelse(avg_dif>= -1*0.1*anims & avg_dif <= 0.1*anims, 1, 0))
+
+HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>%
+  sf::st_as_sf() 
+
+HS_50km_grid <- merge(results %>% dplyr::filter(res_name == "50km"), HS_50km_grid, by = c("gid")) %>%
+  sf::st_as_sf() 
+
+HS_25km_grid <- merge(results %>% dplyr::filter(res_name == "25km"), HS_25km_grid, by = c("gid")) %>%
+  sf::st_as_sf() 
+
+HS_10km_grid <- merge(results %>% dplyr::filter(res_name == "10km"), HS_10km_grid, by = c("gid")) %>%
+  sf::st_as_sf() 
+```
+
+## Map results
+
+Let's map these and see what kind of spatial trends we can see.
+
+```{r}
+#| label: results-maps
+#| warning: false
+#| include: true
+
+mapview::mapView(HS_100km_grid)
+mapview::mapView(HS_50km_grid)
+mapview::mapView(HS_25km_grid)
+mapview::mapView(HS_10km_grid)
+```
+
+## Map the results
+
+Let's marry our results to a sf object that lacks a false origin so that we can more easily map them. 
+
+```{r}
+#| label: results-sfmaps
+#| warning: false
+#| include: true
+
+# Create grids without false origin
+study_site <- study_site %>% # UTM 17N
+  sf::st_transform(4269) %>% # Convert to NAD 1983
+  sf::st_transform(3857) # Convert to WGS 84
+
+HS100km <- grid_res(100, study_site, 3857, "polygons")
+HS50km <- grid_res(50, study_site, 3857, "polygons")
+HS25km <- grid_res(25, study_site, 3857, "polygons")
+HS10km <- grid_res(10, study_site, 3857, "polygons")
+
+# Merge results data to new geometries
+HS100km <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS100km, by = c("gid")) %>%
+  sf::st_as_sf() 
+
+HS50km <- merge((HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS50km, by = c("gid")) %>%
+  sf::st_as_sf()
+
+HS25km <- merge((HS_25km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS25km, by = c("gid")) %>%
+  sf::st_as_sf()
+
+HS10km <- merge((HS_10km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS10km, by = c("gid")) %>%
+  sf::st_as_sf()
+```
+
+# Model the effects
+
+We want to create a model to understand which variables affect a good fit in the grid cells.
+
+## Create a dummy model
+
+We need to check for colinearity between main effects to see if we need to include any interaction terms between main effects in the model.
+
+```{r}
+#| label: vif
+#| warning: false
+#| include: true
+
+dummy.fit <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), data = HS_10km_grid)
+
+car::vif(dummy.fit)
+```
+
+```{r}
+#| label: model-selection
+#| warning: false
+#| include: true
+
+# 100 x 100km resolution
+fit1.100km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
+                 family = binomial(), data = HS_100km_grid)
+
+# den_rcs      1.7679  1  0.1836395
+
+fit2.100km <- glm(formula = g_fit ~ p_a + mean_depth + d_shore,
+                 family = binomial(), data = HS_100km_grid)
+
+car::Anova(fit2.100km)
+
+
+# 50 x 50km resolution
+fit1.50km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
+                 family = binomial(), data = HS_50km_grid)
+
+# d_shore      0.1248  1     0.7239
+
+fit2.50km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth,
+                 family = binomial(), data = HS_50km_grid)
+
+# den_rcs       0.305  1     0.5809 
+
+fit3.50km <- glm(formula = g_fit ~ p_a + mean_depth,
+                 family = binomial(), data = HS_50km_grid)
+
+car::Anova(fit3.50km)
+
+# 25 x 25km resolution
+fit1.25km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
+                 family = binomial(), data = HS_25km_grid)
+
+# d_shore       2.161  1    0.14154
+
+fit2.25km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth,
+                 family = binomial(), data = HS_25km_grid)
+
+car::Anova(fit2.25km)
+
+# 10 x 10km resolution
+fit1.10km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
+                 family = binomial(), data = HS_10km_grid)
+
+car::Anova(fit1.10km)
+```
+
+## Is the model useful?
+
+Now that we've constructed the model using backward selection by p-value, let's evaluate whether or not it is useful. We'll do this by comparing the null deviance to the residual deviance. `p-value = 1 - pchisq(null deviance - residual deviance, degrees of freedom)`
+
+```{r}
+#| label: model-usefulness
+#| warning: false
+#| include: true
+
+summary(fit2.100km)
+
+p_value.100km = 1 - pchisq(120.090-59.388, 3)
+p_value.100km
+
+summary(fit3.50km)
+
+p_value.50km = 1 - pchisq(327.03-233.64, 3)
+p_value.50km
+
+summary(fit2.25km)
+
+p_value.25km = 1 - pchisq(975.40-750.33, 3)
+p_value.25km
+
+summary(fit1.10km)
+
+p_value.10km = 1 - pchisq(5012.5-4012.9, 3)
+p_value.10km
+```
+
+## Calculate odds ratios
+
+We want to know how much each main effect increases (or decreases) the odds of a good fit occurring so we need to calculate the odds ratios.
+
+```{r}
+#| label: odds-ratios
+#| warning: false
+#| include: true
+
+odds_100km <- get_or(fit2.100km) %>%
+  mutate(res_name = "100km")
+
+odds_50km <- get_or(fit3.50km) %>%
+  mutate(res_name = "50km")
+
+odds_25km <- get_or(fit2.25km) %>%
+  mutate(res_name = "25km")
+
+odds_10km <- get_or(fit1.10km) %>%
+  mutate(res_name = "10km")
+
+odds_ratios <- rbind(odds_100km, odds_50km, odds_25km, odds_10km)
+```
+
+## How many receivers?
+
+Let's find out how the density of receivers varied for each grid cell resolution.
+
+```{r}
+#| label: rcv-den
+#| warning: false
+#| include: true
+
+res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
+
+rcv_dens <- lapply(res, den_rcvs)
+
+rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+```
+
+## Where do good fits occur?
+
+What are the characteristics of the grid cells that exhibited a good fit?
+
+```{r}
+#| label: good-fits
+#| warning: false
+#| include: true
+
+gd_fit_char <- lapply(res, gd_fts) %>%
+  data.table::rbindlist(., idcol = 'resolution') %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+
+```
+
+## Do the methods close gaps?
+
+Let's find out how many of the good fits occurred in grid cells that lacked receivers. We can use the results list `res` that we created in the previous step and apply a function over all resolutions at the same time.
+
+```{r}
+#| label: gaps-closed
+#| warning: false
+#| include: true
+
+clsd_gps <- lapply(res, gps_fld) %>%
+  data.table::rbindlist(., idcol = 'resolution') %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+```
+
+## Where are these closed gaps?
+
+Let's find out where these closed gaps are located (e.g., are they coastal?).
+
+```{r}
+
+clsd_gp_chars <- lapply(res, gps_chr) %>%
+  data.table::rbindlist(., idcol = 'resolution') %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+```
+
+## Where are receivers located?
+
+Let's find out where most of the receivers are in the current array.
+
+```{r}
+
+rcv_chars <- lapply(res, rcv_chr) %>%
+  data.table::rbindlist(., idcol = 'resolution') %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+
+```
+
+## What if we had chosen a different depth cutoff?
+
+Blacktip sharks, the species chosen to demonstrate the current methods, is known to rarely cross the Gulf Stream, which is in deep waters. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
+
+```{r}
+
+depth_limit <- 300 # [m]
+
+dif_depth <- lapply(res, dif_co) %>%
+  data.table::rbindlist(., idcol = 'resolution') %>%
+  left_join(tibble(resolution = 1:4, 
+                   res_name = c("100km", "50km", "25km", "10km")), 
+            by = "resolution") %>%
+  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+```
+
+## Demonstrate ecological application
+
+Let's apply these methods to real acoustic telemetry data so we can derive distribution information.
+
+```{r}
+
+load(system.file("extdata", "subset.Rda", package = "sporeg"))
+  
+CRS <- 3857
+barrier <- atlcoast %>%
+  sf::st_transform(., 3857)
+vis_graph <- pathroutr::prt_visgraph(barrier)
+buffer <- 650
+  
+tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)
+
+# Check map
+mapview::mapView(tbuff650)
+```
+
+## Calculate grid counts
+
+Here, we need to calculate the number of unique individuals in each grid cell so that we can determine the distribution of the population.
+
+```{r}
+sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
+
+subset_cts <- cts(sg, tbuff650)
+```
+
+How would it differ if we just used the daily summarized acoustic telemetry data to derive distribution information?
+
+```{r}
+
+load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
+
+sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
+
+at_dly_locs_cts <- cts(sg, at_dly_locs)
+```
+
+What if we connected those data with straight lines?
+
+```{r}
+
+load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
+
+at_lines <- at_dly_locs %>%
+  group_by(ID, time) %>%
+  sf::st_transform(3857) %>%
+  summarise(pt = sf::st_combine(geometry)) %>%
+  sf::st_centroid() %>%
+  mutate(lat = sf::st_coordinates(pt)[,2],
+         lon = sf::st_coordinates(pt)[,1]) %>%
+  arrange(ID, time) %>%
+  mutate(start_x = lon, start_y = lat, end_x = lead(lon), end_y = lead(lat)) %>% #Prep data for making lines - ensures proper order
+  sf::st_as_sf(coords = c("lon", "lat"), crs = 3857) %>%
+  filter(!is.na(end_y)) %>%
+  tidyr::nest() %>% 
+  mutate(
+    data = purrr::map(data, 
+                      ~ mutate(.x,
+                               x = purrr::pmap(.l = list(start_x, start_y, end_x, end_y),
+                                               .f = make_line)))) %>%
+  mutate(
+      data = purrr::map(data,
+                        ~ mutate(.x, x = sf::st_sfc(x))),
+      x = purrr::map(data, ~ sf::st_union(sf::st_set_geometry(.x, 'x'))), ##Preserves order
+      x = purrr::map(x, ~ sf::st_cast(.x, 'MULTILINESTRING')) 
+    ) %>% 
+    dplyr::select(-data) %>% 
+    tidyr::unnest(x) %>% 
+    sf::st_as_sf(sf_column_name = 'x', crs = 3857)
+
+sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
+
+at_line_cts <- cts(sg, at_lines)
+
+```
+
+## Map good fits over ecological data
+
+Let's merge the results that have a false origin with the distribution data so we know where we can rely on the results.
+
+```{r}
+
+goodfts_50km <- merge((HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)), at_line_cts, by = "gid") %>%
+  sf::st_as_sf()
+```
+
+## Map reconstruction results
+
+Let's map the mean differences with the corrected map projection.
+
+```{r}
+
+mapview::mapView(goodfts_50km, zcol = "avg_dif")
+```

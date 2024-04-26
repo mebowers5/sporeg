@@ -4,7 +4,17 @@
 \alias{simul_trks}
 \title{Simulate tracks}
 \usage{
-simul_trks(anims, study_site, theta, vmin, vmax, rel_site, n_days, initHeading)
+simul_trks(
+  anims,
+  study_site,
+  theta,
+  vmin,
+  vmax,
+  rel_site,
+  crs,
+  n_days,
+  initHeading
+)
 }
 \arguments{
 \item{anims}{integer. quantity of desired animals to simulate}
@@ -18,6 +28,8 @@ simul_trks(anims, study_site, theta, vmin, vmax, rel_site, n_days, initHeading)
 \item{vmax}{numeric. maximum velocity from which to sample step length}
 
 \item{rel_site}{simple feature polygon object in which simulated animals are "released" or where simulated tracks begin}
+
+\item{crs}{EPSG code for study_site polygon. Must be projected coordinate system}
 
 \item{n_days}{integer. number of days that tracks should be simulated}
 
