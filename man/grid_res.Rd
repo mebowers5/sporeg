@@ -22,7 +22,6 @@ grid comprised of polygons or points depending on \code{what} parameter
 This function creates a grid inside a specified polygon.
 }
 \examples{
-site_depth <- sf::st_read("Bathy500m.shp") \%>\% sf::st_transform(4269)
 # NOTE: The study site must be in a projected coordinate system (e.g., WGS 84; EPSG: 3857)
 # when it is initially fed into the function grid_res
 site_depth <- site_depth \%>\% sf::st_transform(., 3857)

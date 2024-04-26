@@ -30,9 +30,9 @@ And clearing any cache we may have remaining from previous work.
 
 ```r
 gc()
-#>           used  (Mb) gc trigger  (Mb) max used (Mb)
-#> Ncells 3459074 184.8    5110707 273.0  5110707  273
-#> Vcells 5522294  42.2   10146329  77.5  8388602   64
+#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 5463597 291.8    9207830 491.8  9207830 491.8
+#> Vcells 9671340  73.8   17824054 136.0 14786712 112.9
 ```
 
 Next, let's load the packages that we will need to run the steps in this vignette.
@@ -370,25 +370,8 @@ base::replicate(n = reps, expr = {
     return(df)
   }
   )
-#> [[1]]
-#> function (x, df1, df2, ncp, log = FALSE) 
-#> {
-#>     if (missing(ncp)) 
-#>         .Call(C_df, x, df1, df2, log)
-#>     else .Call(C_dnf, x, df1, df2, ncp, log)
-#> }
-#> <bytecode: 0x00000206bb142610>
-#> <environment: namespace:stats>
-#> 
-#> [[2]]
-#> function (x, df1, df2, ncp, log = FALSE) 
-#> {
-#>     if (missing(ncp)) 
-#>         .Call(C_df, x, df1, df2, log)
-#>     else .Call(C_dnf, x, df1, df2, ncp, log)
-#> }
-#> <bytecode: 0x00000206bb142610>
-#> <environment: namespace:stats>
+#> Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file '', probable reason 'Invalid argument'
+#> Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection
 ```
 
 ## Stop the cluster
@@ -409,6 +392,8 @@ First, let's load the results.
 
 ```r
 load(system.file("data", filename, package = "sporeg")) 
+#> Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file '', probable reason 'Invalid argument'
+#> Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection
 ```
 
 Hmm... these are hard to look at. Let's turn them into a data frame instead.
@@ -432,6 +417,9 @@ results <- results %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") 
+#> Error in `left_join()`:
+#> ! Join columns in `x` must be present in the data.
+#> ✖ Problem with `resolution`.
 ```
 
 Test for zero variance.
@@ -440,10 +428,15 @@ Test for zero variance.
 ```r
 # Remove grid cells with zero variance
 df_var <- zero_var(results) 
+#> Error in `dplyr::group_by()`:
+#> ! Must group by variables found in `.data`.
+#> Column `res_name` is not found.
+#> Column `gid` is not found.
 
 # Find the grid cell with zero variance
 df_zero_var <- anti_join(results, df_var, by = c("res_name", "gid")) %>%
   distinct(res_name, gid)
+#> Error in eval(expr, envir, enclos): object 'df_var' not found
 ```
 
 ### Prep for power analysis
@@ -481,76 +474,44 @@ pow_stat <- df_var %>%
   summarise(sd = sd(dif)) %>%
   ungroup() %>%
   group_by(res_name)
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'df_var' not found
 
 res <- pow_stat %>% dplyr::filter(res_name == "100km")
+#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_100km <- powr(res, sig.level, power, delta)
+#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 100 km x 100 km")
 #> [1] "Grid cell resolution: 100 km x 100 km"
 pwr_100km
-#> 
-#>      Paired t test power calculation 
-#> 
-#>               n = 1575.042
-#>           delta = 0.03
-#>              sd = 1.316561
-#>       sig.level = 0.95
-#>           power = 0.8
-#>     alternative = two.sided
-#> 
-#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
+#> Error in eval(expr, envir, enclos): object 'pwr_100km' not found
 
 res <- pow_stat %>% dplyr::filter(res_name == "50km")
+#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_50km <- powr(res, sig.level, power, delta)
+#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 50 km x 50 km")
 #> [1] "Grid cell resolution: 50 km x 50 km"
 pwr_50km
-#> 
-#>      Paired t test power calculation 
-#> 
-#>               n = 2059.669
-#>           delta = 0.03
-#>              sd = 1.505545
-#>       sig.level = 0.95
-#>           power = 0.8
-#>     alternative = two.sided
-#> 
-#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
+#> Error in eval(expr, envir, enclos): object 'pwr_50km' not found
 
 res <- pow_stat %>% dplyr::filter(res_name == "25km")
+#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_25km <- powr(res, sig.level, power, delta)
+#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 25 km x 25 km")
 #> [1] "Grid cell resolution: 25 km x 25 km"
 pwr_25km
-#> 
-#>      Paired t test power calculation 
-#> 
-#>               n = 2837.093
-#>           delta = 0.03
-#>              sd = 1.766981
-#>       sig.level = 0.95
-#>           power = 0.8
-#>     alternative = two.sided
-#> 
-#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
+#> Error in eval(expr, envir, enclos): object 'pwr_25km' not found
 
 
 res <- pow_stat %>% dplyr::filter(res_name == "10km")
+#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_10km <- powr(res, sig.level, power, delta)
+#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 10 km x 10 km")
 #> [1] "Grid cell resolution: 10 km x 10 km"
 pwr_10km
-#> 
-#>      Paired t test power calculation 
-#> 
-#>               n = 3271.239
-#>           delta = 0.03
-#>              sd = 1.897367
-#>       sig.level = 0.95
-#>           power = 0.8
-#>     alternative = two.sided
-#> 
-#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
+#> Error in eval(expr, envir, enclos): object 'pwr_10km' not found
 ```
 
 ## Sanity check
@@ -563,14 +524,9 @@ max_sd <- pow_stat %>%
   ungroup() %>%
   group_by(res_name) %>%
   summarise(max_sd = max(sd))
+#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 max_sd
-#> # A tibble: 4 × 2
-#>   res_name max_sd
-#>   <chr>     <dbl>
-#> 1 100km      1.32
-#> 2 10km       1.90
-#> 3 25km       1.77
-#> 4 50km       1.51
+#> Error in eval(expr, envir, enclos): object 'max_sd' not found
 ```
 
 ## Decisions, decisions
@@ -590,28 +546,15 @@ new_df <- df_var %>%
                   res_name == "50km" & iteration <= 128 |
                   res_name == "25km" & iteration <= 128 |
                   res_name == "10km" & iteration <= 144)
+#> Error in eval(expr, envir, enclos): object 'df_var' not found
 
 results <- new_df %>%
   group_by(res_name, gid) %>%
   summarise(avg_dif = mean(dif),
             se = plotrix::std.error(dif)) 
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'new_df' not found
 results
-#> # A tibble: 6,354 × 4
-#> # Groups:   res_name [4]
-#>    res_name   gid avg_dif    se
-#>    <chr>    <dbl>   <dbl> <dbl>
-#>  1 100km        2     1.1 0.180
-#>  2 100km        5     2.8 0.133
-#>  3 100km        7     2.3 0.213
-#>  4 100km        9     2.3 0.213
-#>  5 100km       10     0.4 0.267
-#>  6 100km       12     2.5 0.224
-#>  7 100km       13    -0.1 0.1  
-#>  8 100km       19     0.1 0.1  
-#>  9 100km       21     0.4 0.163
-#> 10 100km       24     0.3 0.153
-#> # ℹ 6,344 more rows
+#> Null data.table (0 rows and 0 cols)
 ```
 
 ## Check the methods performance
@@ -638,6 +581,10 @@ how_well_ct <- results %>%
             tot_wn_4 = sum(wn_4),
             tot_wn_5 = sum(wn_5)) %>%
   distinct()
+#> Error in `mutate()`:
+#> ℹ In argument: `res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))`.
+#> Caused by error:
+#> ! object 'res_name' not found
 
 # Percentages
 how_well <- results %>%
@@ -657,6 +604,10 @@ how_well <- results %>%
             tot_wn_4 = sum(wn_4)/maxgid*100,
             tot_wn_5 = sum(wn_5)/maxgid*100) %>%
   distinct()
+#> Error in `mutate()`:
+#> ℹ In argument: `res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))`.
+#> Caused by error:
+#> ! object 'res_name' not found
 ```
 
 ## Track Reconstruction Issue
@@ -676,7 +627,7 @@ recon <- df_var %>%
             max_27 = length(which(max_recon >= 27))/max(iteration)*100,
             max_26 = length(which(max_recon >= 26))/max(iteration)*100,
             max_25 = length(which(max_recon >= 25))/max(iteration)*100)
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'df_var' not found
 ```
 
 ## Additional Bias
@@ -692,7 +643,7 @@ recon_res <- df_var %>%
   ungroup() %>%
   group_by(res_name) %>%
   count()
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'df_var' not found
 ```
 
 Let's re-number these iterations where all `anims` were re-constructed.
@@ -706,7 +657,7 @@ new_iters <- df_var %>%
   ungroup() %>%
   distinct(iteration) %>%
   mutate(new_iter = seq_along(iteration))
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'df_var' not found
 ```
 
 Now we can see how our results would change if we had selected only iterations in which all `anims` were re-constructed.
@@ -718,16 +669,15 @@ new_iters_df <- merge(new_iters, df_var) %>%
                   res_name == "50km" & new_iter <= 128 |
                   res_name == "25km" & new_iter <= 128 |
                   res_name == "10km" & new_iter <= 144)
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'new_iters' not found
 
 new_results <- new_iters_df %>%
   group_by(res_name, gid) %>%
   summarise(avg_dif = mean(dif),
             se = plotrix::std.error(dif)) 
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'new_iters_df' not found
 new_results
-#> # A tibble: 0 × 4
-#> # Groups:   res_name [0]
-#> # ℹ 4 variables: res_name <chr>, gid <dbl>, avg_dif <dbl>, se <dbl>
+#> Error in eval(expr, envir, enclos): object 'new_results' not found
 
 new_how_well <- new_results %>%
   group_by(res_name) %>%
@@ -746,12 +696,10 @@ new_how_well <- new_results %>%
             tot_wn_4 = sum(wn_4)/maxgid*100,
             tot_wn_5 = sum(wn_5)/maxgid*100) %>%
   distinct()
-#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
+#> Error in eval(expr, envir, enclos): object 'new_results' not found
 
 new_how_well
-#> # A tibble: 0 × 7
-#> # Groups:   res_name [0]
-#> # ℹ 7 variables: res_name <ord>, tot_wn_0 <dbl>, tot_wn_1 <dbl>, tot_wn_2 <dbl>, tot_wn_3 <dbl>, tot_wn_4 <dbl>, tot_wn_5 <dbl>
+#> Error in eval(expr, envir, enclos): object 'new_how_well' not found
 ```
 
 ## Gather more information
@@ -839,9 +787,9 @@ HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 
 rm(depth)
 gc()
-#>            used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells  5560926 297.0   18013944 962.1 18013944 962.1
-#> Vcells 11805317  90.1   31926959 243.6 31926959 243.6
+#>            used  (Mb) gc trigger   (Mb) max used   (Mb)
+#> Ncells  7722622 412.5   22833067 1219.5 22833067 1219.5
+#> Vcells 15532111 118.6   37529736  286.4 37529733  286.4
 ```
 
 Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
@@ -903,18 +851,34 @@ Merge the results to these grid cell metadata and determine which grid cells exh
 ```r
 results <- results %>%
   mutate(g_fit = ifelse(avg_dif>= -1*0.1*anims & avg_dif <= 0.1*anims, 1, 0))
+#> Error in `mutate()`:
+#> ℹ In argument: `g_fit = ifelse(...)`.
+#> Caused by error:
+#> ! object 'avg_dif' not found
 
 HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
+#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "100km"`.
+#> Caused by error:
+#> ! object 'res_name' not found
 
 HS_50km_grid <- merge(results %>% dplyr::filter(res_name == "50km"), HS_50km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
+#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "50km"`.
+#> Caused by error:
+#> ! object 'res_name' not found
 
 HS_25km_grid <- merge(results %>% dplyr::filter(res_name == "25km"), HS_25km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
+#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "25km"`.
+#> Caused by error:
+#> ! object 'res_name' not found
 
 HS_10km_grid <- merge(results %>% dplyr::filter(res_name == "10km"), HS_10km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
+#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "10km"`.
+#> Caused by error:
+#> ! object 'res_name' not found
 ```
 
 ## Map results
@@ -974,10 +938,10 @@ We need to check for colinearity between main effects to see if we need to inclu
 
 ```r
 dummy.fit <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), data = HS_10km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::vif(dummy.fit)
-#>    den_rcs        p_a mean_depth    d_shore 
-#>   1.479777   1.489267   1.782095   1.805110
+#> Error in eval(expr, envir, enclos): object 'dummy.fit' not found
 ```
 
 
@@ -985,83 +949,59 @@ car::vif(dummy.fit)
 # 100 x 100km resolution
 fit1.100km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_100km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # den_rcs      1.7679  1  0.1836395
 
 fit2.100km <- glm(formula = g_fit ~ p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_100km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit2.100km)
-#> Analysis of Deviance Table (Type II tests)
-#> 
-#> Response: g_fit
-#>            LR Chisq Df Pr(>Chisq)    
-#> p_a         16.8930  1  3.955e-05 ***
-#> mean_depth   3.5324  1    0.06018 .  
-#> d_shore      0.9076  1    0.34076    
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> Error in eval(expr, envir, enclos): object 'fit2.100km' not found
 
 
 # 50 x 50km resolution
 fit1.50km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_50km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # d_shore      0.1248  1     0.7239
 
 fit2.50km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth,
                  family = binomial(), data = HS_50km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # den_rcs       0.305  1     0.5809 
 
 fit3.50km <- glm(formula = g_fit ~ p_a + mean_depth,
                  family = binomial(), data = HS_50km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit3.50km)
-#> Analysis of Deviance Table (Type II tests)
-#> 
-#> Response: g_fit
-#>            LR Chisq Df Pr(>Chisq)    
-#> p_a          12.178  1  0.0004835 ***
-#> mean_depth   38.942  1  4.366e-10 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> Error in eval(expr, envir, enclos): object 'fit3.50km' not found
 
 # 25 x 25km resolution
 fit1.25km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_25km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # d_shore       2.161  1    0.14154
 
 fit2.25km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth,
                  family = binomial(), data = HS_25km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit2.25km)
-#> Analysis of Deviance Table (Type II tests)
-#> 
-#> Response: g_fit
-#>            LR Chisq Df Pr(>Chisq)    
-#> den_rcs       1.244  1  0.2647398    
-#> p_a          14.684  1  0.0001271 ***
-#> mean_depth  123.041  1  < 2.2e-16 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> Error in eval(expr, envir, enclos): object 'fit2.25km' not found
 
 # 10 x 10km resolution
 fit1.10km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_10km_grid)
+#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit1.10km)
-#> Analysis of Deviance Table (Type II tests)
-#> 
-#> Response: g_fit
-#>            LR Chisq Df Pr(>Chisq)    
-#> den_rcs       0.007  1     0.9322    
-#> p_a          25.073  1  5.519e-07 ***
-#> mean_depth  136.766  1  < 2.2e-16 ***
-#> d_shore      52.425  1  4.470e-13 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> Error in eval(expr, envir, enclos): object 'fit1.10km' not found
 ```
 
 ## Is the model useful?
@@ -1071,112 +1011,28 @@ Now that we've constructed the model using backward selection by p-value, let's 
 
 ```r
 summary(fit2.100km)
-#> 
-#> Call:
-#> glm(formula = g_fit ~ p_a + mean_depth + d_shore, family = binomial(), 
-#>     data = HS_100km_grid)
-#> 
-#> Coefficients:
-#>               Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) -2.193e+00  8.380e-01  -2.617 0.008869 ** 
-#> p_a1         3.474e+00  1.014e+00   3.425 0.000615 ***
-#> mean_depth  -1.578e-02  1.071e-02  -1.474 0.140379    
-#> d_shore      1.147e-05  1.231e-05   0.932 0.351205    
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> (Dispersion parameter for binomial family taken to be 1)
-#> 
-#>     Null deviance: 64.656  on 58  degrees of freedom
-#> Residual deviance: 37.598  on 55  degrees of freedom
-#>   (1 observation deleted due to missingness)
-#> AIC: 45.598
-#> 
-#> Number of Fisher Scoring iterations: 7
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit2.100km' not found
 
 p_value.100km = 1 - pchisq(120.090-59.388, 3)
 p_value.100km
 #> [1] 4.161116e-13
 
 summary(fit3.50km)
-#> 
-#> Call:
-#> glm(formula = g_fit ~ p_a + mean_depth, family = binomial(), 
-#>     data = HS_50km_grid)
-#> 
-#> Coefficients:
-#>              Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) -0.539946   0.276090  -1.956 0.050502 .  
-#> p_a1         1.214609   0.351263   3.458 0.000545 ***
-#> mean_depth  -0.027241   0.007919  -3.440 0.000582 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> (Dispersion parameter for binomial family taken to be 1)
-#> 
-#>     Null deviance: 270.49  on 244  degrees of freedom
-#> Residual deviance: 203.85  on 242  degrees of freedom
-#>   (1 observation deleted due to missingness)
-#> AIC: 209.85
-#> 
-#> Number of Fisher Scoring iterations: 8
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit3.50km' not found
 
 p_value.50km = 1 - pchisq(327.03-233.64, 3)
 p_value.50km
 #> [1] 0
 
 summary(fit2.25km)
-#> 
-#> Call:
-#> glm(formula = g_fit ~ den_rcs + p_a + mean_depth, family = binomial(), 
-#>     data = HS_25km_grid)
-#> 
-#> Coefficients:
-#>             Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) -0.58347    0.15246  -3.827 0.000130 ***
-#> den_rcs     -5.29886    4.87903  -1.086 0.277458    
-#> p_a1         0.94002    0.24227   3.880 0.000104 ***
-#> mean_depth  -0.03491    0.00540  -6.465 1.01e-10 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> (Dispersion parameter for binomial family taken to be 1)
-#> 
-#>     Null deviance: 855.91  on 895  degrees of freedom
-#> Residual deviance: 688.24  on 892  degrees of freedom
-#>   (11 observations deleted due to missingness)
-#> AIC: 696.24
-#> 
-#> Number of Fisher Scoring iterations: 8
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit2.25km' not found
 
 p_value.25km = 1 - pchisq(975.40-750.33, 3)
 p_value.25km
 #> [1] 0
 
 summary(fit1.10km)
-#> 
-#> Call:
-#> glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), 
-#>     data = HS_10km_grid)
-#> 
-#> Coefficients:
-#>               Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) -4.086e-01  5.467e-02  -7.473 7.84e-14 ***
-#> den_rcs      1.391e-01  1.638e+00   0.085    0.932    
-#> p_a1         7.773e-01  1.515e-01   5.130 2.90e-07 ***
-#> mean_depth  -1.093e-02  1.556e-03  -7.021 2.20e-12 ***
-#> d_shore     -1.004e-05  1.313e-06  -7.647 2.06e-14 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> (Dispersion parameter for binomial family taken to be 1)
-#> 
-#>     Null deviance: 5210.0  on 5053  degrees of freedom
-#> Residual deviance: 4404.3  on 5049  degrees of freedom
-#>   (87 observations deleted due to missingness)
-#> AIC: 4414.3
-#> 
-#> Number of Fisher Scoring iterations: 7
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit1.10km' not found
 
 p_value.10km = 1 - pchisq(5012.5-4012.9, 3)
 p_value.10km
@@ -1191,17 +1047,22 @@ We want to know how much each main effect increases (or decreases) the odds of a
 ```r
 odds_100km <- get_or(fit2.100km) %>%
   mutate(res_name = "100km")
+#> Error in eval(expr, envir, enclos): object 'fit2.100km' not found
 
 odds_50km <- get_or(fit3.50km) %>%
   mutate(res_name = "50km")
+#> Error in eval(expr, envir, enclos): object 'fit3.50km' not found
 
 odds_25km <- get_or(fit2.25km) %>%
   mutate(res_name = "25km")
+#> Error in eval(expr, envir, enclos): object 'fit2.25km' not found
 
 odds_10km <- get_or(fit1.10km) %>%
   mutate(res_name = "10km")
+#> Error in eval(expr, envir, enclos): object 'fit1.10km' not found
 
 odds_ratios <- rbind(odds_100km, odds_50km, odds_25km, odds_10km)
+#> Error in eval(expr, envir, enclos): object 'odds_100km' not found
 ```
 
 ## How many receivers?
@@ -1233,6 +1094,10 @@ gd_fit_char <- lapply(res, gd_fts) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#> Error in `stopifnot()`:
+#> ℹ In argument: `g_fit == 1`.
+#> Caused by error:
+#> ! object 'g_fit' not found
 ```
 
 ## Do the methods close gaps?
@@ -1247,6 +1112,10 @@ clsd_gps <- lapply(res, gps_fld) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#> Error in `dplyr::filter()`:
+#> ℹ In argument: `g_fit == 1 & p_a == 0`.
+#> Caused by error:
+#> ! object 'g_fit' not found
 ```
 
 ## Where are these closed gaps?
@@ -1262,6 +1131,10 @@ clsd_gp_chars <- lapply(res, gps_chr) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#> Error in `stopifnot()`:
+#> ℹ In argument: `g_fit == 1 & p_a == 0`.
+#> Caused by error:
+#> ! object 'g_fit' not found
 ```
 
 ## Where are receivers located?
@@ -1294,6 +1167,10 @@ dif_depth <- lapply(res, dif_co) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#> Error in `dplyr::filter()`:
+#> ℹ In argument: `mean_depth <= depth_limit`.
+#> Caused by error:
+#> ! argument "depth_limit" is missing, with no default
 ```
 
 ## Demonstrate ecological application
@@ -1406,5 +1283,8 @@ Let's map the mean differences with the corrected map projection.
 ```r
 
 mapview::mapView(goodfts_50km, zcol = "avg_dif")
-#> Error in loadNamespace(name): there is no package called 'webshot'
+#> Error: 
+#> at least one of the following columns: 
+#> 'avg_dif' 
+#> not found in goodfts_50km
 ```

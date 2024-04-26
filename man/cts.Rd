@@ -17,9 +17,3 @@ A simple feature object with counts associated with grid cell IDs \code{"gid"}
 \description{
 The function allows you to calculate counts per grid cell in demonstrative modeled movement data.
 }
-\examples{
-sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
-subset_cts <- cts(sg, tbuff650)
-# Save counts to shapfile
-sf::st_write(subset_cts, dsn = "subset_cts08312023.shp", delete_dsn = TRUE)
-}
