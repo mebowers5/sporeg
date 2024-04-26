@@ -51,3 +51,4 @@ The creation of this package was made possible by the helpful, supportive hosts 
 # documentation updates and vignette build
 # doc-updates-vignette-build
 sporeg
+# sporeg
