@@ -52,3 +52,4 @@ The creation of this package was made possible by the helpful, supportive hosts 
 # doc-updates-vignette-build
 sporeg
 # sporeg
+sporeg
