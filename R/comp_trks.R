@@ -99,14 +99,14 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
 
   # the track cannot start or end within the land barrier; prt_trim() trims those out
   mod_trks <- mod_trks %>%
-    rowwise() %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(trim_data = list(pathroutr::prt_trim(data, land_barrier)))
 
   # here, we create our re-routed points; the return is a two column data frame with the
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
-    dplyr::mutate(rrt_pts = list(prt_reroute(trim_data, land_barrier, vis_graph)))
+    dplyr::mutate(rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph)))
 
   # Clear cache
   gc()
@@ -116,7 +116,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
-    dplyr::mutate(path_pts = list(prt_update_points(rrt_pts, trim_data)),
+    dplyr::mutate(path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
            path_lines = list(path_pts %>% dplyr::summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
 
   # Clear cache
@@ -131,10 +131,10 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   ### Create grid that maintains row for each grid cell
   #Convert from rowwise_df to sf object
   mod_trks <- mod_trks %>%
-    rowwise() %>%
+    dplyr::rowwise() %>%
     dplyr::mutate(geom = sf::st_geometry(geom)) %>%
     dplyr::select(ID, geom) %>%
-    ungroup() %>%
+    dplyr::ungroup() %>%
     sf::st_as_sf(., sf_column_name = "geom")
 
   ### Count distinct AnimalIDs in each grid cell
