@@ -30,7 +30,8 @@ Imports:
     tibble,
     tidyr,
     units,
-    magrittr
+    magrittr,
+    stats
 Remotes: 
     jmlondon/pathroutr,
     ocean-tracking-network/glatos
