@@ -53,15 +53,15 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
   t <- track_path %>% dplyr::rowwise() %>%
-    dplyr::mutate(rrt_pts = list(prt_reroute(trim_data, land_barrier, vis_graph)))
+    dplyr::mutate(rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph)))
 
   # NOTE: previous versions of prt_update_points() had the argument order reversed from
   # what it now requires. The updated geometry points are passed first (here, `rrt_pts`)
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
   t <- t %>% dplyr::rowwise() %>%
-    dplyr::mutate(path_pts = list(prt_update_points(rrt_pts, trim_data)),
-           path_lines = list(path_pts %>% summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
+    dplyr::mutate(path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
+           path_lines = list(path_pts %>% dplyr::summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
 
   # we need to rbind all of our lines and points into single objects that can be plotted
   t$geom <- do.call(rbind, t$path_lines)

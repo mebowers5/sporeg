@@ -23,5 +23,6 @@ This functions creates a line by connecting start and end points.
 }
 \examples{
 make_line(Longitude, Latitude, lead(Longitude), lead(Latitude))
-make_line(sf::st_coordinates(point_geom)[,1], sf::st_coordinates(point_geom)[,2], lead(sf::st_coordinates(point_geom)[,1]), lead(sf::st_coordinates(point_geom)[,2]))
+make_line(sf::st_coordinates(point_geom)[,1], sf::st_coordinates(point_geom)[,2],
+lead(sf::st_coordinates(point_geom)[,1]), lead(sf::st_coordinates(point_geom)[,2]))
 }

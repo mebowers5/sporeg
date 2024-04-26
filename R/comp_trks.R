@@ -61,19 +61,12 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
     sf::st_drop_geometry() %>%
     as.data.frame
 
-  # Clear cache
-  gc()
-
   #Impute missing locations with continuous time movement model
   mod_trks <- momentuHMM::crawlWrap(obsData = mod_trks, timeStep = "15 min",
                                     fixPar = c(NA, NA),
                                     theta = c(8,0),
                                     attempts = 100, retrySD = 5, retryFits = 5,
                                     ncores = 2, retryParallel = TRUE)
-  # plot(crw_mod)
-
-  # Clear cache
-  gc()
 
   #Continue with movement model data products
   #Get the data.frame of predicted locations
@@ -104,11 +97,6 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
     dplyr::group_by(ID) %>%
     tidyr::nest()
 
-  # Clear cache
-  gc()
-
-  library(sf)
-
   # the track cannot start or end within the land barrier; prt_trim() trims those out
   mod_trks <- mod_trks %>%
     rowwise() %>%
@@ -129,7 +117,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # from prt_reroute()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
     dplyr::mutate(path_pts = list(prt_update_points(rrt_pts, trim_data)),
-           path_lines = list(path_pts %>% summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
+           path_lines = list(path_pts %>% dplyr::summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
 
   # Clear cache
   gc()
@@ -170,11 +158,11 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
 
   #Now that we have every combination of gid and Iteration in one variable, merge one of the count files to it - doesn't really matter which on but we'll use the complete data one here
   # Note: Is the above comment wrong or is the code wrong? I think the comment is wrong - leftover from when iterations were assigned instead of looped.
-  tc <- left_join(all, sim_count, by = "gid") %>%
+  tc <- dplyr::left_join(all, sim_count, by = "gid") %>%
     dplyr::mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
 
   #Join derived count to data frame
-  tc <- left_join(tc, mod_count, by = "gid") %>%
+  tc <- dplyr::left_join(tc, mod_count, by = "gid") %>%
     dplyr::mutate_all(~replace(., is.na(.), 0))  # Replace NA's with zeros so we can check count
 
   #Calculate differences in each grid cell by iteration and gid
@@ -200,7 +188,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   sim_trks <- sim_trks %>%
     dplyr::mutate(
       data = purrr::map(data,
-                        ~ mutate(.x, x = sf::st_sfc(x))),
+                        ~ dplyr::mutate(.x, x = sf::st_sfc(x))),
       x = purrr::map(data, ~ sf::st_union(sf::st_set_geometry(.x, 'x'))), ##Preserves order
       x = purrr::map(x, ~ sf::st_cast(.x, 'MULTILINESTRING'))
     ) %>%
@@ -252,7 +240,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   #Turn crwPredict product into data frame
   mod_trks <- mod_trks %>%
     dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
-    mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
+    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
     as.data.frame
 
   # Read in the track data; here, I'm filtering to just include the predicted locations
@@ -274,8 +262,6 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
     dplyr::group_by(ID) %>%
     tidyr::nest()
 
-  library(sf)
-
   # the track cannot start or end within the land barrier; prt_trim() trims those out
   mod_trks <- mod_trks %>%
     dplyr::rowwise() %>%
@@ -293,7 +279,7 @@ comp_trks <- function(sim_trks, stations, land_barrier, vis_graph, multi.grid, H
   # from prt_reroute()
   mod_trks <- mod_trks %>% dplyr::rowwise() %>%
     dplyr::mutate(path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
-           path_lines = list(path_pts %>% summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
+           path_lines = list(path_pts %>% dplyr::summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
 
   # we need to rbind all of our lines and points into single objects that can be plotted
   mod_trks$geom <- do.call(rbind, mod_trks$path_lines)

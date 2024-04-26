@@ -21,7 +21,8 @@ df <- lapply(df, data.table::rbindlist, idcol = 'resolution')
 # Bind the bound resolution by iteration
 df <- data.table::rbindlist(df, idcol = 'iteration')
 df <- df \%>\%
-left_join(tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")), by = "resolution") 
+left_join(tibble(resolution = 1:4,
+res_name = c("100km", "50km", "25km", "10km")), by = "resolution")
 # Remove grid cells with zero variance
-df_var <- zero_var(df) 
+df_var <- zero_var(df)
 }

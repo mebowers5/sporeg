@@ -24,5 +24,6 @@ data.table::rbindlist(., idcol = 'resolution') \%>\%
 left_join(tibble(resolution = 1:4,
                    res_name = c("100km", "50km", "25km", "10km")),
                                by = "resolution") \%>\%
-                                 mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+                                 mutate(res_name = ordered(res_name,
+                                 levels = c("100km", "50km", "25km", "10km")))
 }

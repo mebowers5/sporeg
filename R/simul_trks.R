@@ -41,7 +41,7 @@ simul_trks <- function(anims, study_site, theta, vmin, vmax, rel_site, crs, n_da
   simu <- sim %>% as.data.frame() %>%
     setNames(gsub("geometry.", perl = TRUE, "", names(.))) %>%
     setNames(gsub("geometry", perl = TRUE, "0", names(.))) %>%
-    tidyr::pivot_longer(., cols = everything(), names_to = "AnimalID", values_to = "geom") %>%
+    tidyr::pivot_longer(., cols = tidyr::everything(), names_to = "AnimalID", values_to = "geom") %>%
     dplyr::mutate(ID = as.numeric(AnimalID) + 1) %>%
     dplyr::group_by(ID) %>%
     dplyr::mutate(uid = seq_along(AnimalID)) #Assign sequential numbers to rows to preserve directionality
@@ -52,7 +52,7 @@ simul_trks <- function(anims, study_site, theta, vmin, vmax, rel_site, crs, n_da
                   ID,
                   geom, POINT_Y, POINT_X) %>%
     dplyr::group_by(ID) %>%
-    arrange(uid) %>%
+    dplyr::arrange(uid) %>%
     dplyr::mutate(time = seq.POSIXt(from = as.POSIXct("2000-01-01 01:00:00"), by = "1 hour", along.with = uid),   #Make up dates for the row numbers by Iteration and Animal ID
            start_x = POINT_X, start_y = POINT_Y, end_x = dplyr::lead(POINT_X), end_y = dplyr::lead(POINT_Y)) %>% #Prep data for making lines - ensures proper order
     sf::st_as_sf()
