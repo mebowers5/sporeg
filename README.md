@@ -48,3 +48,4 @@ You don't have any experience documenting issues on GitHub? No problem! Start he
 The creation of this package was made possible by the helpful, supportive hosts and attendees of Ocean Tracking Network Study Hall, particularly Mike O'Brien, Ben Hlina, Jon Pye, and Sarah Popova. In addition, I thank Josh London for help with pathroutr code and encouragement. I also thank Brian J. Smith for introducing me to the world of movement modeling and for all his help and encouragement early on.
 
 
+# documentation updates and vignette build
