@@ -11,8 +11,7 @@
 
 den_rcvs <- function(df) {
 
-  load(system.file("extdata", "res.Rda",
-                   package = "sporeg"))
+  res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 
   den_rcv <- df %>%
     as.data.frame() %>%

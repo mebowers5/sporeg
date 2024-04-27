@@ -10,11 +10,7 @@ The goal of sporeg is to reconstruct passive telemetry tracks using movement mod
 
 ## Installation
 
-You can install the development version of sporeg like so:
-
-``` r
-Sporeg requires R version >= 4.3.2
-```
+Sporeg requires R version >= 4.3.2. You can install the development version of sporeg like so:
 
 To install sporeg, first install the remotes package
 
