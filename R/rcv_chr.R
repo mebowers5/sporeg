@@ -5,7 +5,8 @@
 #' @return a data frame object with summary statistics that provide insight into the locations of the receivers in the network receiver array
 #' @export
 #'
-#' @examples rcv_chars <- lapply(res, rcv_chr) %>%
+#' @examples res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+#' rcv_chars <- lapply(res, rcv_chr) %>%
 #' data.table::rbindlist(., idcol = 'resolution') %>%
 #' left_join(tibble(resolution = 1:4,
 #' res_name = c("100km", "50km", "25km", "10km")),
@@ -13,9 +14,6 @@
 #'               mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
 rcv_chr <- function(df) {
-
-  load(system.file("extdata", "res.Rda",
-                   package = "sporeg"))
 
   tot <- df %>%
     as.data.frame() %>%

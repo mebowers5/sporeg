@@ -6,7 +6,8 @@
 #' @return a data frame object with summary statistics from grid cells that contained good fits
 #' @export
 #'
-#' @examples gd_fit_char <- lapply(res, gd_fts) %>%
+#' @examples #' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+#' gd_fit_char <- lapply(res, gd_fts) %>%
 #' data.table::rbindlist(., idcol = 'resolution') %>%
 #'  left_join(tibble(resolution = 1:4,
 #'                   res_name = c("100km", "50km", "25km", "10km")),
@@ -14,9 +15,6 @@
 #'  mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
 gd_fts <- function(df) {
-
-  load(system.file("extdata", "res.Rda",
-                   package = "sporeg"))
 
   tot <- df %>%
     dplyr::filter(g_fit == 1) %>%

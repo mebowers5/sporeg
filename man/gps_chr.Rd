@@ -16,6 +16,7 @@ a data frame object with summary statistics that provide insight into the locati
 Gaps characteristics
 }
 \examples{
+#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 clsd_gp_chars <- lapply(res, gps_chr) \%>\%
 data.table::rbindlist(., idcol = 'resolution') \%>\%
   left_join(tibble(resolution = 1:4,

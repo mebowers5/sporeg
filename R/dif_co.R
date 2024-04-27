@@ -8,6 +8,7 @@
 #'
 #' @examples
 #' depth_limit <- 300 # [m]
+#' #' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 #' dif_depth <- lapply(res, dif_co) %>%
 #' data.table::rbindlist(., idcol = 'resolution') %>%
 #' left_join(tibble(resolution = 1:4,
@@ -18,12 +19,8 @@
 
 dif_co <- function(df, depth_limit) {
 
-  load(system.file("extdata", "res.Rda",
-                   package = "sporeg"))
-
   tot <- df %>%
     as.data.frame() %>%
-    dplyr::select(-x) %>%
     dplyr::filter(mean_depth <= depth_limit) %>%
     dplyr::count() %>%
     dplyr::rename(tot = n)

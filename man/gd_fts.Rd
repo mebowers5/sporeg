@@ -16,6 +16,7 @@ a data frame object with summary statistics from grid cells that contained good 
 This function summarizes minimum, maximum, and mean statistics for depth (mean_depth), distance from shore (d_shore), receiver count (count), receiver presence/absence (p_a), and the percentage of grid cells missing receivers for all of the good fits (g_fit).
 }
 \examples{
+#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 gd_fit_char <- lapply(res, gd_fts) \%>\%
 data.table::rbindlist(., idcol = 'resolution') \%>\%
  left_join(tibble(resolution = 1:4,
