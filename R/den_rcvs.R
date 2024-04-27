@@ -7,11 +7,10 @@
 #' @export
 #'
 #' @examples
+#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 #' rcv_dens <- lapply(res, den_rcvs)
 
 den_rcvs <- function(df) {
-
-  res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 
   den_rcv <- df %>%
     as.data.frame() %>%
