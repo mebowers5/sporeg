@@ -14,6 +14,9 @@
 
 gps_chr <- function(df) {
 
+  load(system.file("extdata", "res.Rda",
+                   package = "sporeg"))
+
   df <- df %>%
     dplyr::filter(g_fit == 1 & p_a == 0) %>%
     dplyr::mutate(d_shore_km = d_shore/1000) %>%

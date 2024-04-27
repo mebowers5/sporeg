@@ -18,6 +18,9 @@
 
 dif_co <- function(df, depth_limit) {
 
+  load(system.file("extdata", "res.Rda",
+                   package = "sporeg"))
+
   tot <- df %>%
     as.data.frame() %>%
     dplyr::select(-x) %>%

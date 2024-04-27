@@ -15,6 +15,9 @@
 
 gps_fld <- function(df) {
 
+  load(system.file("extdata", "res.Rda",
+                   package = "sporeg"))
+
   tot <- df %>%
     dplyr::filter(p_a == 0) %>%
     dplyr::count() %>%

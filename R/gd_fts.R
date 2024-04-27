@@ -15,6 +15,9 @@
 
 gd_fts <- function(df) {
 
+  load(system.file("extdata", "res.Rda",
+                   package = "sporeg"))
+
   tot <- df %>%
     dplyr::filter(g_fit == 1) %>%
     dplyr::mutate(d_shore_km = d_shore/1000) %>%

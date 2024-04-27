@@ -14,6 +14,9 @@
 
 rcv_chr <- function(df) {
 
+  load(system.file("extdata", "res.Rda",
+                   package = "sporeg"))
+
   tot <- df %>%
     as.data.frame() %>%
     dplyr::select(-x) %>%
