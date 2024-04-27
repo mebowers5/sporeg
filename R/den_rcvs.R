@@ -12,6 +12,8 @@
 
 den_rcvs <- function(df) {
 
+  den_rcs <- NULL
+
   den_rcv <- df %>%
     as.data.frame() %>%
     dplyr::filter(den_rcs > units::set_units(0, 1/km^2)) %>%
