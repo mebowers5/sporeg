@@ -30,9 +30,9 @@ And clearing any cache we may have remaining from previous work.
 
 ```r
 gc()
-#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 5463597 291.8    9207830 491.8  9207830 491.8
-#> Vcells 9671340  73.8   17824054 136.0 14786712 112.9
+#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
+#> Ncells  6208718 331.6   14414641  769.9  14414641  769.9
+#> Vcells 10747059  82.0  209411908 1597.7 261764465 1997.2
 ```
 
 Next, let's load the packages that we will need to run the steps in this vignette.
@@ -41,16 +41,7 @@ Next, let's load the packages that we will need to run the steps in this vignett
 ```r
 library(sporeg)
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(sf)
-#> Linking to GEOS 3.11.2, GDAL 3.8.2, PROJ 9.3.1; sf_use_s2() is TRUE
 library(sp)
 library(pathroutr) 
 
@@ -62,20 +53,6 @@ library(parallel)
 library(geosphere)
 library(mapview)
 library(oceanmap)
-#> Loading required package: maps
-#> Loading required package: mapdata
-#> Loading required package: raster
-#> 
-#> Attaching package: 'raster'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     select
-#> Loading required package: extrafont
-#> Registering fonts with R
-#> Loading required package: reshape2
-#> Registered S3 method overwritten by 'ggedit':
-#>   method from   
-#>   +.gg   ggplot2
 library(car)
 #> Loading required package: carData
 #> 
@@ -232,76 +209,76 @@ clusterEvalQ(cl, {
   
 })
 #> [[1]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[2]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[3]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[4]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[5]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[6]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[7]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[8]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[9]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[10]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[11]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"      
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[12]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"     
-#> [10] "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"     
-#> [19] "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"   "grDevices"  "utils"      "datasets"  
-#> [28] "methods"    "base"
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
+#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
+#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"
 ```
 
 Let's create an output file where our results will go. We only want to create this file once, otherwise we will overwrite our previous results. Thus, you will need to un-comment the lines to create it the first time. We want to assign the file name every time we run iterations, however.
@@ -402,9 +379,11 @@ Hmm... these are hard to look at. Let's turn them into a data frame instead.
 ```r
 # Bind the lists by grid cell resolution
 results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
+#> Error in eval(expr, envir, enclos): object 'results' not found
 
 # Bind the bound resolution by iteration
 results <- data.table::rbindlist(results, idcol = 'iteration')
+#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ## Remove zero inflation
@@ -417,9 +396,7 @@ results <- results %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") 
-#> Error in `left_join()`:
-#> ! Join columns in `x` must be present in the data.
-#> ✖ Problem with `resolution`.
+#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 Test for zero variance.
@@ -428,15 +405,12 @@ Test for zero variance.
 ```r
 # Remove grid cells with zero variance
 df_var <- zero_var(results) 
-#> Error in `dplyr::group_by()`:
-#> ! Must group by variables found in `.data`.
-#> Column `res_name` is not found.
-#> Column `gid` is not found.
+#> Error in eval(expr, envir, enclos): object 'results' not found
 
 # Find the grid cell with zero variance
 df_zero_var <- anti_join(results, df_var, by = c("res_name", "gid")) %>%
   distinct(res_name, gid)
-#> Error in eval(expr, envir, enclos): object 'df_var' not found
+#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ### Prep for power analysis
@@ -554,7 +528,7 @@ results <- new_df %>%
             se = plotrix::std.error(dif)) 
 #> Error in eval(expr, envir, enclos): object 'new_df' not found
 results
-#> Null data.table (0 rows and 0 cols)
+#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ## Check the methods performance
@@ -581,10 +555,7 @@ how_well_ct <- results %>%
             tot_wn_4 = sum(wn_4),
             tot_wn_5 = sum(wn_5)) %>%
   distinct()
-#> Error in `mutate()`:
-#> ℹ In argument: `res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))`.
-#> Caused by error:
-#> ! object 'res_name' not found
+#> Error in eval(expr, envir, enclos): object 'results' not found
 
 # Percentages
 how_well <- results %>%
@@ -604,10 +575,7 @@ how_well <- results %>%
             tot_wn_4 = sum(wn_4)/maxgid*100,
             tot_wn_5 = sum(wn_5)/maxgid*100) %>%
   distinct()
-#> Error in `mutate()`:
-#> ℹ In argument: `res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))`.
-#> Caused by error:
-#> ! object 'res_name' not found
+#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ## Track Reconstruction Issue
@@ -787,9 +755,9 @@ HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 
 rm(depth)
 gc()
-#>            used  (Mb) gc trigger   (Mb) max used   (Mb)
-#> Ncells  7722622 412.5   22833067 1219.5 22833067 1219.5
-#> Vcells 15532111 118.6   37529736  286.4 37529733  286.4
+#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
+#> Ncells  7690371 410.8   24513708 1309.2  24513708 1309.2
+#> Vcells 15110634 115.3   85775119  654.5 261764465 1997.2
 ```
 
 Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
@@ -851,34 +819,23 @@ Merge the results to these grid cell metadata and determine which grid cells exh
 ```r
 results <- results %>%
   mutate(g_fit = ifelse(avg_dif>= -1*0.1*anims & avg_dif <= 0.1*anims, 1, 0))
-#> Error in `mutate()`:
-#> ℹ In argument: `g_fit = ifelse(...)`.
-#> Caused by error:
-#> ! object 'avg_dif' not found
+#> Error in eval(expr, envir, enclos): object 'results' not found
 
 HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "100km"`.
-#> Caused by error:
-#> ! object 'res_name' not found
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 
 HS_50km_grid <- merge(results %>% dplyr::filter(res_name == "50km"), HS_50km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "50km"`.
-#> Caused by error:
-#> ! object 'res_name' not found
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 
 HS_25km_grid <- merge(results %>% dplyr::filter(res_name == "25km"), HS_25km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "25km"`.
-#> Caused by error:
-#> ! object 'res_name' not found
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 
 HS_10km_grid <- merge(results %>% dplyr::filter(res_name == "10km"), HS_10km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'merge': ℹ In argument: `res_name == "10km"`.
-#> Caused by error:
-#> ! object 'res_name' not found
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 ```
 
 ## Map results
@@ -1186,7 +1143,8 @@ CRS <- 3857
 barrier <- atlcoast %>%
   sf::st_transform(., 3857)
 vis_graph <- pathroutr::prt_visgraph(barrier)
-#> Warning in st_cast.sf(barrier, "POLYGON"): repeating attributes for all sub-geometries for which they may not be constant
+#> Warning in st_cast.sf(barrier, "POLYGON"): repeating attributes for all sub-geometries for which they may not be
+#> constant
 buffer <- 650
   
 tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)

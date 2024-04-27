@@ -16,10 +16,5 @@ A data frame object with minimum, mean, and maximum of receiver densities and co
 This function provides summary statistics on the densities and counts of receivers in a grid.
 }
 \examples{
-res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 rcv_dens <- lapply(res, den_rcvs)
-rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') \%>\%
-left_join(tibble(resolution = 1:4,
-res_name = c("100km", "50km", "25km", "10km")), by = "resolution") \%>\%
-mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 }
