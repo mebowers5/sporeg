@@ -5,10 +5,6 @@
 #'
 #' @return A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2
 #' @export
-#'
-#' @examples
-#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
-#' rcv_dens <- lapply(res, den_rcvs)
 
 den_rcvs <- function(df) {
 
