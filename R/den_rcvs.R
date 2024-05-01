@@ -16,7 +16,7 @@ den_rcvs <- function(df) {
 
   den_rcv <- df %>%
     as.data.frame() %>%
-    mutate(den_rcs = units::set_units(den_rcs, 1/km^2)) %>%
+    dplyr::mutate(den_rcs = units::set_units(den_rcs, 1/km^2)) %>%
     dplyr::filter(den_rcs > 0) %>%
     dplyr::summarise(dn_min = min(den_rcs),
               dn_mean = mean(den_rcs),
