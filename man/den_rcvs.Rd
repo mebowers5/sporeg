@@ -15,7 +15,3 @@ A data frame object with minimum, mean, and maximum of receiver densities and co
 \description{
 This function provides summary statistics on the densities and counts of receivers in a grid.
 }
-\examples{
-res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
-rcv_dens <- lapply(res, den_rcvs)
-}
