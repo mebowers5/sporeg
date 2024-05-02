@@ -6,4 +6,4 @@ utils::globalVariables(c("data", "x", "ID", "time",
                          "mean_depth", "n", "g_fit", "d_shore_km", "p_a",
                          "n_abs", "Effect", "AnimalID", "uid", "POINT_Y",
                          "POINT_X", "end_y", "res_name", "sd", ".",
-                         "den_rcs"))
+                         "den_rcs", "depth_limit", "tot"))
