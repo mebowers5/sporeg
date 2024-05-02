@@ -17,10 +17,3 @@ A simple feature multipolygon object with mean depth per grid cell
 \description{
 This function allows you to calculate mean depth per grid cell.
 }
-\examples{
-depth <- readr::read_csv(file = "Depth_Data.csv") \%>\%
-sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4269)
-depth <- sf::st_filter(depth, site_depth) \%>\%
-mutate(uid = seq_along(geometry))
-HS_100km_grid <- depth_data(HS_100km_grid, depth)
-}
