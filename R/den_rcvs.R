@@ -25,7 +25,6 @@
 
 den_rcvs <- function(df) {
 
-  load(system.file("extdata", "res.Rda", package = "sporeg"))
   zero_up <- units::set_units(0, "1/km^2")
 
   den_rcv <- df %>%
