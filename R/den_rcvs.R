@@ -25,7 +25,7 @@ den_rcvs <- function(df) {
 
   den_rcv <- df %>%
     as.data.frame() %>%
-    dplyr::filter(den_rcs > 0) %>%
+    dplyr::filter(.$den_rcs > 0) %>%
     dplyr::summarise(dn_min = min(den_rcs),
               dn_mean = mean(den_rcs),
               dn_max = max(den_rcs),
