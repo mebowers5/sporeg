@@ -10,7 +10,10 @@
 #' # Apply dif_co to list of grid resolutions
 #'
 #' library(sporeg)
-#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+#' library(dplyr)
+#' library(sf)
+#' library(data.table)
+#' load(system.file("extdata", "res.Rda", package = "sporeg"))
 #'
 #' depth_limit <- 300 #[m]
 #'
@@ -19,7 +22,7 @@
 #' left_join(tibble(resolution = 1:4,
 #' res_name = c("100km", "50km", "25km", "10km")),
 #' by = "resolution") %>%
-#' mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#' dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
 dif_co <- function(df, depth_limit) {
 
