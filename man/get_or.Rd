@@ -17,5 +17,5 @@ This function calculates the odds ratios for each variable in your model.
 }
 \examples{
 odds_100km <- get_or(fit2.100km) \%>\%
-mutate(res_name = "100km")
+dplyr::mutate(res_name = "100km")
 }
