@@ -11,7 +11,7 @@
 #'
 #' library(sporeg)
 #' library(data.table)
-#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+#' load(system.file("extdata", "res.Rda", package = "sporeg"))
 #'
 #' rcv_dens <- lapply(res, den_rcvs)
 #' rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
