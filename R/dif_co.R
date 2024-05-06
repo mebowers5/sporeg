@@ -26,7 +26,7 @@
 
 dif_co <- function(df, depth_limit) {
 
-  depth_limit <- NULL
+  depth_limit <- 300
 
   tot <- df %>%
     as.data.frame() %>%
