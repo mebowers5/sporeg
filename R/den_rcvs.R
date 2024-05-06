@@ -10,6 +10,7 @@
 #' # Apply den_rcvs to list of grid resolutions
 #'
 #' library(sporeg)
+#' library(data.table)
 #' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 #'
 #' rcv_dens <- lapply(res, den_rcvs)
@@ -21,11 +22,11 @@
 
 den_rcvs <- function(df) {
 
-  df <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+  zero_up <- units::set_units(0, "1/km^2")
 
   den_rcv <- df %>%
     as.data.frame() %>%
-    dplyr::filter(.$den_rcs > 0) %>%
+    dplyr::filter(den_rcs > zero_up) %>%
     dplyr::summarise(dn_min = min(den_rcs),
               dn_mean = mean(den_rcs),
               dn_max = max(den_rcs),

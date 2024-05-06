@@ -290,7 +290,7 @@ Let's create an output file where our results will go. We only want to create th
 # results <- list()
 
 # Assign the filename
-filename <- "results.Rdata"
+filename <- "results.Rda"
 
 # Save the empty list object to the filename
 # save(results, file = filename)
@@ -368,7 +368,7 @@ First, let's load the results.
 
 
 ```r
-load(system.file("data", filename, package = "sporeg")) 
+load(system.file("extdata", filename, package = "sporeg")) 
 #> Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file '', probable reason 'Invalid argument'
 #> Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection
 ```
