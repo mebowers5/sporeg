@@ -18,6 +18,9 @@ This function provides summary statistics on the densities and counts of receive
 \examples{
 # Apply den_rcvs to list of grid resolutions
 
+library(sporeg)
+res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+
 rcv_dens <- lapply(res, den_rcvs)
 rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') \%>\%
 left_join(tibble(resolution = 1:4,
