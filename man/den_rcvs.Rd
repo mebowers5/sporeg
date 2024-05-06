@@ -20,6 +20,7 @@ This function provides summary statistics on the densities and counts of receive
 
 library(sporeg)
 library(dplyr)
+library(sf)
 library(data.table)
 load(system.file("extdata", "res.Rda", package = "sporeg"))
 
