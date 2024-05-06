@@ -17,7 +17,8 @@ Suggests:
     mapview,
     oceanmap,
     parallel,
-    sp
+    sp,
+    data.table
 VignetteBuilder: knitr
 Imports: 
     dplyr,
