@@ -20,7 +20,6 @@ Suggests:
     sp
 VignetteBuilder: knitr
 Imports: 
-    data.table,
     dplyr,
     glatos (>= 0.7.3),
     pathroutr (>= 0.2.1),
@@ -28,7 +27,6 @@ Imports:
     lubridate,
     momentuHMM,
     purrr,
-    readr,
     tibble,
     tidyr,
     units,
