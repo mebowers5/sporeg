@@ -6,7 +6,10 @@
 #' @return A data frame object with a point estimate and lower and upper 95% confidence interval values associated with each covariate
 #' @export
 #'
-#' @examples
+#' @examples # Get the odds ratio for each variable in the final model
+#'
+#' load(system.file("extdata", "fit2.100km.Rda", package = "sporeg"))
+#'
 #' odds_100km <- get_or(fit2.100km) %>%
 #' dplyr::mutate(res_name = "100km")
 
