@@ -7,13 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
-
-
-```r
-library(sporeg)
-```
-
 ## Objective
 
 This vignette is a step by step guide to the methods in "Full Disclosure:...". It will show you how to simulate semi-random tracks, derive acoustic telemetry data from those tracks, model/reconstruct tracks from those derived detection data, re-route them off land, summarize distribution information, and compare the simulated and modeled summarizations. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
@@ -753,8 +746,6 @@ HS_50km_grid <- depth_data(HS_50km_grid, depth_data)
 HS_25km_grid <- depth_data(HS_25km_grid, depth_data)
 HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 
-rm(depth)
-gc()
 #>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
 #> Ncells  7690371 410.8   24513708 1309.2  24513708 1309.2
 #> Vcells 15110634 115.3   85775119  654.5 261764465 1997.2
@@ -782,16 +773,16 @@ fo_land_barrier <- fo_land_barrier %>%
 
 epsg = 3857
 
-HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf() 
 
-HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 
-HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 
-HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 ```
 
@@ -861,6 +852,8 @@ Let's marry our results to a sf object that lacks a false origin so that we can 
 
 ```r
 # Create grids without false origin
+load(system.file("extdata", "study_site.Rda", package = "sporeg"))
+
 study_site <- study_site %>% # UTM 17N
   sf::st_transform(4269) %>% # Convert to NAD 1983
   sf::st_transform(3857) # Convert to WGS 84
