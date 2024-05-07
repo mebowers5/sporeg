@@ -16,11 +16,18 @@ a data frame object with summary statistics that provide insight into the locati
 Gaps characteristics
 }
 \examples{
-#' res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
+# Apply gps_chr to list of grid resolutions
+
+library(sporeg)
+library(dplyr)
+library(sf)
+library(data.table)
+load(system.file("extdata", "res.Rda", package = "sporeg"))
+
 clsd_gp_chars <- lapply(res, gps_chr) \%>\%
 data.table::rbindlist(., idcol = 'resolution') \%>\%
   left_join(tibble(resolution = 1:4,
                    res_name = c("100km", "50km", "25km", "10km")),
             by = "resolution") \%>\%
-            mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+            dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 }
