@@ -16,7 +16,7 @@
 #' library(sporeg)
 #' library(dplyr)
 #' library(data.table)
-#' load(system.file("extdata", results.Rda, package = "sporeg"))
+#' load(system.file("extdata", "results.Rda", package = "sporeg"))
 #'
 #' results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
 #' results <- data.table::rbindlist(results, idcol = 'iteration') %>%
