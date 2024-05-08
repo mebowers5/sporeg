@@ -24,12 +24,25 @@ A data frame object
 This is a wrapper function for running a power analysis on iterative simulation and reconstruction methods process.
 }
 \examples{
-df_var <- zero_var(df)
+# Use powr wrapper function on example results
+
+library(sporeg)
+library(dplyr)
+library(data.table)
+load(system.file("extdata", results.Rda, package = "sporeg"))
+
+results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
+results <- data.table::rbindlist(results, idcol = 'iteration') \%>\%
+left_join(tibble(resolution = 1:4,
+res_name = c("100km", "50km", "25km", "10km")),
+by = "resolution")
+
+df_var <- zero_var(results)
 pow_stat <- df_var \%>\%
-group_by(res_name, gid) \%>\%
-summarise(sd = sd(dif)) \%>\%
-ungroup() \%>\%
-group_by(res_name)
+dplyr::group_by(res_name, gid) \%>\%
+dplyr::summarise(sd = sd(dif)) \%>\%
+dplyr::ungroup() \%>\%
+dplyr::group_by(res_name)
 
 res <- pow_stat \%>\% dplyr::filter(res_name == "100km")
 pwr_100km <- powr(res, sig.level, power, delta)
