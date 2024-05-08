@@ -42,5 +42,20 @@ simple feature (multi)linestring object that represents individual simulated tra
 This function simulates tracks inside a specified polygon.
 }
 \examples{
- df <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, n_days, initHeading)
+library(sporeg)
+
+load(system.file("extdata", "rel_site.Rda", package = "sporeg"))
+load(system.file("extdata", "study_site.Rda", package = "sporeg"))
+
+anims <- 30
+yr <- 1
+theta <- c(0, 1.74)
+vmin <- 0.98
+vmax <- 1.58
+crs <- 3857
+n_days <- 365*yr
+initHeading <- 0
+
+tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, n_days, initHeading)
+
 }
