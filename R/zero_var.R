@@ -6,16 +6,19 @@
 #' @return a data frame object with grid IDs that did not exhibit zero variance
 #' @export
 #'
-#' @examples
-#' # Bind the lists by grid cell resolution
-#' df <- lapply(df, data.table::rbindlist, idcol = 'resolution')
-#' # Bind the bound resolution by iteration
-#' df <- data.table::rbindlist(df, idcol = 'iteration')
-#' df <- df %>%
+#' @examples # Remove grid cells with zero variance
+#' library(sporeg)
+#' library(dplyr)
+#' load(system.file("extdata", "results.Rda", package = "sporeg"))
+#'
+#' results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
+#' results <- data.table::rbindlist(results, idcol = 'iteration')
+#' results <- results %>%
 #' left_join(tibble(resolution = 1:4,
-#' res_name = c("100km", "50km", "25km", "10km")), by = "resolution")
-#' # Remove grid cells with zero variance
-#' df_var <- zero_var(df)
+#' res_name = c("100km", "50km", "25km", "10km")),
+#' by = "resolution")
+#'
+#' df_var <- zero_var(results)
 
 zero_var <- function(df) {
 

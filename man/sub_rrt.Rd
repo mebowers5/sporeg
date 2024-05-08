@@ -24,13 +24,18 @@ A simple feature (multi)polygon object
 This function allows you to re-route demonstrative movement data that has been reconstructed using a movement model around a polygon barrier.
 }
 \examples{
-load(file = "subset.Rdata")
+library(sporeg)
+library(dplyr)
+library(pathroutr)
+library(sf)
+load(system.file("extdata", "subset.Rda", package = "sporeg"))
+load(system.file("extdata", "atlcoast.Rda", package = "sporeg"))
+
 CRS <- 3857
-barrier <- sf::st_read("atlcoast.shp") \%>\%
-sf::st_transform(., 3857)
+barrier <- atlcoast
 vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
-tbuff650 <- sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
-# Check map
-mapview::mapView(tbuff650)
+
+tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)
+
 }
