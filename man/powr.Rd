@@ -45,6 +45,13 @@ dplyr::ungroup() \%>\%
 dplyr::group_by(res_name)
 
 res <- pow_stat \%>\% dplyr::filter(res_name == "100km")
+
+anims <- 30
+power <- 0.8
+delta <- anims*0.01 # a delta within 1\% of the total number of animals
+sig.level <- 0.95
+n <- NULL
+
 pwr_100km <- powr(res, sig.level, power, delta)
 print("Grid cell resolution: 100 km x 100 km")
 pwr_100km
