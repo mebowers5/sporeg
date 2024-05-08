@@ -16,6 +16,8 @@
 #'
 #' @examples
 #' library(sporeg)
+#' library(sf)
+#' library(glatos)
 #'
 #' load(system.file("extdata", "rel_site.Rda", package = "sporeg"))
 #' load(system.file("extdata", "study_site.Rda", package = "sporeg"))
@@ -29,8 +31,8 @@
 #' n_days <- 365*yr
 #' initHeading <- 0
 #'
-#' tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, n_days, initHeading)
-#'
+#' tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)
+
 simul_trks <- function(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading){
 
   sim <- base::replicate(n = anims, expr = {
