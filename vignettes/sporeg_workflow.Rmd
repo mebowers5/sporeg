@@ -854,8 +854,7 @@ Let's marry our results to a sf object that lacks a false origin so that we can 
 # Create grids without false origin
 load(system.file("extdata", "study_site.Rda", package = "sporeg"))
 
-study_site <- study_site %>% # UTM 17N
-  sf::st_transform(4269) %>% # Convert to NAD 1983
+study_site <- study_site %>% 
   sf::st_transform(3857) # Convert to WGS 84
 
 HS100km <- grid_res(100, study_site, 3857, "polygons")
