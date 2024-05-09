@@ -7,6 +7,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
+
+
+```r
+library(sporeg)
+```
+
 ## Objective
 
 This vignette is a step by step guide to the methods in "Full Disclosure:...". It will show you how to simulate semi-random tracks, derive acoustic telemetry data from those tracks, model/reconstruct tracks from those derived detection data, re-route them off land, summarize distribution information, and compare the simulated and modeled summarizations. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
@@ -23,9 +30,9 @@ And clearing any cache we may have remaining from previous work.
 
 ```r
 gc()
-#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-#> Ncells  6208718 331.6   14414641  769.9  14414641  769.9
-#> Vcells 10747059  82.0  209411908 1597.7 261764465 1997.2
+#>           used (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 1862652 99.5    3613974 193.1  3613974 193.1
+#> Vcells 4826901 36.9   10212654  78.0 10211354  78.0
 ```
 
 Next, let's load the packages that we will need to run the steps in this vignette.
@@ -34,8 +41,20 @@ Next, let's load the packages that we will need to run the steps in this vignett
 ```r
 library(sporeg)
 library(dplyr)
+#> Warning: package 'dplyr' was built under R version 4.4.0
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(sf)
+#> Warning: package 'sf' was built under R version 4.4.0
+#> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE
 library(sp)
+#> Warning: package 'sp' was built under R version 4.4.0
 library(pathroutr) 
 
 # To install pathroutr, use the following code: 
@@ -44,10 +63,33 @@ library(pathroutr)
 
 library(parallel)
 library(geosphere)
+#> Warning: package 'geosphere' was built under R version 4.4.0
 library(mapview)
+#> Warning: package 'mapview' was built under R version 4.4.0
 library(oceanmap)
+#> Warning: package 'oceanmap' was built under R version 4.4.0
+#> Loading required package: maps
+#> Warning: package 'maps' was built under R version 4.4.0
+#> Loading required package: mapdata
+#> Warning: package 'mapdata' was built under R version 4.4.0
+#> Loading required package: raster
+#> Warning: package 'raster' was built under R version 4.4.0
+#> 
+#> Attaching package: 'raster'
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     select
+#> Loading required package: extrafont
+#> Warning: package 'extrafont' was built under R version 4.4.0
+#> Registering fonts with R
+#> Loading required package: reshape2
+#> Warning: package 'reshape2' was built under R version 4.4.0
+#> Error: package or namespace load failed for 'oceanmap':
+#>  Functions found when exporting methods from the namespace 'spam' which are not S4 generic: 'crossprod', 'tcrossprod'
 library(car)
+#> Warning: package 'car' was built under R version 4.4.0
 #> Loading required package: carData
+#> Warning: package 'carData' was built under R version 4.4.0
 #> 
 #> Attaching package: 'car'
 #> The following object is masked from 'package:dplyr':
@@ -283,7 +325,7 @@ Let's create an output file where our results will go. We only want to create th
 # results <- list()
 
 # Assign the filename
-filename <- "results.Rda"
+filename <- "results.Rdata"
 
 # Save the empty list object to the filename
 # save(results, file = filename)
@@ -361,7 +403,7 @@ First, let's load the results.
 
 
 ```r
-load(system.file("extdata", filename, package = "sporeg")) 
+load(system.file("data", filename, package = "sporeg")) 
 #> Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file '', probable reason 'Invalid argument'
 #> Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection
 ```
@@ -746,9 +788,11 @@ HS_50km_grid <- depth_data(HS_50km_grid, depth_data)
 HS_25km_grid <- depth_data(HS_25km_grid, depth_data)
 HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 
-#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-#> Ncells  7690371 410.8   24513708 1309.2  24513708 1309.2
-#> Vcells 15110634 115.3   85775119  654.5 261764465 1997.2
+rm(depth)
+gc()
+#>            used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells  5917178 316.1   14904267 796.0 14904267 796.0
+#> Vcells 12412687  94.8   31289210 238.8 31289210 238.8
 ```
 
 Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
@@ -773,16 +817,16 @@ fo_land_barrier <- fo_land_barrier %>%
 
 epsg = 3857
 
-HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf() 
 
-HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 
-HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 
-HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 ```
 
@@ -852,9 +896,8 @@ Let's marry our results to a sf object that lacks a false origin so that we can 
 
 ```r
 # Create grids without false origin
-load(system.file("extdata", "study_site.Rda", package = "sporeg"))
-
-study_site <- study_site %>% 
+study_site <- study_site %>% # UTM 17N
+  sf::st_transform(4269) %>% # Convert to NAD 1983
   sf::st_transform(3857) # Convert to WGS 84
 
 HS100km <- grid_res(100, study_site, 3857, "polygons")
@@ -1023,12 +1066,17 @@ Let's find out how the density of receivers varied for each grid cell resolution
 res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
 rcv_dens <- lapply(res, den_rcvs)
+#> Error in `dplyr::filter()`:
+#> ℹ In argument: `den_rcs > 0`.
+#> Caused by error in `Ops.units()`:
+#> ! both operands of the expression should be "units" objects
 
 rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#> Error in eval(expr, envir, enclos): object 'rcv_dens' not found
 ```
 
 ## Where do good fits occur?
