@@ -9,6 +9,11 @@
 #' @return A simple feature geometry object or simple feature linestring object
 #' @keywords internal
 #' @noRd
+#'
+#' @examples \dontrun{
+#' internal_function()
+#' }
+#'
 #' @export
 
 
