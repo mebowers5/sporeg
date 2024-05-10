@@ -14,7 +14,7 @@
 #' internal_function()
 #' }
 #'
-#' @export
+
 
 
 make_line <- function(start_x, start_y, end_x, end_y) {
