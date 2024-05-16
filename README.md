@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10198496.svg)](https://doi.org/10.5281/zenodo.10198496)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10198495.svg)](https://doi.org/10.5281/zenodo.10198495)
 
 <!-- badges: end -->
 
