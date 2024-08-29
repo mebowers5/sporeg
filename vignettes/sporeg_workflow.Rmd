@@ -30,9 +30,9 @@ And clearing any cache we may have remaining from previous work.
 
 ```r
 gc()
-#>           used (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1862652 99.5    3613974 193.1  3613974 193.1
-#> Vcells 4826901 36.9   10212654  78.0 10211354  78.0
+#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
+#> Ncells  4899571 261.7   16144236  862.2  20020541 1069.3
+#> Vcells 13242971 101.1  142066286 1083.9 346841131 2646.2
 ```
 
 Next, let's load the packages that we will need to run the steps in this vignette.
@@ -41,20 +41,8 @@ Next, let's load the packages that we will need to run the steps in this vignett
 ```r
 library(sporeg)
 library(dplyr)
-#> Warning: package 'dplyr' was built under R version 4.4.0
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(sf)
-#> Warning: package 'sf' was built under R version 4.4.0
-#> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE
 library(sp)
-#> Warning: package 'sp' was built under R version 4.4.0
 library(pathroutr) 
 
 # To install pathroutr, use the following code: 
@@ -63,38 +51,8 @@ library(pathroutr)
 
 library(parallel)
 library(geosphere)
-#> Warning: package 'geosphere' was built under R version 4.4.0
 library(mapview)
-#> Warning: package 'mapview' was built under R version 4.4.0
-library(oceanmap)
-#> Warning: package 'oceanmap' was built under R version 4.4.0
-#> Loading required package: maps
-#> Warning: package 'maps' was built under R version 4.4.0
-#> Loading required package: mapdata
-#> Warning: package 'mapdata' was built under R version 4.4.0
-#> Loading required package: raster
-#> Warning: package 'raster' was built under R version 4.4.0
-#> 
-#> Attaching package: 'raster'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     select
-#> Loading required package: extrafont
-#> Warning: package 'extrafont' was built under R version 4.4.0
-#> Registering fonts with R
-#> Loading required package: reshape2
-#> Warning: package 'reshape2' was built under R version 4.4.0
-#> Error: package or namespace load failed for 'oceanmap':
-#>  Functions found when exporting methods from the namespace 'spam' which are not S4 generic: 'crossprod', 'tcrossprod'
 library(car)
-#> Warning: package 'car' was built under R version 4.4.0
-#> Loading required package: carData
-#> Warning: package 'carData' was built under R version 4.4.0
-#> 
-#> Attaching package: 'car'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     recode
 ```
 
 ## Get the objects required for simulating tracks
@@ -173,7 +131,7 @@ For simulating tracks:
 
 ```r
 # Number of animals
-anims <- 3
+anims <- 1
 # Number of years
 yr <- 1       
 # Turning angle - standard deviation of body flexion from blacktip kinematics study
@@ -201,7 +159,7 @@ For the iterations:
 
 
 ```r
-total_iterations <- 10 # Total number of iterations desired
+total_iterations <- 2 # Total number of iterations desired
 reps <- 2 # Number of replicates that will result in desired iterations given reps
 runs <- 1:(total_iterations/reps) # Interval at which outputs should be written to file
 ```
@@ -244,75 +202,63 @@ clusterEvalQ(cl, {
   
 })
 #> [[1]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[2]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[3]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[4]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[5]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[6]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[7]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[8]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[9]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[10]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[11]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"      
 #> 
 #> [[12]]
-#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"     
-#>  [9] "tidyr"      "tibble"     "ggplot2"    "tidyverse"  "sfnetworks" "pathroutr"  "lubridate"  "crawl"     
-#> [17] "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
+#>  [1] "doFuture"   "foreach"    "future"     "stplanr"    "forcats"    "stringr"    "purrr"      "readr"      "tidyr"      "tibble"     "ggplot2"    "tidyverse" 
+#> [13] "sfnetworks" "pathroutr"  "lubridate"  "crawl"      "momentuHMM" "dplyr"      "glatos"     "sp"         "sf"         "sporeg"     "stats"      "graphics"  
 #> [25] "grDevices"  "utils"      "datasets"   "methods"    "base"
 ```
 
@@ -325,7 +271,7 @@ Let's create an output file where our results will go. We only want to create th
 # results <- list()
 
 # Assign the filename
-filename <- "results.Rdata"
+filename <- "results.Rda"
 
 # Save the empty list object to the filename
 # save(results, file = filename)
@@ -368,13 +314,13 @@ base::replicate(n = reps, expr = {
     }
     )
     # Load the previous results
-    load(system.file("data", filename, package = "sporeg")) 
+    load(system.file("extdata", filename, package = "sporeg")) 
     
     # Append the new results to the previous results
     results <- append(results, iterated_results)
     
     # Overwrite the results with both the new and previous results combined
-    save(results, file = system.file("data", filename, package = "sporeg"))
+    save(results, file = system.file("extdata", filename, package = "sporeg"))
     
     # Clear cache
     gc()
@@ -382,8 +328,25 @@ base::replicate(n = reps, expr = {
     return(df)
   }
   )
-#> Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file '', probable reason 'Invalid argument'
-#> Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection
+#> [[1]]
+#> function (x, df1, df2, ncp, log = FALSE) 
+#> {
+#>     if (missing(ncp)) 
+#>         .Call(C_df, x, df1, df2, log)
+#>     else .Call(C_dnf, x, df1, df2, ncp, log)
+#> }
+#> <bytecode: 0x0000024e24b981c8>
+#> <environment: namespace:stats>
+#> 
+#> [[2]]
+#> function (x, df1, df2, ncp, log = FALSE) 
+#> {
+#>     if (missing(ncp)) 
+#>         .Call(C_df, x, df1, df2, log)
+#>     else .Call(C_dnf, x, df1, df2, ncp, log)
+#> }
+#> <bytecode: 0x0000024e24b981c8>
+#> <environment: namespace:stats>
 ```
 
 ## Stop the cluster
@@ -403,9 +366,7 @@ First, let's load the results.
 
 
 ```r
-load(system.file("data", filename, package = "sporeg")) 
-#> Warning in readChar(con, 5L, useBytes = TRUE): cannot open compressed file '', probable reason 'Invalid argument'
-#> Error in readChar(con, 5L, useBytes = TRUE): cannot open the connection
+load(system.file("extdata", filename, package = "sporeg")) 
 ```
 
 Hmm... these are hard to look at. Let's turn them into a data frame instead.
@@ -414,11 +375,9 @@ Hmm... these are hard to look at. Let's turn them into a data frame instead.
 ```r
 # Bind the lists by grid cell resolution
 results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
-#> Error in eval(expr, envir, enclos): object 'results' not found
 
 # Bind the bound resolution by iteration
 results <- data.table::rbindlist(results, idcol = 'iteration')
-#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ## Remove zero inflation
@@ -428,10 +387,9 @@ Remove any cases where both `sim_count` and `mod_count` were zero for all iterat
 
 ```r
 results <- results %>%
-  left_join(tibble(resolution = 1:4, 
+  dplyr::left_join(dplyr::tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") 
-#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 Test for zero variance.
@@ -440,12 +398,10 @@ Test for zero variance.
 ```r
 # Remove grid cells with zero variance
 df_var <- zero_var(results) 
-#> Error in eval(expr, envir, enclos): object 'results' not found
 
 # Find the grid cell with zero variance
 df_zero_var <- anti_join(results, df_var, by = c("res_name", "gid")) %>%
   distinct(res_name, gid)
-#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ### Prep for power analysis
@@ -483,44 +439,76 @@ pow_stat <- df_var %>%
   summarise(sd = sd(dif)) %>%
   ungroup() %>%
   group_by(res_name)
-#> Error in eval(expr, envir, enclos): object 'df_var' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 
 res <- pow_stat %>% dplyr::filter(res_name == "100km")
-#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_100km <- powr(res, sig.level, power, delta)
-#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 100 km x 100 km")
 #> [1] "Grid cell resolution: 100 km x 100 km"
 pwr_100km
-#> Error in eval(expr, envir, enclos): object 'pwr_100km' not found
+#> 
+#>      Paired t test power calculation 
+#> 
+#>               n = 106156.5
+#>           delta = 0.01
+#>              sd = 3.602859
+#>       sig.level = 0.95
+#>           power = 0.8
+#>     alternative = two.sided
+#> 
+#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
 
 res <- pow_stat %>% dplyr::filter(res_name == "50km")
-#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_50km <- powr(res, sig.level, power, delta)
-#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 50 km x 50 km")
 #> [1] "Grid cell resolution: 50 km x 50 km"
 pwr_50km
-#> Error in eval(expr, envir, enclos): object 'pwr_50km' not found
+#> 
+#>      Paired t test power calculation 
+#> 
+#>               n = 114900.1
+#>           delta = 0.01
+#>              sd = 3.748298
+#>       sig.level = 0.95
+#>           power = 0.8
+#>     alternative = two.sided
+#> 
+#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
 
 res <- pow_stat %>% dplyr::filter(res_name == "25km")
-#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_25km <- powr(res, sig.level, power, delta)
-#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 25 km x 25 km")
 #> [1] "Grid cell resolution: 25 km x 25 km"
 pwr_25km
-#> Error in eval(expr, envir, enclos): object 'pwr_25km' not found
+#> 
+#>      Paired t test power calculation 
+#> 
+#>               n = 116536.4
+#>           delta = 0.01
+#>              sd = 3.774895
+#>       sig.level = 0.95
+#>           power = 0.8
+#>     alternative = two.sided
+#> 
+#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
 
 
 res <- pow_stat %>% dplyr::filter(res_name == "10km")
-#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 pwr_10km <- powr(res, sig.level, power, delta)
-#> Error in output$sd: object of type 'closure' is not subsettable
 print("Grid cell resolution: 10 km x 10 km")
 #> [1] "Grid cell resolution: 10 km x 10 km"
 pwr_10km
-#> Error in eval(expr, envir, enclos): object 'pwr_10km' not found
+#> 
+#>      Paired t test power calculation 
+#> 
+#>               n = 129098.6
+#>           delta = 0.01
+#>              sd = 3.973149
+#>       sig.level = 0.95
+#>           power = 0.8
+#>     alternative = two.sided
+#> 
+#> NOTE: n is number of *pairs*, sd is std.dev. of *differences* within pairs
 ```
 
 ## Sanity check
@@ -533,9 +521,14 @@ max_sd <- pow_stat %>%
   ungroup() %>%
   group_by(res_name) %>%
   summarise(max_sd = max(sd))
-#> Error in eval(expr, envir, enclos): object 'pow_stat' not found
 max_sd
-#> Error in eval(expr, envir, enclos): object 'max_sd' not found
+#> # A tibble: 4 × 2
+#>   res_name max_sd
+#>   <chr>     <dbl>
+#> 1 100km      3.60
+#> 2 10km       3.97
+#> 3 25km       3.77
+#> 4 50km       3.75
 ```
 
 ## Decisions, decisions
@@ -555,15 +548,28 @@ new_df <- df_var %>%
                   res_name == "50km" & iteration <= 128 |
                   res_name == "25km" & iteration <= 128 |
                   res_name == "10km" & iteration <= 144)
-#> Error in eval(expr, envir, enclos): object 'df_var' not found
 
 results <- new_df %>%
   group_by(res_name, gid) %>%
   summarise(avg_dif = mean(dif),
             se = plotrix::std.error(dif)) 
-#> Error in eval(expr, envir, enclos): object 'new_df' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 results
-#> Error in eval(expr, envir, enclos): object 'results' not found
+#> # A tibble: 6,709 × 4
+#> # Groups:   res_name [4]
+#>    res_name   gid avg_dif    se
+#>    <chr>    <dbl>   <dbl> <dbl>
+#>  1 100km        1  11.7   0.237
+#>  2 100km        2  11.7   0.237
+#>  3 100km        3  27.6   0.162
+#>  4 100km        4   7.36  0.202
+#>  5 100km        5  26.1   0.166
+#>  6 100km        6   1.71  0.112
+#>  7 100km        7  21.5   0.219
+#>  8 100km        8   1.48  0.123
+#>  9 100km        9  22.6   0.193
+#> 10 100km       10   0.933 0.183
+#> # ℹ 6,699 more rows
 ```
 
 ## Check the methods performance
@@ -590,7 +596,6 @@ how_well_ct <- results %>%
             tot_wn_4 = sum(wn_4),
             tot_wn_5 = sum(wn_5)) %>%
   distinct()
-#> Error in eval(expr, envir, enclos): object 'results' not found
 
 # Percentages
 how_well <- results %>%
@@ -610,7 +615,6 @@ how_well <- results %>%
             tot_wn_4 = sum(wn_4)/maxgid*100,
             tot_wn_5 = sum(wn_5)/maxgid*100) %>%
   distinct()
-#> Error in eval(expr, envir, enclos): object 'results' not found
 ```
 
 ## Track Reconstruction Issue
@@ -630,7 +634,7 @@ recon <- df_var %>%
             max_27 = length(which(max_recon >= 27))/max(iteration)*100,
             max_26 = length(which(max_recon >= 26))/max(iteration)*100,
             max_25 = length(which(max_recon >= 25))/max(iteration)*100)
-#> Error in eval(expr, envir, enclos): object 'df_var' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 ```
 
 ## Additional Bias
@@ -646,7 +650,7 @@ recon_res <- df_var %>%
   ungroup() %>%
   group_by(res_name) %>%
   count()
-#> Error in eval(expr, envir, enclos): object 'df_var' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 ```
 
 Let's re-number these iterations where all `anims` were re-constructed.
@@ -660,7 +664,7 @@ new_iters <- df_var %>%
   ungroup() %>%
   distinct(iteration) %>%
   mutate(new_iter = seq_along(iteration))
-#> Error in eval(expr, envir, enclos): object 'df_var' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 ```
 
 Now we can see how our results would change if we had selected only iterations in which all `anims` were re-constructed.
@@ -672,15 +676,28 @@ new_iters_df <- merge(new_iters, df_var) %>%
                   res_name == "50km" & new_iter <= 128 |
                   res_name == "25km" & new_iter <= 128 |
                   res_name == "10km" & new_iter <= 144)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'new_iters' not found
 
 new_results <- new_iters_df %>%
   group_by(res_name, gid) %>%
   summarise(avg_dif = mean(dif),
             se = plotrix::std.error(dif)) 
-#> Error in eval(expr, envir, enclos): object 'new_iters_df' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 new_results
-#> Error in eval(expr, envir, enclos): object 'new_results' not found
+#> # A tibble: 6,709 × 4
+#> # Groups:   res_name [4]
+#>    res_name   gid avg_dif     se
+#>    <chr>    <dbl>   <dbl>  <dbl>
+#>  1 100km        1 11.3    0.217 
+#>  2 100km        2 11.4    0.219 
+#>  3 100km        3 27.7    0.136 
+#>  4 100km        4  6.13   0.190 
+#>  5 100km        5 26.3    0.155 
+#>  6 100km        6  0.429  0.0554
+#>  7 100km        7 21.4    0.247 
+#>  8 100km        8  0.0756 0.0747
+#>  9 100km        9 22.5    0.217 
+#> 10 100km       10 -0.454  0.168 
+#> # ℹ 6,699 more rows
 
 new_how_well <- new_results %>%
   group_by(res_name) %>%
@@ -699,10 +716,17 @@ new_how_well <- new_results %>%
             tot_wn_4 = sum(wn_4)/maxgid*100,
             tot_wn_5 = sum(wn_5)/maxgid*100) %>%
   distinct()
-#> Error in eval(expr, envir, enclos): object 'new_results' not found
+#> `summarise()` has grouped output by 'res_name'. You can override using the `.groups` argument.
 
 new_how_well
-#> Error in eval(expr, envir, enclos): object 'new_how_well' not found
+#> # A tibble: 4 × 7
+#> # Groups:   res_name [4]
+#>   res_name tot_wn_0 tot_wn_1 tot_wn_2 tot_wn_3 tot_wn_4 tot_wn_5
+#>   <ord>       <dbl>    <dbl>    <dbl>    <dbl>    <dbl>    <dbl>
+#> 1 100km      11.8      31.2      37.6     39.8     40.9     44.1
+#> 2 50km        3.42     14.0      22.6     28.8     32.2     39.4
+#> 3 25km        0.710     7.40     15.7     21.7     26.1     30.7
+#> 4 10km        1.05      7.14     14.2     19.8     25.2     29.7
 ```
 
 ## Gather more information
@@ -790,9 +814,9 @@ HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 
 rm(depth)
 gc()
-#>            used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells  5917178 316.1   14904267 796.0 14904267 796.0
-#> Vcells 12412687  94.8   31289210 238.8 31289210 238.8
+#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
+#> Ncells  5937806 317.2   16144236  862.2  20020541 1069.3
+#> Vcells 86773773 662.1  277306084 2115.7 346841131 2646.2
 ```
 
 Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
@@ -854,23 +878,18 @@ Merge the results to these grid cell metadata and determine which grid cells exh
 ```r
 results <- results %>%
   mutate(g_fit = ifelse(avg_dif>= -1*0.1*anims & avg_dif <= 0.1*anims, 1, 0))
-#> Error in eval(expr, envir, enclos): object 'results' not found
 
-HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>%
+HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>% 
   sf::st_as_sf() 
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 
 HS_50km_grid <- merge(results %>% dplyr::filter(res_name == "50km"), HS_50km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 
 HS_25km_grid <- merge(results %>% dplyr::filter(res_name == "25km"), HS_25km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 
 HS_10km_grid <- merge(results %>% dplyr::filter(res_name == "10km"), HS_10km_grid, by = c("gid")) %>%
   sf::st_as_sf() 
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'merge': object 'results' not found
 ```
 
 ## Map results
@@ -891,7 +910,7 @@ mapview::mapView(HS_10km_grid)
 
 ## Map the results
 
-Let's marry our results to a sf object that lacks a false origin so that we can more easily map them. 
+Let's marry our results to a sf object that lacks a false origin so that we can more easily map them.
 
 
 ```r
@@ -906,7 +925,7 @@ HS25km <- grid_res(25, study_site, 3857, "polygons")
 HS10km <- grid_res(10, study_site, 3857, "polygons")
 
 # Merge results data to new geometries
-HS100km <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS100km, by = c("gid")) %>%
+HS100km <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS100km, by = c("gid")) %>% 
   sf::st_as_sf() 
 
 HS50km <- merge((HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS50km, by = c("gid")) %>%
@@ -925,15 +944,15 @@ We want to create a model to understand which variables affect a good fit in the
 
 ## Create a dummy model
 
-We need to check for colinearity between main effects to see if we need to include any interaction terms between main effects in the model.
+We need to check for multicollinearity between main effects to see if we need to include any interaction terms between main effects in the model.
 
 
 ```r
 dummy.fit <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), data = HS_10km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::vif(dummy.fit)
-#> Error in eval(expr, envir, enclos): object 'dummy.fit' not found
+#>    den_rcs        p_a mean_depth    d_shore 
+#>   2.243987   2.237338   3.867154   3.884465
 ```
 
 
@@ -941,59 +960,81 @@ car::vif(dummy.fit)
 # 100 x 100km resolution
 fit1.100km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_100km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # den_rcs      1.7679  1  0.1836395
 
 fit2.100km <- glm(formula = g_fit ~ p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_100km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit2.100km)
-#> Error in eval(expr, envir, enclos): object 'fit2.100km' not found
+#> Analysis of Deviance Table (Type II tests)
+#> 
+#> Response: g_fit
+#>            LR Chisq Df Pr(>Chisq)
+#> p_a               0  1          1
+#> mean_depth        0  1          1
+#> d_shore           0  1          1
 
 
 # 50 x 50km resolution
 fit1.50km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_50km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # d_shore      0.1248  1     0.7239
 
 fit2.50km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth,
                  family = binomial(), data = HS_50km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # den_rcs       0.305  1     0.5809 
 
 fit3.50km <- glm(formula = g_fit ~ p_a + mean_depth,
                  family = binomial(), data = HS_50km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit3.50km)
-#> Error in eval(expr, envir, enclos): object 'fit3.50km' not found
+#> Analysis of Deviance Table (Type II tests)
+#> 
+#> Response: g_fit
+#>            LR Chisq Df Pr(>Chisq)  
+#> p_a          4.1599  1    0.04139 *
+#> mean_depth   1.0366  1    0.30862  
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # 25 x 25km resolution
 fit1.25km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_25km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 # d_shore       2.161  1    0.14154
 
 fit2.25km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth,
                  family = binomial(), data = HS_25km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit2.25km)
-#> Error in eval(expr, envir, enclos): object 'fit2.25km' not found
+#> Analysis of Deviance Table (Type II tests)
+#> 
+#> Response: g_fit
+#>            LR Chisq Df Pr(>Chisq)  
+#> den_rcs      3.9681  1    0.04637 *
+#> p_a          4.8087  1    0.02832 *
+#> mean_depth   4.6879  1    0.03038 *
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # 10 x 10km resolution
 fit1.10km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
                  family = binomial(), data = HS_10km_grid)
-#> Error in eval(predvars, data, env): object 'g_fit' not found
 
 car::Anova(fit1.10km)
-#> Error in eval(expr, envir, enclos): object 'fit1.10km' not found
+#> Analysis of Deviance Table (Type II tests)
+#> 
+#> Response: g_fit
+#>            LR Chisq Df Pr(>Chisq)  
+#> den_rcs      2.6686  1    0.10235  
+#> p_a          3.9961  1    0.04561 *
+#> mean_depth   6.4064  1    0.01137 *
+#> d_shore      0.0083  1    0.92754  
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 ## Is the model useful?
@@ -1003,28 +1044,108 @@ Now that we've constructed the model using backward selection by p-value, let's 
 
 ```r
 summary(fit2.100km)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit2.100km' not found
+#> 
+#> Call:
+#> glm(formula = g_fit ~ p_a + mean_depth + d_shore, family = binomial(), 
+#>     data = HS_100km_grid)
+#> 
+#> Coefficients:
+#>               Estimate Std. Error z value Pr(>|z|)
+#> (Intercept) -2.657e+01  7.155e+04       0        1
+#> p_a1         3.067e-16  8.704e+04       0        1
+#> mean_depth   1.992e-17  3.526e+02       0        1
+#> d_shore     -1.410e-20  8.199e-01       0        1
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 0.0000e+00  on 91  degrees of freedom
+#> Residual deviance: 5.3375e-10  on 88  degrees of freedom
+#>   (1 observation deleted due to missingness)
+#> AIC: 8
+#> 
+#> Number of Fisher Scoring iterations: 25
 
 p_value.100km = 1 - pchisq(120.090-59.388, 3)
 p_value.100km
 #> [1] 4.161116e-13
 
 summary(fit3.50km)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit3.50km' not found
+#> 
+#> Call:
+#> glm(formula = g_fit ~ p_a + mean_depth, family = binomial(), 
+#>     data = HS_50km_grid)
+#> 
+#> Coefficients:
+#>               Estimate Std. Error z value Pr(>|z|)
+#> (Intercept)  -20.83643 2790.65303  -0.007    0.994
+#> p_a1          18.19835 2790.65301   0.007    0.995
+#> mean_depth    -0.05813    0.08522  -0.682    0.495
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 23.837  on 285  degrees of freedom
+#> Residual deviance: 17.353  on 283  degrees of freedom
+#>   (6 observations deleted due to missingness)
+#> AIC: 23.353
+#> 
+#> Number of Fisher Scoring iterations: 21
 
 p_value.50km = 1 - pchisq(327.03-233.64, 3)
 p_value.50km
 #> [1] 0
 
 summary(fit2.25km)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit2.25km' not found
+#> 
+#> Call:
+#> glm(formula = g_fit ~ den_rcs + p_a + mean_depth, family = binomial(), 
+#>     data = HS_25km_grid)
+#> 
+#> Coefficients:
+#>               Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)   -4.34384    0.63747  -6.814 9.48e-12 ***
+#> den_rcs     -157.33129  135.99644  -1.157   0.2473    
+#> p_a1           2.38492    1.03498   2.304   0.0212 *  
+#> mean_depth    -0.03038    0.02401  -1.266   0.2057    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 82.96  on 967  degrees of freedom
+#> Residual deviance: 72.32  on 964  degrees of freedom
+#>   (18 observations deleted due to missingness)
+#> AIC: 80.32
+#> 
+#> Number of Fisher Scoring iterations: 11
 
 p_value.25km = 1 - pchisq(975.40-750.33, 3)
 p_value.25km
 #> [1] 0
 
 summary(fit1.10km)
-#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'summary': object 'fit1.10km' not found
+#> 
+#> Call:
+#> glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), 
+#>     data = HS_10km_grid)
+#> 
+#> Coefficients:
+#>               Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept) -4.373e+00  2.928e-01 -14.931   <2e-16 ***
+#> den_rcs     -2.563e+01  2.301e+01  -1.114    0.265    
+#> p_a1         1.531e+00  7.455e-01   2.054    0.040 *  
+#> mean_depth  -3.199e-02  2.149e-02  -1.489    0.137    
+#> d_shore      1.029e-06  1.134e-05   0.091    0.928    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> 
+#> (Dispersion parameter for binomial family taken to be 1)
+#> 
+#>     Null deviance: 348.39  on 5198  degrees of freedom
+#> Residual deviance: 321.98  on 5194  degrees of freedom
+#>   (139 observations deleted due to missingness)
+#> AIC: 331.98
+#> 
+#> Number of Fisher Scoring iterations: 12
 
 p_value.10km = 1 - pchisq(5012.5-4012.9, 3)
 p_value.10km
@@ -1039,22 +1160,17 @@ We want to know how much each main effect increases (or decreases) the odds of a
 ```r
 odds_100km <- get_or(fit2.100km) %>%
   mutate(res_name = "100km")
-#> Error in eval(expr, envir, enclos): object 'fit2.100km' not found
 
 odds_50km <- get_or(fit3.50km) %>%
   mutate(res_name = "50km")
-#> Error in eval(expr, envir, enclos): object 'fit3.50km' not found
 
 odds_25km <- get_or(fit2.25km) %>%
   mutate(res_name = "25km")
-#> Error in eval(expr, envir, enclos): object 'fit2.25km' not found
 
 odds_10km <- get_or(fit1.10km) %>%
   mutate(res_name = "10km")
-#> Error in eval(expr, envir, enclos): object 'fit1.10km' not found
 
 odds_ratios <- rbind(odds_100km, odds_50km, odds_25km, odds_10km)
-#> Error in eval(expr, envir, enclos): object 'odds_100km' not found
 ```
 
 ## How many receivers?
@@ -1091,10 +1207,7 @@ gd_fit_char <- lapply(res, gd_fts) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
-#> Error in `stopifnot()`:
-#> ℹ In argument: `g_fit == 1`.
-#> Caused by error:
-#> ! object 'g_fit' not found
+#> Error in `[[<-.data.frame`(`*tmp*`, sf_column, value = structure(list(), class = c("sfc_GEOMETRY", : replacement has 0 rows, data has 1
 ```
 
 ## Do the methods close gaps?
@@ -1109,10 +1222,6 @@ clsd_gps <- lapply(res, gps_fld) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
-#> Error in `dplyr::filter()`:
-#> ℹ In argument: `g_fit == 1 & p_a == 0`.
-#> Caused by error:
-#> ! object 'g_fit' not found
 ```
 
 ## Where are these closed gaps?
@@ -1128,10 +1237,13 @@ clsd_gp_chars <- lapply(res, gps_chr) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
-#> Error in `stopifnot()`:
-#> ℹ In argument: `g_fit == 1 & p_a == 0`.
-#> Caused by error:
-#> ! object 'g_fit' not found
+#> Warning: There were 4 warnings in `dplyr::summarise()`.
+#> The first warning was:
+#> ℹ In argument: `max_dpth = max(na.omit(mean_depth))`.
+#> Caused by warning in `max()`:
+#> ! no non-missing arguments to max; returning -Inf
+#> ℹ Run `dplyr::last_dplyr_warnings()` to see the 3 remaining warnings.
+#> Error in `[[<-.data.frame`(`*tmp*`, sf_column, value = structure(list(), class = c("sfc_GEOMETRY", : replacement has 0 rows, data has 1
 ```
 
 ## Where are receivers located?
@@ -1151,7 +1263,7 @@ rcv_chars <- lapply(res, rcv_chr) %>%
 
 ## What if we had chosen a different depth cutoff?
 
-Blacktip sharks, the species chosen to demonstrate the current methods, is known to rarely cross the Gulf Stream, which is in deep waters. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
+Blacktip sharks, the species chosen to demonstrate the current methods, is known to cross the Gulf Stream, which is in deep waters, on occasion. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
 
 
 ```r
@@ -1183,8 +1295,7 @@ CRS <- 3857
 barrier <- atlcoast %>%
   sf::st_transform(., 3857)
 vis_graph <- pathroutr::prt_visgraph(barrier)
-#> Warning in st_cast.sf(barrier, "POLYGON"): repeating attributes for all sub-geometries for which they may not be
-#> constant
+#> Warning in st_cast.sf(barrier, "POLYGON"): repeating attributes for all sub-geometries for which they may not be constant
 buffer <- 650
   
 tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)
@@ -1281,8 +1392,5 @@ Let's map the mean differences with the corrected map projection.
 ```r
 
 mapview::mapView(goodfts_50km, zcol = "avg_dif")
-#> Error: 
-#> at least one of the following columns: 
-#> 'avg_dif' 
-#> not found in goodfts_50km
+#> Error in loadNamespace(name): there is no package called 'webshot'
 ```
