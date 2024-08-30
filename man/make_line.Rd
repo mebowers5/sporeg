@@ -22,6 +22,7 @@ A simple feature geometry object or simple feature linestring object
 This functions creates a line by connecting start and end points.
 }
 \examples{
+library(sporeg)
 library(dplyr)
 library(sf)
 library(purrr)

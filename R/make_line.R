@@ -9,6 +9,7 @@
 #' @return A simple feature geometry object or simple feature linestring object
 #'
 #' @examples
+#' library(sporeg)
 #' library(dplyr)
 #' library(sf)
 #' library(purrr)
