@@ -7,6 +7,7 @@
 #' @param end_y latitudinal sf coordinate object from the desired end point
 #'
 #' @return A simple feature geometry object or simple feature linestring object
+#' @export
 #'
 #' @examples
 #' library(sporeg)
