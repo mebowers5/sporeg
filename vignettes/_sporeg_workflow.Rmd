@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 library(sporeg)
 ```
 
-## Objective
+# Objective
 
 This vignette is a step by step guide to the methods in "Full Disclosure:...". It will show you how to simulate semi-random tracks, derive acoustic telemetry data from those tracks, model/reconstruct tracks from those derived detection data, re-route them off land, summarize distribution information, and compare the simulated and modeled summarizations. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
 
@@ -148,7 +148,7 @@ For simulating tracks:
 #| include: true
 
 # Number of animals
-anims <- 1
+anims <- 30
 # Number of years
 yr <- 1       
 # Turning angle - standard deviation of body flexion from blacktip kinematics study
@@ -470,7 +470,7 @@ results <- new_df %>%
 results
 ```
 
-## Check the methods performance
+# Check the methods performance
 
 Let's create a table that shows how closely the modeled tracks compared to the reconstructed tracks for each grid resolution. Here, we compare counts of grid cells within a certain difference from `sim_count` divided by the total number of grid cells.
 
@@ -1005,7 +1005,7 @@ gd_fit_char <- lapply(res, gd_fts) %>%
 
 ```
 
-## Do the methods close gaps?
+# Do the methods close gaps?
 
 Let's find out how many of the good fits occurred in grid cells that lacked receivers. We can use the results list `res` that we created in the previous step and apply a function over all resolutions at the same time.
 
@@ -1067,13 +1067,50 @@ dif_depth <- lapply(res, dif_co) %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 ```
 
-## Demonstrate ecological application
+# Demonstrate ecological application
 
 Let's apply these methods to real acoustic telemetry data so we can derive distribution information.
 
 ```{r}
 
-load(system.file("extdata", "subset.Rda", package = "sporeg"))
+load(system.file("extdata", "demo_dets.Rda", package = "sporeg"))
+
+demo_dets <- demo_dets %>%
+    dplyr::arrange(ID, time) %>%
+    dplyr::group_by(ID, time) %>%
+    dplyr::summarize(mean_pos = sf::st_combine(geometry)) %>%
+    sf::st_centroid() %>%
+    dplyr::mutate(time = as.POSIXct(time),
+           x = sf::st_coordinates(mean_pos)[,1],
+           y = sf::st_coordinates(mean_pos)[,2],
+           locType = "o") %>% # Obtain x and y coordinates so that you can merge with predicted locations later
+    sf::st_drop_geometry() %>%
+    as.data.frame
+
+  #Impute missing locations with continuous time movement model
+  demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
+                                    fixPar = c(NA, NA),
+                                    theta = c(8,0),
+                                    attempts = 100, retrySD = 5, retryFits = 5,
+                                    ncores = 2, retryParallel = TRUE)
+
+  #Continue with movement model data products
+  #Get the data.frame of predicted locations
+  demo_dets <- data.frame(demo_dets$crwPredict)
+
+  #Turn crwPredict product into data frame
+  demo_dets <- demo_dets %>%
+    dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
+    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
+    as.data.frame
+
+  # Read in the track data; here, I'm filtering to just include the predicted locations
+  # and making sure the time is a proper POSIX. Neither of those two steps are
+  # necessary
+  demo_dets <- demo_dets %>%
+    #dplyr::filter(locType == "p") %>%
+    dplyr::select(ID, time, mu.x, mu.y) %>%
+    dplyr::mutate(time = lubridate::ymd_hms(format(as.POSIXct(time, tz = "UTC"), "%Y-%m-%d %H:%M:%S", ID = as.factor(ID))))
   
 CRS <- 3857
 barrier <- atlcoast %>%
@@ -1081,7 +1118,49 @@ barrier <- atlcoast %>%
 vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
   
-tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)
+tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
+
+# Check map
+mapview::mapView(tbuff650)
+```
+
+Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package.
+
+```{r}
+demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
+                                    fixPar = c(NA, NA),
+                                    theta = c(8,0),
+                                    attempts = 100, retrySD = 5, retryFits = 5,
+                                    ncores = 2, retryParallel = TRUE)
+
+demo_dets <- data.frame(demo_dets$crwPredict)
+```
+
+Turn the movement model product into a data frame and label the predicted locations.
+
+```{r}
+demo_dets <- demo_dets %>%
+    dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
+    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
+    as.data.frame
+
+demo_dets <- demo_dets %>%
+    dplyr::select(ID, time, mu.x, mu.y) %>%
+    dplyr::mutate(time = lubridate::ymd_hms(format(as.POSIXct(time, tz = "UTC"), "%Y-%m-%d %H:%M:%S", ID = as.factor(ID))))
+```
+
+Since the movement model does not recognize land, let's re-route the parts that crossed the land barrier.
+
+```{r}
+CRS <- 3857
+
+load(system.file("extdata", "atlcoast.Rda", package = "sporeg"))
+
+barrier <- atlcoast %>% sf::st_transform(., 3857)
+vis_graph <- pathroutr::prt_visgraph(barrier)
+buffer <- 650
+  
+tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
 
 # Check map
 mapview::mapView(tbuff650)
