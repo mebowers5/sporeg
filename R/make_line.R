@@ -9,7 +9,12 @@
 #' @return A simple feature geometry object or simple feature linestring object
 #'
 #' @examples
+#' library(dplyr)
+#' library(sf)
+#' library(tidyr)
+#'
 #' load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
+#'
 #' at_lines <- at_dly_locs %>%
 #' group_by(ID, time) %>%
 #' sf::st_transform(3857) %>%
@@ -26,7 +31,16 @@
 #' data = purrr::map(data,
 #' ~ mutate(.x,
 #' x = purrr::pmap(.l = list(start_x, start_y, end_x, end_y),
-#' .f = make_line))))
+#' .f = make_line)))) %>%
+#' mutate(
+#' data = purrr::map(data,
+#' ~ mutate(.x, x = sf::st_sfc(x))),
+#' x = purrr::map(data, ~ sf::st_union(sf::st_set_geometry(.x, 'x'))), ##Preserves order
+#' x = purrr::map(x, ~ sf::st_cast(.x, 'MULTILINESTRING'))
+#' ) %>%
+#' dplyr::select(-data) %>%
+#' tidyr::unnest(x) %>%
+#' sf::st_as_sf(sf_column_name = 'x', crs = 3857)
 
 make_line <- function(start_x, start_y, end_x, end_y) {
   sf::st_linestring(matrix(c(start_x, end_x, start_y, end_y), 2, 2))
