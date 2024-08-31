@@ -148,7 +148,7 @@ For simulating tracks:
 #| include: true
 
 # Number of animals
-anims <- 3
+anims <- 30
 # Number of years
 yr <- 1       
 # Turning angle - standard deviation of body flexion from blacktip kinematics study
@@ -1086,45 +1086,9 @@ demo_dets <- demo_dets %>%
            locType = "o") %>% # Obtain x and y coordinates so that you can merge with predicted locations later
     sf::st_drop_geometry() %>%
     as.data.frame
-
-  #Impute missing locations with continuous time movement model
-  demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
-                                    fixPar = c(NA, NA),
-                                    theta = c(8,0),
-                                    attempts = 100, retrySD = 5, retryFits = 5,
-                                    ncores = 2, retryParallel = TRUE)
-
-  #Continue with movement model data products
-  #Get the data.frame of predicted locations
-  demo_dets <- data.frame(demo_dets$crwPredict)
-
-  #Turn crwPredict product into data frame
-  demo_dets <- demo_dets %>%
-    dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
-    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
-    as.data.frame
-
-  # Read in the track data; here, I'm filtering to just include the predicted locations
-  # and making sure the time is a proper POSIX. Neither of those two steps are
-  # necessary
-  demo_dets <- demo_dets %>%
-    #dplyr::filter(locType == "p") %>%
-    dplyr::select(ID, time, mu.x, mu.y) %>%
-    dplyr::mutate(time = lubridate::ymd_hms(format(as.POSIXct(time, tz = "UTC"), "%Y-%m-%d %H:%M:%S", ID = as.factor(ID))))
-  
-CRS <- 3857
-barrier <- atlcoast %>%
-  sf::st_transform(., 3857)
-vis_graph <- pathroutr::prt_visgraph(barrier)
-buffer <- 650
-  
-tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
-
-# Check map
-mapview::mapView(tbuff650)
 ```
 
-Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package.
+Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package, to impute locations between observations.
 
 ```{r}
 demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",

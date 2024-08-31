@@ -30,9 +30,9 @@ And clearing any cache we may have remaining from previous work.
 
 ``` r
 gc()
-#>            used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells  5733280 306.2   10961307 585.4 10961307 585.4
-#> Vcells 10340004  78.9   21468864 163.8 21468765 163.8
+#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
+#> Ncells  6158613 329.0   15965602  852.7  19957002 1065.9
+#> Vcells 15238421 116.3  171543472 1308.8 214429340 1636.0
 ```
 
 Next, let's load the packages that we will need to run the steps in this vignette.
@@ -131,7 +131,7 @@ For simulating tracks:
 
 ``` r
 # Number of animals
-anims <- 3
+anims <- 30
 # Number of years
 yr <- 1       
 # Turning angle - standard deviation of body flexion from blacktip kinematics study
@@ -335,7 +335,7 @@ base::replicate(n = reps, expr = {
 #>         .Call(C_df, x, df1, df2, log)
 #>     else .Call(C_dnf, x, df1, df2, ncp, log)
 #> }
-#> <bytecode: 0x000002a43c308d00>
+#> <bytecode: 0x000001b364717fd0>
 #> <environment: namespace:stats>
 #> 
 #> [[2]]
@@ -345,7 +345,7 @@ base::replicate(n = reps, expr = {
 #>         .Call(C_df, x, df1, df2, log)
 #>     else .Call(C_dnf, x, df1, df2, ncp, log)
 #> }
-#> <bytecode: 0x000002a43c308d00>
+#> <bytecode: 0x000001b364717fd0>
 #> <environment: namespace:stats>
 ```
 
@@ -449,9 +449,9 @@ pwr_100km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 11837.53
-#>           delta = 0.03
-#>              sd = 3.609324
+#>               n = 118.5833
+#>           delta = 0.3
+#>              sd = 3.612462
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -466,9 +466,9 @@ pwr_50km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 12784.14
-#>           delta = 0.03
-#>              sd = 3.750861
+#>               n = 128.0676
+#>           delta = 0.3
+#>              sd = 3.754149
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -483,9 +483,9 @@ pwr_25km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 12784.14
-#>           delta = 0.03
-#>              sd = 3.750861
+#>               n = 128.0676
+#>           delta = 0.3
+#>              sd = 3.754149
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -501,9 +501,9 @@ pwr_10km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 14404.71
-#>           delta = 0.03
-#>              sd = 3.981507
+#>               n = 143.9643
+#>           delta = 0.3
+#>              sd = 3.980335
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -815,8 +815,8 @@ HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 rm(depth)
 gc()
 #>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-#> Ncells  7463253 398.6   20578014 1099.0  20578014 1099.0
-#> Vcells 89082411 679.7  225984719 1724.2 225984719 1724.2
+#> Ncells  7241735 386.8   15965602  852.7  19957002 1065.9
+#> Vcells 88571060 675.8  228085467 1740.2 228085359 1740.2
 ```
 
 Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
@@ -952,7 +952,7 @@ dummy.fit <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family 
 
 car::vif(dummy.fit)
 #>    den_rcs        p_a mean_depth    d_shore 
-#>   2.148366   2.143100   3.903303   3.917314
+#>   1.715691   1.710425   3.200149   3.207655
 ```
 
 
@@ -970,10 +970,12 @@ car::Anova(fit2.100km)
 #> Analysis of Deviance Table (Type II tests)
 #> 
 #> Response: g_fit
-#>            LR Chisq Df Pr(>Chisq)
-#> p_a               0  1          1
-#> mean_depth        0  1          1
-#> d_shore           0  1          1
+#>            LR Chisq Df Pr(>Chisq)    
+#> p_a          38.654  1   5.06e-10 ***
+#> mean_depth   13.370  1  0.0002557 ***
+#> d_shore       4.798  1  0.0284877 *  
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
 # 50 x 50km resolution
@@ -994,9 +996,9 @@ car::Anova(fit3.50km)
 #> Analysis of Deviance Table (Type II tests)
 #> 
 #> Response: g_fit
-#>            LR Chisq Df Pr(>Chisq)   
-#> p_a          7.7896  1   0.005255 **
-#> mean_depth   2.4360  1   0.118576   
+#>            LR Chisq Df Pr(>Chisq)    
+#> p_a          23.977  1  9.748e-07 ***
+#> mean_depth   47.514  1  5.462e-12 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1014,9 +1016,9 @@ car::Anova(fit2.25km)
 #> 
 #> Response: g_fit
 #>            LR Chisq Df Pr(>Chisq)    
-#> den_rcs      4.9048  1  0.0267819 *  
-#> p_a          6.5787  1  0.0103209 *  
-#> mean_depth  14.5422  1  0.0001371 ***
+#> den_rcs       5.395  1    0.02019 *  
+#> p_a          33.317  1  7.828e-09 ***
+#> mean_depth  151.463  1  < 2.2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1029,10 +1031,10 @@ car::Anova(fit1.10km)
 #> 
 #> Response: g_fit
 #>            LR Chisq Df Pr(>Chisq)    
-#> den_rcs      6.2834  1    0.01219 *  
-#> p_a          7.2807  1    0.00697 ** 
-#> mean_depth  22.6427  1  1.951e-06 ***
-#> d_shore      0.0295  1    0.86362    
+#> den_rcs      13.876  1  0.0001952 ***
+#> p_a          28.967  1  7.361e-08 ***
+#> mean_depth  204.521  1  < 2.2e-16 ***
+#> d_shore       8.777  1  0.0030512 ** 
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -1050,20 +1052,22 @@ summary(fit2.100km)
 #>     data = HS_100km_grid)
 #> 
 #> Coefficients:
-#>               Estimate Std. Error z value Pr(>|z|)
-#> (Intercept) -2.657e+01  7.155e+04       0        1
-#> p_a1         3.067e-16  8.704e+04       0        1
-#> mean_depth   1.992e-17  3.526e+02       0        1
-#> d_shore     -1.410e-20  8.199e-01       0        1
+#>               Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept) -1.799e+00  6.267e-01  -2.870  0.00410 ** 
+#> p_a1         3.979e+00  8.102e-01   4.911 9.05e-07 ***
+#> mean_depth  -2.158e-02  7.689e-03  -2.806  0.00501 ** 
+#> d_shore      1.879e-05  8.853e-06   2.123  0.03378 *  
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 0.0000e+00  on 91  degrees of freedom
-#> Residual deviance: 5.3375e-10  on 88  degrees of freedom
+#>     Null deviance: 120.090  on 91  degrees of freedom
+#> Residual deviance:  59.388  on 88  degrees of freedom
 #>   (1 observation deleted due to missingness)
-#> AIC: 8
+#> AIC: 67.388
 #> 
-#> Number of Fisher Scoring iterations: 25
+#> Number of Fisher Scoring iterations: 7
 
 p_value.100km = 1 - pchisq(120.090-59.388, 3)
 p_value.100km
@@ -1076,21 +1080,21 @@ summary(fit3.50km)
 #>     data = HS_50km_grid)
 #> 
 #> Coefficients:
-#>             Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) -4.41418    1.10178  -4.006 6.16e-05 ***
-#> p_a1         2.47201    1.09383   2.260   0.0238 *  
-#> mean_depth  -0.02302    0.02450  -0.940   0.3473    
+#>              Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept) -0.584305   0.253586  -2.304 0.021213 *  
+#> p_a1         1.557870   0.326283   4.775  1.8e-06 ***
+#> mean_depth  -0.025806   0.006803  -3.793 0.000149 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 65.768  on 285  degrees of freedom
-#> Residual deviance: 51.920  on 283  degrees of freedom
+#>     Null deviance: 327.03  on 285  degrees of freedom
+#> Residual deviance: 233.64  on 283  degrees of freedom
 #>   (6 observations deleted due to missingness)
-#> AIC: 57.92
+#> AIC: 239.64
 #> 
-#> Number of Fisher Scoring iterations: 10
+#> Number of Fisher Scoring iterations: 8
 
 p_value.50km = 1 - pchisq(327.03-233.64, 3)
 p_value.50km
@@ -1103,22 +1107,22 @@ summary(fit2.25km)
 #>     data = HS_25km_grid)
 #> 
 #> Coefficients:
-#>              Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept)  -3.13200    0.36272  -8.635  < 2e-16 ***
-#> den_rcs     -54.74344   38.52510  -1.421  0.15532    
-#> p_a1          1.55060    0.58426   2.654  0.00795 ** 
-#> mean_depth   -0.03117    0.01399  -2.229  0.02581 *  
+#>               Estimate Std. Error z value Pr(>|z|)    
+#> (Intercept)  -0.488155   0.143319  -3.406 0.000659 ***
+#> den_rcs     -10.429624   4.778274  -2.183 0.029057 *  
+#> p_a1          1.346413   0.233967   5.755 8.68e-09 ***
+#> mean_depth   -0.036931   0.005238  -7.051 1.78e-12 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 202.43  on 967  degrees of freedom
-#> Residual deviance: 178.25  on 964  degrees of freedom
+#>     Null deviance: 975.40  on 967  degrees of freedom
+#> Residual deviance: 750.33  on 964  degrees of freedom
 #>   (18 observations deleted due to missingness)
-#> AIC: 186.25
+#> AIC: 758.33
 #> 
-#> Number of Fisher Scoring iterations: 10
+#> Number of Fisher Scoring iterations: 8
 
 p_value.25km = 1 - pchisq(975.40-750.33, 3)
 p_value.25km
@@ -1132,22 +1136,22 @@ summary(fit1.10km)
 #> 
 #> Coefficients:
 #>               Estimate Std. Error z value Pr(>|z|)    
-#> (Intercept) -3.066e+00  1.588e-01 -19.304  < 2e-16 ***
-#> den_rcs     -2.126e+01  1.201e+01  -1.771  0.07659 .  
-#> p_a1         1.205e+00  4.359e-01   2.764  0.00570 ** 
-#> mean_depth  -3.349e-02  1.189e-02  -2.817  0.00485 ** 
-#> d_shore      1.067e-06  6.222e-06   0.171  0.86387    
+#> (Intercept) -2.469e-01  6.084e-02  -4.059 4.93e-05 ***
+#> den_rcs     -7.281e+00  2.261e+00  -3.220  0.00128 ** 
+#> p_a1         8.672e-01  1.632e-01   5.313 1.08e-07 ***
+#> mean_depth  -3.072e-02  3.852e-03  -7.975 1.53e-15 ***
+#> d_shore     -6.291e-06  2.095e-06  -3.003  0.00267 ** 
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> (Dispersion parameter for binomial family taken to be 1)
 #> 
-#>     Null deviance: 948.70  on 5198  degrees of freedom
-#> Residual deviance: 863.12  on 5194  degrees of freedom
+#>     Null deviance: 5012.5  on 5198  degrees of freedom
+#> Residual deviance: 4012.9  on 5194  degrees of freedom
 #>   (139 observations deleted due to missingness)
-#> AIC: 873.12
+#> AIC: 4022.9
 #> 
-#> Number of Fisher Scoring iterations: 11
+#> Number of Fisher Scoring iterations: 9
 
 p_value.10km = 1 - pchisq(5012.5-4012.9, 3)
 p_value.10km
@@ -1204,7 +1208,6 @@ gd_fit_char <- lapply(res, gd_fts) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
-#> Error in `[[<-.data.frame`(`*tmp*`, sf_column, value = structure(list(), class = c("sfc_GEOMETRY", : replacement has 0 rows, data has 1
 ```
 
 # Do the methods close gaps?
@@ -1234,13 +1237,6 @@ clsd_gp_chars <- lapply(res, gps_chr) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
-#> Warning: There were 4 warnings in `dplyr::summarise()`.
-#> The first warning was:
-#> ℹ In argument: `max_dpth = max(na.omit(mean_depth))`.
-#> Caused by warning in `max()`:
-#> ! no non-missing arguments to max; returning -Inf
-#> ℹ Run `dplyr::last_dplyr_warnings()` to see the 3 remaining warnings.
-#> Error in `[[<-.data.frame`(`*tmp*`, sf_column, value = structure(list(), class = c("sfc_GEOMETRY", : replacement has 0 rows, data has 1
 ```
 
 ## Where are receivers located?
@@ -1273,7 +1269,6 @@ dif_depth <- lapply(res, dif_co) %>%
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
-#> Error in `[[<-.data.frame`(`*tmp*`, sf_column, value = structure(list(), class = c("sfc_GEOMETRY", : replacement has 0 rows, data has 1
 ```
 
 # Demonstrate ecological application
@@ -1297,9 +1292,13 @@ demo_dets <- demo_dets %>%
     sf::st_drop_geometry() %>%
     as.data.frame
 #> `summarise()` has grouped output by 'ID'. You can override using the `.groups` argument.
+```
 
-  #Impute missing locations with continuous time movement model
-  demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
+Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package, to impute locations between observations.
+
+
+``` r
+demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
                                     fixPar = c(NA, NA),
                                     theta = c(8,0),
                                     attempts = 100, retrySD = 5, retryFits = 5,
@@ -1350,7 +1349,7 @@ demo_dets <- demo_dets %>%
 #> Attempting to improve fit for individual 5. Press 'esc' to force exit from 'crawlWrap'
 #>     Attempt 1 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 2 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 3 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 4 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 5 of 5 -- current log-likelihood value: -2829.118  ...DONE
 #> Attempting to improve fit for individual 6. Press 'esc' to force exit from 'crawlWrap'
-#>     Attempt 1 of 5 -- current log-likelihood value: -198.0898  ...    Attempt 2 of 5 -- current log-likelihood value: -198.0898  ...    Attempt 3 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 4 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 5 of 5 -- current log-likelihood value: -198.0223  ...DONE
+#>     Attempt 1 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 2 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 3 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 4 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 5 of 5 -- current log-likelihood value: -198.0223  ...DONE
 #> Attempting to improve fit for individual 7. Press 'esc' to force exit from 'crawlWrap'
 #>     Attempt 1 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 2 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 3 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 4 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 5 of 5 -- current log-likelihood value: -1452.093  ...DONE
 #> Attempting to improve fit for individual 8. Press 'esc' to force exit from 'crawlWrap'
@@ -1361,51 +1360,6 @@ demo_dets <- demo_dets %>%
 #>     Attempt 1 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 2 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 3 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 4 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 5 of 5 -- current log-likelihood value: -3396.162  ...DONE
 #> 
 #> Predicting locations (and uncertainty) at 15 mins time steps for 10 track(s) using crawl::crwPredict... DONE
-
-  #Continue with movement model data products
-  #Get the data.frame of predicted locations
-  demo_dets <- data.frame(demo_dets$crwPredict)
-
-  #Turn crwPredict product into data frame
-  demo_dets <- demo_dets %>%
-    dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
-    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
-    as.data.frame
-
-  # Read in the track data; here, I'm filtering to just include the predicted locations
-  # and making sure the time is a proper POSIX. Neither of those two steps are
-  # necessary
-  demo_dets <- demo_dets %>%
-    #dplyr::filter(locType == "p") %>%
-    dplyr::select(ID, time, mu.x, mu.y) %>%
-    dplyr::mutate(time = lubridate::ymd_hms(format(as.POSIXct(time, tz = "UTC"), "%Y-%m-%d %H:%M:%S", ID = as.factor(ID))))
-  
-CRS <- 3857
-barrier <- atlcoast %>%
-  sf::st_transform(., 3857)
-vis_graph <- pathroutr::prt_visgraph(barrier)
-#> Warning in st_cast.sf(barrier, "POLYGON"): repeating attributes for all sub-geometries for which they may not be constant
-buffer <- 650
-  
-tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
-#> Warning in st_collection_extract.sf(., "POLYGON"): x is already of type POLYGON.
-#> Warning in st_cast.sf(., "POLYGON"): repeating attributes for all sub-geometries for which they may not be constant
-
-# Check map
-mapview::mapView(tbuff650)
-#> Error in loadNamespace(name): there is no package called 'webshot'
-```
-
-Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package.
-
-
-``` r
-demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
-                                    fixPar = c(NA, NA),
-                                    theta = c(8,0),
-                                    attempts = 100, retrySD = 5, retryFits = 5,
-                                    ncores = 2, retryParallel = TRUE)
-#> Error in momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min", : obsData is missing x,y
 
 demo_dets <- data.frame(demo_dets$crwPredict)
 ```
@@ -1418,16 +1372,10 @@ demo_dets <- demo_dets %>%
     dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
     dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
     as.data.frame
-#> Error in `dplyr::select()`:
-#> ! Can't select columns that don't exist.
-#> ✖ Column `ID` doesn't exist.
 
 demo_dets <- demo_dets %>%
     dplyr::select(ID, time, mu.x, mu.y) %>%
     dplyr::mutate(time = lubridate::ymd_hms(format(as.POSIXct(time, tz = "UTC"), "%Y-%m-%d %H:%M:%S", ID = as.factor(ID))))
-#> Error in `dplyr::select()`:
-#> ! Can't select columns that don't exist.
-#> ✖ Column `ID` doesn't exist.
 ```
 
 Since the movement model does not recognize land, let's re-route the parts that crossed the land barrier.
@@ -1444,7 +1392,8 @@ vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
   
 tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
-#> Error in `[.data.frame`(x, coords): undefined columns selected
+#> Warning in st_collection_extract.sf(., "POLYGON"): x is already of type POLYGON.
+#> Warning in st_cast.sf(., "POLYGON"): repeating attributes for all sub-geometries for which they may not be constant
 
 # Check map
 mapview::mapView(tbuff650)
