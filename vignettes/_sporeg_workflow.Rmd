@@ -148,7 +148,7 @@ For simulating tracks:
 #| include: true
 
 # Number of animals
-anims <- 30
+anims <- 3
 # Number of years
 yr <- 1       
 # Turning angle - standard deviation of body flexion from blacktip kinematics study
