@@ -30,9 +30,9 @@ And clearing any cache we may have remaining from previous work.
 
 ``` r
 gc()
-#>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-#> Ncells  6158613 329.0   15965602  852.7  19957002 1065.9
-#> Vcells 15238421 116.3  171543472 1308.8 214429340 1636.0
+#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 5064220 270.5    9773725 522.0  9773725 522.0
+#> Vcells 8385563  64.0   14786712 112.9 11044053  84.3
 ```
 
 Next, let's load the packages that we will need to run the steps in this vignette.
@@ -41,8 +41,20 @@ Next, let's load the packages that we will need to run the steps in this vignett
 ``` r
 library(sporeg)
 library(dplyr)
+#> Warning: package 'dplyr' was built under R version 4.4.0
+#> 
+#> Attaching package: 'dplyr'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 library(sf)
+#> Warning: package 'sf' was built under R version 4.4.0
+#> Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE
 library(sp)
+#> Warning: package 'sp' was built under R version 4.4.0
 library(pathroutr) 
 
 # To install pathroutr, use the following code: 
@@ -51,8 +63,18 @@ library(pathroutr)
 
 library(parallel)
 library(geosphere)
+#> Warning: package 'geosphere' was built under R version 4.4.0
 library(mapview)
+#> Warning: package 'mapview' was built under R version 4.4.0
 library(car)
+#> Warning: package 'car' was built under R version 4.4.0
+#> Loading required package: carData
+#> Warning: package 'carData' was built under R version 4.4.0
+#> 
+#> Attaching package: 'car'
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     recode
 ```
 
 ## Get the objects required for simulating tracks
@@ -335,7 +357,7 @@ base::replicate(n = reps, expr = {
 #>         .Call(C_df, x, df1, df2, log)
 #>     else .Call(C_dnf, x, df1, df2, ncp, log)
 #> }
-#> <bytecode: 0x000001b364717fd0>
+#> <bytecode: 0x00000255bc3f7dd8>
 #> <environment: namespace:stats>
 #> 
 #> [[2]]
@@ -345,7 +367,7 @@ base::replicate(n = reps, expr = {
 #>         .Call(C_df, x, df1, df2, log)
 #>     else .Call(C_dnf, x, df1, df2, ncp, log)
 #> }
-#> <bytecode: 0x000001b364717fd0>
+#> <bytecode: 0x00000255bc3f7dd8>
 #> <environment: namespace:stats>
 ```
 
@@ -449,9 +471,9 @@ pwr_100km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 118.5833
+#>               n = 119.2107
 #>           delta = 0.3
-#>              sd = 3.612462
+#>              sd = 3.622007
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -466,9 +488,9 @@ pwr_50km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 128.0676
+#>               n = 128.8566
 #>           delta = 0.3
-#>              sd = 3.754149
+#>              sd = 3.765696
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -483,9 +505,9 @@ pwr_25km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 128.0676
+#>               n = 128.8566
 #>           delta = 0.3
-#>              sd = 3.754149
+#>              sd = 3.765696
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -501,9 +523,9 @@ pwr_10km
 #> 
 #>      Paired t test power calculation 
 #> 
-#>               n = 143.9643
+#>               n = 144.0009
 #>           delta = 0.3
-#>              sd = 3.980335
+#>              sd = 3.980841
 #>       sig.level = 0.95
 #>           power = 0.8
 #>     alternative = two.sided
@@ -525,10 +547,10 @@ max_sd
 #> # A tibble: 4 × 2
 #>   res_name max_sd
 #>   <chr>     <dbl>
-#> 1 100km      3.61
+#> 1 100km      3.62
 #> 2 10km       3.98
-#> 3 25km       3.75
-#> 4 50km       3.75
+#> 3 25km       3.77
+#> 4 50km       3.77
 ```
 
 ## Decisions, decisions
@@ -815,8 +837,8 @@ HS_10km_grid <- depth_data(HS_10km_grid, depth_data)
 rm(depth)
 gc()
 #>            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-#> Ncells  7241735 386.8   15965602  852.7  19957002 1065.9
-#> Vcells 88571060 675.8  228085467 1740.2 228085359 1740.2
+#> Ncells  6967605 372.2   19265032 1028.9  24081290 1286.1
+#> Vcells 87771012 669.7  252393753 1925.7 252393742 1925.7
 ```
 
 Calculate distance to shore, density of receivers, presence/absence of receivers, and merge with grid cell depth data. We can do all of this using the false origin shapefiles.
@@ -1335,7 +1357,9 @@ demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
 #> Beginning SANN initialization ...
 #> Beginning likelihood optimization ...
 #> DONE
-#> 
+#> Warning in momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min", : crawl::crwMLE for individual 7 failed;
+#> Error in mle$par: $ operator is invalid for atomic vectors
+#>    Check crawl::crwMLE arguments and/or consult crawl documentation.
 #> Attempting to achieve convergence and valid variance estimates for each individual in parallel.
 #>     Press 'esc' to force exit from 'crawlWrap'... 
 #> Attempting to improve fit for individual 1. Press 'esc' to force exit from 'crawlWrap'
@@ -1349,17 +1373,19 @@ demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
 #> Attempting to improve fit for individual 5. Press 'esc' to force exit from 'crawlWrap'
 #>     Attempt 1 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 2 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 3 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 4 of 5 -- current log-likelihood value: -2829.118  ...    Attempt 5 of 5 -- current log-likelihood value: -2829.118  ...DONE
 #> Attempting to improve fit for individual 6. Press 'esc' to force exit from 'crawlWrap'
-#>     Attempt 1 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 2 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 3 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 4 of 5 -- current log-likelihood value: -198.0223  ...    Attempt 5 of 5 -- current log-likelihood value: -198.0223  ...DONE
-#> Attempting to improve fit for individual 7. Press 'esc' to force exit from 'crawlWrap'
-#>     Attempt 1 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 2 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 3 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 4 of 5 -- current log-likelihood value: -1452.093  ...    Attempt 5 of 5 -- current log-likelihood value: -1452.093  ...DONE
+#>     Attempt 1 of 5 -- current log-likelihood value: -202.7435  ...    Attempt 2 of 5 -- current log-likelihood value: -202.7435  ...    Attempt 3 of 5 -- current log-likelihood value: -202.7435  ...    Attempt 4 of 5 -- current log-likelihood value: -202.7435  ...    Attempt 5 of 5 -- current log-likelihood value: -202.7435  ...DONE
 #> Attempting to improve fit for individual 8. Press 'esc' to force exit from 'crawlWrap'
 #>     Attempt 1 of 5 -- current log-likelihood value: -127.5107  ...    Attempt 2 of 5 -- current log-likelihood value: -127.5107  ...    Attempt 3 of 5 -- current log-likelihood value: -127.5107  ...    Attempt 4 of 5 -- current log-likelihood value: -127.5107  ...    Attempt 5 of 5 -- current log-likelihood value: -127.5107  ...DONE
 #> Attempting to improve fit for individual 9. Press 'esc' to force exit from 'crawlWrap'
 #>     Attempt 1 of 5 -- current log-likelihood value: -3431.439  ...    Attempt 2 of 5 -- current log-likelihood value: -3431.439  ...    Attempt 3 of 5 -- current log-likelihood value: -3431.439  ...    Attempt 4 of 5 -- current log-likelihood value: -3431.439  ...    Attempt 5 of 5 -- current log-likelihood value: -3431.439  ...DONE
 #> Attempting to improve fit for individual 10. Press 'esc' to force exit from 'crawlWrap'
 #>     Attempt 1 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 2 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 3 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 4 of 5 -- current log-likelihood value: -3396.162  ...    Attempt 5 of 5 -- current log-likelihood value: -3396.162  ...DONE
+#> Warning in doTryCatch(return(expr), name, parentenv, handler): 
+#> crawl::crwMLE for individual 7 failed;
+#> Error in mle$par: $ operator is invalid for atomic vectors
+#>    Check crawl::crwMLE arguments and/or consult crawl documentation.
 #> 
-#> Predicting locations (and uncertainty) at 15 mins time steps for 10 track(s) using crawl::crwPredict... DONE
+#> Predicting locations (and uncertainty) at 15 mins time steps for 9 track(s) using crawl::crwPredict... DONE
 
 demo_dets <- data.frame(demo_dets$crwPredict)
 ```
