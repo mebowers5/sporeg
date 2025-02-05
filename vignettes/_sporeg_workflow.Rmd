@@ -976,7 +976,7 @@ rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
 
 What are the characteristics of the grid cells that exhibited a good fit?
 
-```{r}
+```{r, eval=FALSE}
 #| label: good-fits
 #| warning: false
 #| include: true
