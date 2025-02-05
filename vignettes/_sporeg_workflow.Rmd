@@ -3,18 +3,14 @@ title: "sporeg Intended Workflow"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{sporeg Intended Workflow}
-  %\VignetteEngine{knitr::rmarkdown_notangle}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
 ```{r, include = FALSE}
-is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
-             "_R_CHECK_LICENSE_") %in% names(Sys.getenv()))
-knitr::opts_chunk$set(eval = !is_check)
-```
-
-```{r}
-Sys.sleep(100)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
 
 ```{r setup}
@@ -190,7 +186,7 @@ runs <- 1:(total_iterations/reps) # Interval at which outputs should be written 
 
 This will allow us to run these processes in parallel. Here, we find out how many cores we have, not including logical cores, and create a cluster
 
-```{r}
+```{r, eval=FALSE}
 #| label: create-cluster
 #| include: true
 
@@ -202,7 +198,7 @@ cl <- makeCluster(numCores-4, outfile = "cluster_out")
 
 Creating a cluster will create multiple instances of R on your computer. Now, we need to upload all of the libraries that each R instance will need to run the iterations. Notice that we have omitted the parallel library.
 
-```{r}
+```{r, eval=FALSE}
 #| label: cluster-libraries
 #| include: true
 
@@ -256,7 +252,7 @@ rm(list = c("HS_100km_grid", "HS_50km_grid", "HS_25km_grid", "HS_10km_grid"))
 
 Now we're ready to mirror our global environment to the cluster cores.
 
-```{r}
+```{r, eval=FALSE}
 #| label: cluster-environment
 #| include: true
 
@@ -267,7 +263,7 @@ parallel::clusterExport(cl, varlist = ls(envir = .GlobalEnv))
 
 We should now have everything in place to iterate our methods. Here, we are using `base::replicate` to decide how often to save the iterations we have made. We are using `parallel::parLapply` to create the iterations. So, if we decided to use `reps <- 10` and `runs <- 100`, we would create 1,000 total iterations and save them every 100 iterations.
 
-```{r}
+```{r, eval=FALSE}
 #| label: iterate-methods
 #| include: true
 
@@ -308,7 +304,7 @@ base::replicate(n = reps, expr = {
 
 You always want to stop the cluster when you are finished using it.
 
-```{r}
+```{r, eval=FALSE}
 #| label: stop-cluster
 #| include: true
 
