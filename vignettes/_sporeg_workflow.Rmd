@@ -990,13 +990,10 @@ rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
 
 What are the characteristics of the grid cells that exhibited a good fit?
 
-```{r}
+```{r, eval=FALSE}
 #| label: good-fits
 #| warning: false
 #| include: true
-
-# Loaded in for demo purposes only
-res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 
 gd_fit_char <- lapply(res, gd_fts) %>%
   data.table::rbindlist(., idcol = 'resolution') %>%
