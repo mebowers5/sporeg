@@ -813,7 +813,7 @@ mapview::mapView(HS_10km_grid)
 
 ## Map the results
 
-Let's marry our results to a sf object that lacks a false origin so that we can more easily map them. 
+Let's marry our results to a sf object that lacks a false origin so that we can more easily map them.
 
 ```{r}
 #| label: results-sfmaps
