@@ -2,12 +2,13 @@
 # CITATION file created with {cffr} R package
 # See also: https://docs.ropensci.org/cffr/
 # --------------------------------------------
-
+ 
 cff-version: 1.2.0
 message: 'To cite package "sporeg" in publications use:'
 type: software
+license: MIT
 title: 'sporeg: A package to reconstruct sporadic passive tracking data and measure
-  the bias and uncertainty incurred through the process.'
+  the bias and uncertainty incurred through the process'
 version: 0.1.0
 abstract: This package is the corresponding code for the Methods in Ecology and Evolution
   article, "A novel process to infer the reliability of ecological information derived
@@ -32,10 +33,6 @@ contact:
   given-names: Mary E.
   email: mebowers5@gmail.com
   orcid: https://orcid.org/0000-0002-5823-186X
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.10198495
-date-released: 2024-04-26
 references:
 - type: software
   title: knitr
@@ -95,7 +92,7 @@ references:
 - type: software
   title: car
   abstract: 'car: Companion to Applied Regression'
-  notes: Imports
+  notes: Suggests
   url: https://CRAN.R-project.org/package=car
   repository: https://CRAN.R-project.org/package=car
   authors:
@@ -108,6 +105,94 @@ references:
   - family-names: Price
     given-names: Brad
     email: brad.price@mail.wvu.edu
+  year: '2024'
+- type: software
+  title: geosphere
+  abstract: 'geosphere: Spherical Trigonometry'
+  notes: Suggests
+  url: https://github.com/rspatial/geosphere/issues/
+  repository: https://CRAN.R-project.org/package=geosphere
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+  year: '2024'
+- type: software
+  title: mapview
+  abstract: 'mapview: Interactive Viewing of Spatial Data in R'
+  notes: Suggests
+  url: https://github.com/r-spatial/mapview
+  repository: https://CRAN.R-project.org/package=mapview
+  authors:
+  - family-names: Appelhans
+    given-names: Tim
+    email: tim.appelhans@gmail.com
+  - family-names: Detsch
+    given-names: Florian
+    email: fdetsch@web.de
+  - family-names: Reudenbach
+    given-names: Christoph
+    email: reudenbach@geo.uni-marburg.de
+  - family-names: Woellauer
+    given-names: Stefan
+    email: stephan.woellauer@geo.uni-marburg.de
+  year: '2024'
+- type: software
+  title: oceanmap
+  abstract: 'oceanmap: A Plotting Toolbox for 2D Oceanographic Data'
+  notes: Suggests
+  repository: https://CRAN.R-project.org/package=oceanmap
+  authors:
+  - family-names: Bauer
+    given-names: Robert K.
+  year: '2024'
+- type: software
+  title: parallel
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Suggests
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
+- type: software
+  title: sp
+  abstract: 'sp: Classes and Methods for Spatial Data'
+  notes: Suggests
+  url: https://github.com/edzer/sp/
+  repository: https://CRAN.R-project.org/package=sp
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+  - family-names: Bivand
+    given-names: Roger
+    email: Roger.Bivand@nhh.no
+  year: '2024'
+- type: software
+  title: data.table
+  abstract: 'data.table: Extension of `data.frame`'
+  notes: Suggests
+  url: https://r-datatable.com
+  repository: https://CRAN.R-project.org/package=data.table
+  authors:
+  - family-names: Barrett
+    given-names: Tyson
+    email: t.barrett88@gmail.com
+  - family-names: Dowle
+    given-names: Matt
+    email: mattjdowle@gmail.com
+  - family-names: Srinivasan
+    given-names: Arun
+    email: asrini@pm.me
+  - family-names: Gorecki
+    given-names: Jan
+  - family-names: Chirico
+    given-names: Michael
+  - family-names: Hocking
+    given-names: Toby
+    orcid: https://orcid.org/0000-0002-3146-0865
   year: '2024'
 - type: software
   title: dplyr
@@ -134,17 +219,6 @@ references:
     orcid: https://orcid.org/0000-0003-4777-038X
   year: '2024'
 - type: software
-  title: geosphere
-  abstract: 'geosphere: Spherical Trigonometry'
-  notes: Imports
-  url: https://github.com/rspatial/geosphere/issues/
-  repository: https://CRAN.R-project.org/package=geosphere
-  authors:
-  - family-names: Hijmans
-    given-names: Robert J.
-    email: r.hijmans@gmail.com
-  year: '2024'
-- type: software
   title: glatos
   abstract: 'glatos: A package for the Great Lakes Acoustic Telemetry Observation
     System'
@@ -162,45 +236,6 @@ references:
     given-names: Jon
   year: '2024'
   version: '>= 0.7.3'
-- type: software
-  title: mapview
-  abstract: 'mapview: Interactive Viewing of Spatial Data in R'
-  notes: Imports
-  url: https://github.com/r-spatial/mapview
-  repository: https://CRAN.R-project.org/package=mapview
-  authors:
-  - family-names: Appelhans
-    given-names: Tim
-    email: tim.appelhans@gmail.com
-  - family-names: Detsch
-    given-names: Florian
-    email: fdetsch@web.de
-  - family-names: Reudenbach
-    given-names: Christoph
-    email: reudenbach@geo.uni-marburg.de
-  - family-names: Woellauer
-    given-names: Stefan
-    email: stephan.woellauer@geo.uni-marburg.de
-  year: '2024'
-- type: software
-  title: oceanmap
-  abstract: 'oceanmap: A Plotting Toolbox for 2D Oceanographic Data'
-  notes: Imports
-  repository: https://CRAN.R-project.org/package=oceanmap
-  authors:
-  - family-names: Bauer
-    given-names: Robert K.
-  year: '2024'
-- type: software
-  title: parallel
-  abstract: 'R: A Language and Environment for Statistical Computing'
-  notes: Imports
-  authors:
-  - name: R Core Team
-  institution:
-    name: R Foundation for Statistical Computing
-    address: Vienna, Austria
-  year: '2024'
 - type: software
   title: pathroutr
   abstract: 'pathroutr: An R Package for (Re-)Routing Paths Around Barriers'
@@ -226,18 +261,123 @@ references:
   year: '2024'
   version: '>= 1.0-12'
 - type: software
-  title: sp
-  abstract: 'sp: Classes and Methods for Spatial Data'
+  title: lubridate
+  abstract: 'lubridate: Make Dealing with Dates a Little Easier'
   notes: Imports
-  url: https://github.com/edzer/sp/
-  repository: https://CRAN.R-project.org/package=sp
+  url: https://lubridate.tidyverse.org
+  repository: https://CRAN.R-project.org/package=lubridate
+  authors:
+  - family-names: Spinu
+    given-names: Vitalie
+    email: spinuvit@gmail.com
+  - family-names: Grolemund
+    given-names: Garrett
+  - family-names: Wickham
+    given-names: Hadley
+  year: '2024'
+- type: software
+  title: momentuHMM
+  abstract: 'momentuHMM: Maximum Likelihood Analysis of Animal Movement Behavior Using
+    Multivariate Hidden Markov Models'
+  notes: Imports
+  url: https://github.com/bmcclintock/momentuHMM/discussions
+  repository: https://CRAN.R-project.org/package=momentuHMM
+  authors:
+  - family-names: McClintock
+    given-names: Brett
+  - family-names: Michelot
+    given-names: Theo
+  year: '2024'
+- type: software
+  title: purrr
+  abstract: 'purrr: Functional Programming Tools'
+  notes: Imports
+  url: https://purrr.tidyverse.org/
+  repository: https://CRAN.R-project.org/package=purrr
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@rstudio.com
+  year: '2024'
+- type: software
+  title: tibble
+  abstract: 'tibble: Simple Data Frames'
+  notes: Imports
+  url: https://tibble.tidyverse.org/
+  repository: https://CRAN.R-project.org/package=tibble
+  authors:
+  - family-names: Müller
+    given-names: Kirill
+    email: kirill@cynkra.com
+    orcid: https://orcid.org/0000-0002-1416-3412
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+  year: '2024'
+- type: software
+  title: tidyr
+  abstract: 'tidyr: Tidy Messy Data'
+  notes: Imports
+  url: https://tidyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=tidyr
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Vaughan
+    given-names: Davis
+    email: davis@posit.co
+  - family-names: Girlich
+    given-names: Maximilian
+  year: '2024'
+- type: software
+  title: units
+  abstract: 'units: Measurement Units for R Vectors'
+  notes: Imports
+  url: https://r-quantities.github.io/units/
+  repository: https://CRAN.R-project.org/package=units
   authors:
   - family-names: Pebesma
     given-names: Edzer
     email: edzer.pebesma@uni-muenster.de
-  - family-names: Bivand
-    given-names: Roger
-    email: Roger.Bivand@nhh.no
+    orcid: https://orcid.org/0000-0001-8049-7069
+  - family-names: Mailund
+    given-names: Thomas
+    email: mailund@birc.au.dk
+  - family-names: Kalinowski
+    given-names: Tomasz
+  - family-names: Ucar
+    given-names: Iñaki
+    email: iucar@fedoraproject.org
+    orcid: https://orcid.org/0000-0001-6403-5550
+  year: '2024'
+- type: software
+  title: magrittr
+  abstract: 'magrittr: A Forward-Pipe Operator for R'
+  notes: Imports
+  url: https://magrittr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=magrittr
+  authors:
+  - family-names: Bache
+    given-names: Stefan Milton
+    email: stefan@stefanbache.dk
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+  year: '2024'
+- type: software
+  title: stats
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  institution:
+    name: R Foundation for Statistical Computing
+    address: Vienna, Austria
   year: '2024'
 - type: software
   title: 'R: A Language and Environment for Statistical Computing'
@@ -249,5 +389,5 @@ references:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
   year: '2024'
-  version: '>= 2.10'
+  version: '>= 3.5.0'
 

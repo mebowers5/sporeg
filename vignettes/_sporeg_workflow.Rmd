@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 library(sporeg)
 ```
 
-## Objective
+# Objective
 
 This vignette is a step by step guide to the methods in "Full Disclosure:...". It will show you how to simulate semi-random tracks, derive acoustic telemetry data from those tracks, model/reconstruct tracks from those derived detection data, re-route them off land, summarize distribution information, and compare the simulated and modeled summarizations. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
 
@@ -59,7 +59,6 @@ library(pathroutr)
 library(parallel)
 library(geosphere)
 library(mapview)
-library(oceanmap)
 library(car)
 ```
 
@@ -83,6 +82,7 @@ Get the release site.
 
 load(system.file("extdata", "rel_site.Rda", 
                             package = "sporeg"))
+
 ```
 
 ## Create the objects required for summarizing distribution information
@@ -178,7 +178,7 @@ For the iterations:
 #| label: parallel-params
 #| include: true
 
-total_iterations <- 10 # Total number of iterations desired
+total_iterations <- 2 # Total number of iterations desired
 reps <- 2 # Number of replicates that will result in desired iterations given reps
 runs <- 1:(total_iterations/reps) # Interval at which outputs should be written to file
 ```
@@ -236,7 +236,7 @@ Let's create an output file where our results will go. We only want to create th
 # results <- list()
 
 # Assign the filename
-filename <- "results.Rdata"
+filename <- "results.Rda"
 
 # Save the empty list object to the filename
 # save(results, file = filename)
@@ -285,13 +285,13 @@ base::replicate(n = reps, expr = {
     }
     )
     # Load the previous results
-    load(system.file("data", filename, package = "sporeg")) 
+    load(system.file("extdata", filename, package = "sporeg")) 
     
     # Append the new results to the previous results
     results <- append(results, iterated_results)
     
     # Overwrite the results with both the new and previous results combined
-    save(results, file = system.file("data", filename, package = "sporeg"))
+    save(results, file = system.file("extdata", filename, package = "sporeg"))
     
     # Clear cache
     gc()
@@ -322,7 +322,7 @@ First, let's load the results.
 #| label: view-results
 #| include: true
 
-load(system.file("data", filename, package = "sporeg")) 
+load(system.file("extdata", filename, package = "sporeg")) 
 ```
 
 Hmm... these are hard to look at. Let's turn them into a data frame instead.
@@ -347,7 +347,7 @@ Remove any cases where both `sim_count` and `mod_count` were zero for all iterat
 #| include: true
 
 results <- results %>%
-  left_join(tibble(resolution = 1:4, 
+  dplyr::left_join(dplyr::tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") 
 ```
@@ -470,7 +470,7 @@ results <- new_df %>%
 results
 ```
 
-## Check the methods performance
+# Check the methods performance
 
 Let's create a table that shows how closely the modeled tracks compared to the reconstructed tracks for each grid resolution. Here, we compare counts of grid cells within a certain difference from `sim_count` divided by the total number of grid cells.
 
@@ -783,7 +783,7 @@ Merge the results to these grid cell metadata and determine which grid cells exh
 results <- results %>%
   mutate(g_fit = ifelse(avg_dif>= -1*0.1*anims & avg_dif <= 0.1*anims, 1, 0))
 
-HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>%
+HS_100km_grid <- merge(results %>% dplyr::filter(res_name == "100km"), HS_100km_grid, by = c("gid")) %>% 
   sf::st_as_sf() 
 
 HS_50km_grid <- merge(results %>% dplyr::filter(res_name == "50km"), HS_50km_grid, by = c("gid")) %>%
@@ -831,7 +831,7 @@ HS25km <- grid_res(25, study_site, 3857, "polygons")
 HS10km <- grid_res(10, study_site, 3857, "polygons")
 
 # Merge results data to new geometries
-HS100km <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS100km, by = c("gid")) %>%
+HS100km <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS100km, by = c("gid")) %>% 
   sf::st_as_sf() 
 
 HS50km <- merge((HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS50km, by = c("gid")) %>%
@@ -850,7 +850,7 @@ We want to create a model to understand which variables affect a good fit in the
 
 ## Create a dummy model
 
-We need to check for colinearity between main effects to see if we need to include any interaction terms between main effects in the model.
+We need to check for multicollinearity between main effects to see if we need to include any interaction terms between main effects in the model.
 
 ```{r}
 #| label: vif
@@ -1005,7 +1005,7 @@ gd_fit_char <- lapply(res, gd_fts) %>%
 
 ```
 
-## Do the methods close gaps?
+# Do the methods close gaps?
 
 Let's find out how many of the good fits occurred in grid cells that lacked receivers. We can use the results list `res` that we created in the previous step and apply a function over all resolutions at the same time.
 
@@ -1053,7 +1053,7 @@ rcv_chars <- lapply(res, rcv_chr) %>%
 
 ## What if we had chosen a different depth cutoff?
 
-Blacktip sharks, the species chosen to demonstrate the current methods, is known to rarely cross the Gulf Stream, which is in deep waters. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
+Blacktip sharks, the species chosen to demonstrate the current methods, is known to cross the Gulf Stream, which is in deep waters, on occasion. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
 
 ```{r}
 
@@ -1067,21 +1067,64 @@ dif_depth <- lapply(res, dif_co) %>%
   mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 ```
 
-## Demonstrate ecological application
+# Demonstrate ecological application
 
 Let's apply these methods to real acoustic telemetry data so we can derive distribution information.
 
 ```{r}
 
-load(system.file("extdata", "subset.Rda", package = "sporeg"))
-  
+load(system.file("extdata", "demo_dets.Rda", package = "sporeg"))
+
+demo_dets <- demo_dets %>%
+    dplyr::arrange(ID, time) %>%
+    dplyr::group_by(ID, time) %>%
+    dplyr::summarize(mean_pos = sf::st_combine(geometry)) %>%
+    sf::st_centroid() %>%
+    dplyr::mutate(time = as.POSIXct(time),
+           x = sf::st_coordinates(mean_pos)[,1],
+           y = sf::st_coordinates(mean_pos)[,2],
+           locType = "o") %>% # Obtain x and y coordinates so that you can merge with predicted locations later
+    sf::st_drop_geometry() %>%
+    as.data.frame
+```
+
+Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package, to impute locations between observations.
+
+```{r}
+demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
+                                    fixPar = c(NA, NA),
+                                    theta = c(8,0),
+                                    attempts = 100, retrySD = 5, retryFits = 5,
+                                    ncores = 2, retryParallel = TRUE)
+
+demo_dets <- data.frame(demo_dets$crwPredict)
+```
+
+Turn the movement model product into a data frame and label the predicted locations.
+
+```{r}
+demo_dets <- demo_dets %>%
+    dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
+    dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
+    as.data.frame
+
+demo_dets <- demo_dets %>%
+    dplyr::select(ID, time, mu.x, mu.y) %>%
+    dplyr::mutate(time = lubridate::ymd_hms(format(as.POSIXct(time, tz = "UTC"), "%Y-%m-%d %H:%M:%S", ID = as.factor(ID))))
+```
+
+Since the movement model does not recognize land, let's re-route the parts that crossed the land barrier.
+
+```{r}
 CRS <- 3857
-barrier <- atlcoast %>%
-  sf::st_transform(., 3857)
+
+load(system.file("extdata", "atlcoast.Rda", package = "sporeg"))
+
+barrier <- atlcoast %>% sf::st_transform(., 3857)
 vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
   
-tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)
+tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
 
 # Check map
 mapview::mapView(tbuff650)
