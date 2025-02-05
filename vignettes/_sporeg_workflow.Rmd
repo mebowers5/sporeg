@@ -995,7 +995,8 @@ What are the characteristics of the grid cells that exhibited a good fit?
 #| warning: false
 #| include: true
 
-res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
+# Loaded in for demo purposes only
+res <- load(system.file("extdata", "res.Rda", package = "sporeg"))
 
 gd_fit_char <- lapply(res, gd_fts) %>%
   data.table::rbindlist(., idcol = 'resolution') %>%
