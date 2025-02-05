@@ -990,13 +990,14 @@ rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
 
 What are the characteristics of the grid cells that exhibited a good fit?
 
-```{r, eval=FALSE}
+```{r}
 #| label: good-fits
 #| warning: false
 #| include: true
 
-gd_fit_char <- lapply(res, gd_fts) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+gd_fit_char <- lapply(res, gd_fts)
+
+gd_fit_char <- data.table::rbindlist(., idcol = 'resolution') %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
@@ -1013,8 +1014,9 @@ Let's find out how many of the good fits occurred in grid cells that lacked rece
 #| warning: false
 #| include: true
 
-clsd_gps <- lapply(res, gps_fld) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+clsd_gps <- lapply(res, gps_fld)
+
+clsd_gps <-  data.table::rbindlist(., idcol = 'resolution') %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
@@ -1030,8 +1032,9 @@ Let's find out where these closed gaps are located (e.g., are they coastal?).
 #| warning: false
 #| include: true
 
-clsd_gp_chars <- lapply(res, gps_chr) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+clsd_gp_chars <- lapply(res, gps_chr)
+
+clsd_gp_chars <- data.table::rbindlist(., idcol = 'resolution') %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
@@ -1047,8 +1050,9 @@ Let's find out where most of the receivers are in the current array.
 #| warning: false
 #| include: true
 
-rcv_chars <- lapply(res, rcv_chr) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+rcv_chars <- lapply(res, rcv_chr)
+
+rcv_chars <- data.table::rbindlist(., idcol = 'resolution') %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
@@ -1067,8 +1071,9 @@ Blacktip sharks, the species chosen to demonstrate the current methods, is known
 
 depth_limit <- 300 # [m]
 
-dif_depth <- lapply(res, dif_co) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+dif_depth <- lapply(res, dif_co)
+
+dif_depth <- data.table::rbindlist(., idcol = 'resolution') %>%
   left_join(tibble(resolution = 1:4, 
                    res_name = c("100km", "50km", "25km", "10km")), 
             by = "resolution") %>%
