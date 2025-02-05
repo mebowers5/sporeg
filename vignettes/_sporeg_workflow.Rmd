@@ -1026,6 +1026,9 @@ clsd_gps <- lapply(res, gps_fld) %>%
 Let's find out where these closed gaps are located (e.g., are they coastal?).
 
 ```{r}
+#| label: closed-where
+#| warning: false
+#| include: true
 
 clsd_gp_chars <- lapply(res, gps_chr) %>%
   data.table::rbindlist(., idcol = 'resolution') %>%
@@ -1040,6 +1043,9 @@ clsd_gp_chars <- lapply(res, gps_chr) %>%
 Let's find out where most of the receivers are in the current array.
 
 ```{r}
+#| label: where-rcvs
+#| warning: false
+#| include: true
 
 rcv_chars <- lapply(res, rcv_chr) %>%
   data.table::rbindlist(., idcol = 'resolution') %>%
@@ -1055,6 +1061,9 @@ rcv_chars <- lapply(res, rcv_chr) %>%
 Blacktip sharks, the species chosen to demonstrate the current methods, is known to cross the Gulf Stream, which is in deep waters, on occasion. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
 
 ```{r}
+#| label: diff-cutoff
+#| warning: false
+#| include: true
 
 depth_limit <- 300 # [m]
 
@@ -1071,6 +1080,9 @@ dif_depth <- lapply(res, dif_co) %>%
 Let's apply these methods to real acoustic telemetry data so we can derive distribution information.
 
 ```{r}
+#| label: eco-app
+#| warning: false
+#| include: true
 
 load(system.file("extdata", "demo_dets.Rda", package = "sporeg"))
 
@@ -1090,6 +1102,10 @@ demo_dets <- demo_dets %>%
 Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package, to impute locations between observations.
 
 ```{r}
+#| label: real-tracks
+#| warning: false
+#| include: true
+
 demo_dets <- momentuHMM::crawlWrap(obsData = demo_dets, timeStep = "15 min",
                                     fixPar = c(NA, NA),
                                     theta = c(8,0),
@@ -1102,6 +1118,10 @@ demo_dets <- data.frame(demo_dets$crwPredict)
 Turn the movement model product into a data frame and label the predicted locations.
 
 ```{r}
+#| label: label-locs
+#| warning: false
+#| include: true
+
 demo_dets <- demo_dets %>%
     dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
     dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>%  #Specify predicted locs
@@ -1115,6 +1135,10 @@ demo_dets <- demo_dets %>%
 Since the movement model does not recognize land, let's re-route the parts that crossed the land barrier.
 
 ```{r}
+#| label: real-reroute
+#| warning: false
+#| include: true
+
 CRS <- 3857
 
 load(system.file("extdata", "atlcoast.Rda", package = "sporeg"))
@@ -1134,6 +1158,10 @@ mapview::mapView(tbuff650)
 Here, we need to calculate the number of unique individuals in each grid cell so that we can determine the distribution of the population.
 
 ```{r}
+#| label: real-gridcount
+#| warning: false
+#| include: true
+
 sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
 
 subset_cts <- cts(sg, tbuff650)
@@ -1142,6 +1170,9 @@ subset_cts <- cts(sg, tbuff650)
 How would it differ if we just used the daily summarized acoustic telemetry data to derive distribution information?
 
 ```{r}
+#| label: daily-summs
+#| warning: false
+#| include: true
 
 load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
 
@@ -1153,6 +1184,9 @@ at_dly_locs_cts <- cts(sg, at_dly_locs)
 What if we connected those data with straight lines?
 
 ```{r}
+#| label: straight-line
+#| warning: false
+#| include: true
 
 load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
 
@@ -1194,6 +1228,9 @@ at_line_cts <- cts(sg, at_lines)
 Let's merge the results that have a false origin with the distribution data so we know where we can rely on the results.
 
 ```{r}
+#| label: reliability
+#| warning: false
+#| include: true
 
 goodfts_50km <- merge((HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)), at_line_cts, by = "gid") %>%
   sf::st_as_sf()
@@ -1204,6 +1241,9 @@ goodfts_50km <- merge((HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)), 
 Let's map the mean differences with the corrected map projection.
 
 ```{r}
+#| label: real-map
+#| warning: false
+#| include: true
 
 mapview::mapView(goodfts_50km, zcol = "avg_dif")
 ```
