@@ -1047,7 +1047,7 @@ rcv_chars <- lapply(res, rcv_chr) %>%
 
 Blacktip sharks, the species chosen to demonstrate the current methods, is known to cross the Gulf Stream, which is in deep waters, on occasion. However, in a mark and recapture study, this species was not caught in a location with a depth greater than 265 m. If we cut off our study to 300 m, how do our results change?
 
-```{r}
+```{r, eval=FALSE}
 #| label: diff-cutoff
 #| warning: false
 #| include: true
@@ -1088,7 +1088,7 @@ demo_dets <- demo_dets %>%
 
 Now we can run the movement model, a continuous-time correlated random walk model, using the momentuHMM R package, to impute locations between observations.
 
-```{r, eval=FALSE}
+```{r}
 #| label: real-tracks
 #| warning: false
 #| include: true
