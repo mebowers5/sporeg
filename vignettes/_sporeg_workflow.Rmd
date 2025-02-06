@@ -6,6 +6,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -1011,7 +1012,7 @@ clsd_gps <- lapply(res, gps_fld) %>%
 
 Let's find out where these closed gaps are located (e.g., are they coastal?).
 
-```{r}
+```{r, eval=FALSE}
 #| label: closed-where
 #| warning: false
 #| include: true
