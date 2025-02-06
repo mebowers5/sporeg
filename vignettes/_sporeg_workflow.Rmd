@@ -1121,7 +1121,7 @@ demo_dets <- demo_dets %>%
 
 Since the movement model does not recognize land, let's re-route the parts that crossed the land barrier.
 
-```{r}
+```{r, eval=FALSE}
 #| label: real-reroute
 #| warning: false
 #| include: true
