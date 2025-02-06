@@ -1104,7 +1104,7 @@ demo_dets <- data.frame(demo_dets$crwPredict)
 
 Turn the movement model product into a data frame and label the predicted locations.
 
-```{r}
+```{r, eval=FALSE}
 #| label: label-locs
 #| warning: false
 #| include: true
