@@ -27,6 +27,7 @@ Imports:
     sf (>= 1.0-12),
     lubridate,
     momentuHMM,
+    plotrix,
     purrr,
     tibble,
     tidyr,
