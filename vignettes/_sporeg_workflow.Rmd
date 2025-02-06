@@ -1144,7 +1144,7 @@ mapview::mapView(tbuff650)
 
 Here, we need to calculate the number of unique individuals in each grid cell so that we can determine the distribution of the population.
 
-```{r}
+```{r, eval=FALSE}
 #| label: real-gridcount
 #| warning: false
 #| include: true
