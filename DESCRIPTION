@@ -40,3 +40,4 @@ Remotes:
 Depends: 
     R (>= 3.5.0)
 LazyData: true
+URL: https://mebowers5.github.io/sporeg/
