@@ -12,11 +12,12 @@ The goal of sporeg is to reconstruct passive telemetry tracks using movement mod
 
 Sporeg requires R version >= 4.3.2. The latest version of sporeg can be installed from GitHub using the following:
 
-To install sporeg, first install the remotes package.
+To install sporeg, first install the remotes and pathroutr packages.
 
 ``` r
 install.packages("remotes")
 library(remotes)
+remotes::install_github('jmlondon/pathroutr')
 remotes::install_github('mebowers5/sporeg', build_vignettes = TRUE, dependencies = TRUE)
 ```
 
