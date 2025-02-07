@@ -35,7 +35,7 @@ And clearing any cache we may have remaining from previous work.
 
 ```{r}
 #| label: Clear-cache
-#| include: true
+#| include: false
 
 gc()
 ```
@@ -44,7 +44,7 @@ Next, let's load the packages that we will need to run the steps in this vignett
 
 ```{r}
 #| label: load-packages
-#| include: true
+#| include: false
 
 library(sporeg)
 library(dplyr)
@@ -86,7 +86,7 @@ Make the different resolution grid cells and put them all in a list.
 
 ```{r}
 #| label: grids
-#| include: true
+#| include: false
 
 HS_10km_grid <- grid_res(10, study_site, 3857, what = "polygons")
 HS_25km_grid <- grid_res(25, study_site, 3857, what = "polygons")
@@ -114,7 +114,7 @@ Get the land barrier.
 
 ```{r}
 #| label: land-barrier
-#| include: true
+#| include: false
 
 load(system.file("extdata", "land_barrier.Rda", 
                             package = "sporeg")) 
@@ -204,13 +204,11 @@ clusterEvalQ(cl, {
   library(sf)
   library(sp)
   library(glatos) 
-  # To install glatos, use remotes::install_github("ocean-tracking-network/glatos")
   library(dplyr)
   library(momentuHMM)
   library(crawl)
   library(lubridate)
   library(pathroutr)
-  # To install pathroutr, use remotes::install_github("jmlondon/pathroutr")
   library(sfnetworks)
   library(tidyverse)
   library(stplanr)
@@ -445,7 +443,7 @@ If we ran too many iterations, we can filter for the number required for each it
 
 ```{r}
 #| label: results-summary
-#| include: true
+#| include: false
 new_df <- df_var %>%
   dplyr::filter(res_name == "100km" & iteration <= 119 |
                   res_name == "50km" & iteration <= 128 |
@@ -515,7 +513,7 @@ We had a problem in the track reconstruction where some iterations did not recon
 ```{r}
 #| label: recon-info
 #| warning: false
-#| include: true
+#| include: false
 
 recon <- df_var %>%
   group_by(res_name, iteration) %>%
@@ -538,7 +536,7 @@ Because some tracks were not re-constructed by the movement model, we may have i
 ```{r}
 #| label: recon-results
 #| warning: false
-#| include: true
+#| include: false
 
 recon_res <- df_var %>%
   group_by(res_name, iteration) %>%
@@ -554,7 +552,7 @@ Let's re-number these iterations where all `anims` were re-constructed.
 ```{r}
 #| label: new-iterations
 #| warning: false
-#| include: true
+#| include: false
 
 new_iters <- df_var %>%
   group_by(res_name, iteration) %>%
@@ -570,7 +568,7 @@ Now we can see how our results would change if we had selected only iterations i
 ```{r}
 #| label: new-results
 #| warning: false
-#| include: true
+#| include: false
 
 new_iters_df <- merge(new_iters, df_var) %>%
   dplyr::filter(res_name == "100km" & new_iter <= 119 |
@@ -615,7 +613,7 @@ First, let's gather information on the depth in each grid cell. For this example
 
 ```{r}
 #| label: get-bbox
-#| include: true
+#| include: false
 
 # Objects required for iterations to run
 load(system.file("extdata", "site_depth.Rda", package = "sporeg")) 
@@ -834,7 +832,7 @@ HS10km <- merge((HS_10km_grid %>% as.data.frame() %>% dplyr::select(-x)), HS10km
 
 We want to create a model to understand which variables affect a good fit in the grid cells.
 
-## Create a dummy model
+## Create a model to test for multicolinearity
 
 We need to check for multicollinearity between main effects to see if we need to include any interaction terms between main effects in the model.
 
@@ -843,15 +841,15 @@ We need to check for multicollinearity between main effects to see if we need to
 #| warning: false
 #| include: true
 
-dummy.fit <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), data = HS_10km_grid)
+vif.fit <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore, family = binomial(), data = HS_10km_grid)
 
-car::vif(dummy.fit)
+car::vif(vif.fit)
 ```
 
 ```{r}
 #| label: model-selection
 #| warning: false
-#| include: true
+#| include: false
 
 # 100 x 100km resolution
 fit1.100km <- glm(formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
@@ -906,7 +904,7 @@ Now that we've constructed the model using backward selection by p-value, let's 
 ```{r}
 #| label: model-usefulness
 #| warning: false
-#| include: true
+#| include: false
 
 summary(fit2.100km)
 
@@ -1069,7 +1067,7 @@ Let's apply these methods to real acoustic telemetry data so we can derive distr
 ```{r}
 #| label: eco-app
 #| warning: false
-#| include: true
+#| include: false
 
 load(system.file("extdata", "demo_dets.Rda", package = "sporeg"))
 
@@ -1173,7 +1171,7 @@ What if we connected those data with straight lines?
 ```{r}
 #| label: straight-line
 #| warning: false
-#| include: true
+#| include: false
 
 load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
 

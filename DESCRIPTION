@@ -33,7 +33,9 @@ Imports:
     tidyr,
     units,
     magrittr,
-    stats
+    stats,
+    stplanr,
+    doFuture
 Remotes: 
     jmlondon/pathroutr,
     ocean-tracking-network/glatos
