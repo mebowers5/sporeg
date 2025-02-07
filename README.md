@@ -22,7 +22,7 @@ remotes::install_github('mebowers5/sporeg', build_vignettes = TRUE, dependencies
 
 ## Step-by-step guide
 
-The vignette(s) for this package can be accessed via GitHub pages (<https://mebowers5.github.io/sporeg/>) or the following code:
+The vignette(s) for this package can be accessed via GitHub pages (<https://mebowers5.github.io/sporeg/articles/sporeg_workflow.html>) or the following code:
 
 ``` r
 browseVignettes(package = "sporeg")
