@@ -7,7 +7,5 @@
 ^doc$
 ^Meta$
 ^\.github$
-^vignettes/_sporeg_workflow\.Rmd$
-^vignettes/precompile\.R$
 ^CITATION\.cff$
 ^LICENSE\.md$

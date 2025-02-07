@@ -10,21 +10,21 @@ The goal of sporeg is to reconstruct passive telemetry tracks using movement mod
 
 ## Installation
 
-Sporeg requires R version >= 4.3.2. You can install the development version of sporeg like so:
+Sporeg requires R version >= 4.3.2. The latest version of sporeg can be installed from GitHub using the following:
 
 To install sporeg, first install the remotes package and some dependencies that live on GitHub
 
 ``` r
 install.packages("remotes")
 library(remotes)
-remotes::install_github("ocean-tracking-network/glatos")
-remotes::install_github("jmlondon/pathroutr") 
+remotes::install_github('mebowers5/sporeg', build_vignettes = TRUE, dependencies = TRUE)
 ```
 
-The latest version of sporeg can be installed from GitHub using the following code:
+If you are having trouble installing sporeg, try installing glatos and pathroutr first:
 
 ``` r
-remotes::install_github('mebowers5/sporeg', build_vignettes = TRUE, dependencies = TRUE)
+remotes::install_github("ocean-tracking-network/glatos")
+remotes::install_github("jmlondon/pathroutr") 
 ```
 
 ## Step-by-step guide
