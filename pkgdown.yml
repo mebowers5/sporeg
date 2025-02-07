@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   sporeg_workflow: sporeg_workflow.html
-last_built: 2025-02-07T03:37Z
+last_built: 2025-02-07T04:35Z
 urls:
   reference: https://mebowers5.github.io/sporeg/reference
   article: https://mebowers5.github.io/sporeg/articles
