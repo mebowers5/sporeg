@@ -20,7 +20,7 @@ library(sporeg)
 
 # Objective
 
-This vignette is a step by step guide to the methods that were published in Methods in Ecology and Evolution, *A novel process to infer the reliability of ecological information derived from passive acoustic telemetry track reconstruction* (<https://doi.org/10.1111/2041-210X.14340>). This guide will show you how to simulate tracks, derive acoustic telemetry data from those tracks, reconstruct tracks from those derived detection data, re-route the tracks off land, summarize distribution information, and compare the simulated and modeled tracks. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
+This vignette is a step by step guide to the journal article, *A novel process to infer the reliability of ecological information derived from passive acoustic telemetry track reconstruction*, published in Methods in Ecology and Evolution (<https://doi.org/10.1111/2041-210X.14340>). This guide will show you how to simulate tracks, derive acoustic telemetry data from those tracks, reconstruct tracks from those derived detection data, re-route the tracks off land, summarize distribution information, and compare the simulated and modeled tracks. These comparisons represent the statistical bias incurred by the modeling reconstruction and are directly related to the orientation of receivers within the study area.
 
 Let's begin by clearing our environment.
 
