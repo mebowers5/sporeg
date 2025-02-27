@@ -805,7 +805,7 @@ Let's marry our results to a sf object that lacks a false origin so that we can 
 #| include: true
 
 # Create grids without false origin
-study_site <- load(system.file("extdata", "study_site.Rda", package = "sporeg")) 
+load(system.file("extdata", "study_site.Rda", package = "sporeg")) 
 
 HS100km <- grid_res(100, study_site, 3857, "polygons")
 HS50km <- grid_res(50, study_site, 3857, "polygons")
