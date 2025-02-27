@@ -59,13 +59,13 @@ library(car)
 
 ## Get the objects required for simulating tracks
 
-Get the study site and set the projected coordinate system.
+Get the study site and set the projected coordinate system. To accommodate the acoustic receiver station owners, we have applied a false origin to the spatial objects to occlude the actual locations of acoustic receivers.
 
 ```{r}
 #| label: study-site
 #| include: true
 
-load(system.file("extdata", "study_site.Rda", 
+load(system.file("extdata", "fo_study_site.Rda", 
                             package = "sporeg"))
 ```
 
@@ -75,7 +75,7 @@ Get the release site.
 #| label: release-site
 #| include: true
 
-load(system.file("extdata", "rel_site.Rda", 
+load(system.file("extdata", "fo_rel_site.Rda", 
                             package = "sporeg"))
 
 ```
@@ -88,10 +88,10 @@ Make the different resolution grid cells and put them all in a list.
 #| label: grids
 #| include: true
 
-HS_10km_grid <- grid_res(10, study_site, 3857, what = "polygons")
-HS_25km_grid <- grid_res(25, study_site, 3857, what = "polygons")
-HS_50km_grid <- grid_res(50, study_site, 3857, what = "polygons")
-HS_100km_grid <- grid_res(100, study_site, 3857, what = "polygons")
+HS_10km_grid <- grid_res(10, fo_study_site, 3857, what = "polygons")
+HS_25km_grid <- grid_res(25, fo_study_site, 3857, what = "polygons")
+HS_50km_grid <- grid_res(50, fo_study_site, 3857, what = "polygons")
+HS_100km_grid <- grid_res(100, fo_study_site, 3857, what = "polygons")
 
 HSgrid <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 ```
@@ -104,7 +104,7 @@ Get the stations.
 #| label: stations
 #| include: true
 
-load(system.file("extdata", "stations.Rda", 
+load(system.file("extdata", "fo_stations.Rda", 
                             package = "sporeg"))
 ```
 
@@ -116,10 +116,10 @@ Get the land barrier.
 #| label: land-barrier
 #| include: true
 
-load(system.file("extdata", "land_barrier.Rda", 
+load(system.file("extdata", "fo_land_barrier.Rda", 
                             package = "sporeg")) 
 
-land_barrier <- land_barrier %>%
+fo_land_barrier <- fo_land_barrier %>%
   sf::st_transform(3857) %>%
   sf::st_collection_extract('POLYGON') %>%
   sf::st_cast('POLYGON')
@@ -131,7 +131,7 @@ Create a visibility graph from the land barrier object.
 #| label: visibility-graph
 #| include: true
 
-vis_graph <- pathroutr::prt_visgraph(land_barrier)
+vis_graph <- pathroutr::prt_visgraph(fo_land_barrier)
 ```
 
 ## Set the parameters values
@@ -153,10 +153,10 @@ vmin <- 0.98
 # Upper bound of mean recorded velocity for animal in m/s (ex: blacktip shark) (average + standard deviation)
 vmax <- 1.58  
 # Intersection of bounding box of release site(s) and study site
-rel_site <- rel_site 
+rel_site <- fo_rel_site 
 
 # Study site must be an sp object for the track simulations
-study_site <- study_site 
+fo_study_site <- fo_study_site 
 
 # Name the epsg of the coordinate system for study_site
 crs <- 3857
@@ -266,10 +266,10 @@ base::replicate(n = reps, expr = {
     iterated_results <- parallel::parLapply(cl, runs, fun = function(I) {
       
       # Simulate tracks 
-      df <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)
+      df <- simul_trks(anims, fo_study_site, theta, vmin, vmax, fo_rel_site, crs, n_days, initHeading)
       
       # Compare summary distribution info of simulated and modeled tracks across multiple grid cell resolutions
-      df <- comp_trks(df, stations, land_barrier, vis_graph, HSgrid, multi.grid = TRUE, snap_tolerance = 650)
+      df <- comp_trks(df, fo_stations, fo_land_barrier, vis_graph, HSgrid, multi.grid = TRUE, snap_tolerance = 650)
       
       return(df)
     }
@@ -723,16 +723,16 @@ fo_land_barrier <- fo_land_barrier %>%
 
 epsg = 3857
 
-HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_100km_grid <- merge((HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)), d_shore_rcvs(100, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf() 
 
-HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_50km_grid <- merge((HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(50, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 
-HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_25km_grid <- merge((HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(25, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 
-HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
+HS_10km_grid <- merge((HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)), d_shore_rcvs(10, fo_study_site, fo_land_barrier, epsg, fo_sts_pts), by = "gid") %>%
   sf::st_as_sf()
 ```
 
@@ -805,9 +805,7 @@ Let's marry our results to a sf object that lacks a false origin so that we can 
 #| include: true
 
 # Create grids without false origin
-study_site <- study_site %>% # UTM 17N
-  sf::st_transform(4269) %>% # Convert to NAD 1983
-  sf::st_transform(3857) # Convert to WGS 84
+study_site <- study_site
 
 HS100km <- grid_res(100, study_site, 3857, "polygons")
 HS50km <- grid_res(50, study_site, 3857, "polygons")
