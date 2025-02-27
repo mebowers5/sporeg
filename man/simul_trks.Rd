@@ -46,14 +46,16 @@ library(sporeg)
 library(sf)
 library(glatos)
 
-load(system.file("extdata", "rel_site.Rda", package = "sporeg"))
-load(system.file("extdata", "study_site.Rda", package = "sporeg"))
+load(system.file("extdata", "fo_rel_site.Rda", package = "sporeg"))
+load(system.file("extdata", "fo_study_site.Rda", package = "sporeg"))
 
 anims <- 30
+study_site <- fo_study_site
 yr <- 1
 theta <- c(0, 1.74)
 vmin <- 0.98
 vmax <- 1.58
+rel_site <- fo_rel_site
 crs <- 3857
 n_days <- 365*yr
 initHeading <- 0
