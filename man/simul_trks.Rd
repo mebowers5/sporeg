@@ -46,9 +46,6 @@ library(sporeg)
 library(sf)
 library(glatos)
 
-load(system.file("extdata", "fo_rel_site.Rda", package = "sporeg"))
-load(system.file("extdata", "fo_study_site.Rda", package = "sporeg"))
-
 anims <- 30
 study_site <- fo_study_site
 yr <- 1

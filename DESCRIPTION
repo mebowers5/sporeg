@@ -1,6 +1,6 @@
 Package: sporeg
 Title: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process
-Version: 0.1.0
+Version: 0.2.0.900
 Authors@R: 
     person("Mary E.", "Bowers", , "mebowers5@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5823-186X"))
@@ -8,7 +8,7 @@ Description: This package is the corresponding code for the Methods in Ecology a
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     knitr,
     rmarkdown,

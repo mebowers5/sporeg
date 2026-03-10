@@ -14,8 +14,6 @@
 #' library(dplyr)
 #' library(pathroutr)
 #' library(sf)
-#' load(system.file("extdata", "subset.Rda", package = "sporeg"))
-#' load(system.file("extdata", "atlcoast.Rda", package = "sporeg"))
 #'
 #' CRS <- 3857
 #' barrier <- atlcoast
@@ -27,10 +25,10 @@
 #' @export
 
 sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
-
   # convert the track_data to sf and set the CRS; the bb step is just a way to limit
   # the size of the land polygon and save some computation time when creating vis_graph
-  track_path <- track_data %>% sf::st_as_sf(coords = c("mu.x","mu.y"), crs = CRS)
+  track_path <- track_data %>%
+    sf::st_as_sf(coords = c("mu.x", "mu.y"), crs = CRS)
 
   # there are multiple paths identified by ID; we'll group and nest for a proper
   # tidyverse/list-column workflow
@@ -41,7 +39,7 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
 
   # we need to get our land polygon into a proper format; essentially, we want it to be
   # a series of POLYGONs (and not MULTIPOLYGONs or GEOMETRYCOLLECTION).
-  land_barrier <- barrier  %>%
+  land_barrier <- barrier %>%
     sf::st_transform(CRS) %>%
     sf::st_collection_extract('POLYGON') %>%
     sf::st_cast('POLYGON')
@@ -58,16 +56,26 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   # here, we create our re-routed points; the return is a two column data frame with the
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
-  t <- track_path %>% dplyr::rowwise() %>%
-    dplyr::mutate(rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph)))
+  t <- track_path %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph))
+    )
 
   # NOTE: previous versions of prt_update_points() had the argument order reversed from
   # what it now requires. The updated geometry points are passed first (here, `rrt_pts`)
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
-  t <- t %>% dplyr::rowwise() %>%
-    dplyr::mutate(path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
-           path_lines = list(path_pts %>% dplyr::summarise(do_union = FALSE) %>% sf::st_cast('LINESTRING')))  # do_union MUST be FALSE!
+  t <- t %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
+      path_lines = list(
+        path_pts %>%
+          dplyr::summarise(do_union = FALSE) %>%
+          sf::st_cast('LINESTRING')
+      )
+    ) # do_union MUST be FALSE!
 
   # we need to rbind all of our lines and points into single objects that can be plotted
   t$geom <- do.call(rbind, t$path_lines)

@@ -28,7 +28,6 @@ This function creates a grid inside a specified polygon.
 library(sporeg)
 library(dplyr)
 library(sf)
-load(system.file("extdata", "site_depth.Rda", package = "sporeg"))
 
 site_depth <- site_depth \%>\% sf::st_transform(., 3857)
 HS_100km_grid <- grid_res(100, site_depth, 4269, "polygons")

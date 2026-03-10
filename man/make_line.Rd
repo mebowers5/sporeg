@@ -28,8 +28,6 @@ library(sf)
 library(purrr)
 library(tidyr)
 
-load(system.file("extdata", "at_dly_locs.Rda", package = "sporeg"))
-
 at_lines <- at_dly_locs \%>\%
  dplyr::group_by(ID, time) \%>\%
  sf::st_transform(3857) \%>\%
