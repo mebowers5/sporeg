@@ -27,12 +27,12 @@ Let's load the packages that we will need to run the steps in this vignette.
 library(sporeg)
 library(dplyr)
 library(sf)
-#library(sp)
+library(sp)
 library(pathroutr)
 library(parallel)
-# library(geosphere)
-# library(mapview)
-# library(car)
+library(geosphere)
+library(mapview)
+library(car)
 ```
 
 ## Get the objects required for simulating tracks
@@ -296,7 +296,20 @@ results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
 
 # Bind the bound resolution by iteration
 results <- data.table::rbindlist(results, idcol = 'iteration')
+
+head(results)
 ```
+
+Hooray, we've run `sporeg` using 2 iterations! Deeper investigation requires many more than 2 iterations, but this can take a long time. To speed things up, let's load a model we've already run and work from that instead.
+
+```{r}
+#| label: import-previous-run
+#| include: true
+results <- sporeg::results |>
+  lapply(data.table::rbindlist, idcol = 'resolution') |>
+  data.table::rbindlist(idcol = 'iteration')
+```
+
 
 ## Remove zero inflation
 
@@ -390,7 +403,6 @@ res <- pow_stat %>% dplyr::filter(res_name == "10km")
 pwr_10km <- powr(res, sig.level, power, delta)
 print("Grid cell resolution: 10 km x 10 km")
 pwr_10km
-
 ```
 
 ## Sanity check
@@ -531,8 +543,6 @@ recon_res <- df_var %>%
   group_by(res_name, iteration) %>%
   summarise(max_mod = max(mod_count)) %>%
   dplyr::filter(max_mod == anims) %>%
-  ungroup() %>%
-  group_by(res_name) %>%
   count()
 ```
 
@@ -576,7 +586,6 @@ new_results
 new_how_well <- new_results %>%
   group_by(res_name) %>%
   mutate(
-    maxgid = max(gid),
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
     wn_0 = ifelse(avg_dif >= -1 * 0.1 & avg_dif <= 0.1, 1, 0),
     wn_1 = ifelse(avg_dif >= -1 * 1 & avg_dif <= 1, 1, 0),
@@ -586,6 +595,7 @@ new_how_well <- new_results %>%
     wn_5 = ifelse(avg_dif >= -1 * 5 & avg_dif <= 5, 1, 0)
   ) %>%
   summarise(
+    maxgid = max(gid),
     tot_wn_0 = sum(wn_0) / maxgid * 100,
     tot_wn_1 = sum(wn_1) / maxgid * 100,
     tot_wn_2 = sum(wn_2) / maxgid * 100,
