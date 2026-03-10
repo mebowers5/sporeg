@@ -9,25 +9,24 @@
 #' @examples
 #' # Apply den_rcvs to list of grid resolutions
 #'
-#' library(sporeg)
-#' library(dplyr)
-#' library(sf)
-#' library(data.table)
-#'
 #' rcv_dens <- lapply(res, den_rcvs)
 #'
-#' rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
-#' left_join(tibble(resolution = 1:4,
-#' res_name = c("100km", "50km", "25km", "10km")),
-#' by = "resolution") %>%
-#' mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#' rcv_dens <- dplyr::bind_rows(rcv_dens, .id = 'resolution') |>
+#'  dplyr::mutate(resolution = as.numeric(resolution)) |>
+#'  dplyr::left_join(
+#'    dplyr::tibble(
+#'     resolution = 1:4,
+#'     res_name = c("100km", "50km", "25km", "10km")
+#'    ),
+#'    by = "resolution") |>
+#' dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
 den_rcvs <- function(df) {
   zero_up <- units::set_units(0, "1/km^2")
 
-  den_rcv <- df %>%
-    as.data.frame() %>%
-    dplyr::filter(den_rcs > zero_up) %>%
+  den_rcv <- df |>
+    as.data.frame() |>
+    dplyr::filter(den_rcs > zero_up) |>
     dplyr::summarise(
       dn_min = min(den_rcs),
       dn_mean = mean(den_rcs),
