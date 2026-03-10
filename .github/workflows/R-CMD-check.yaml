@@ -9,6 +9,10 @@ on:
     branches: [main, dev]
   workflow_dispatch:
 
+concurrency:
+  group: rcmdcheck-${{ github.ref }}
+  cancel-in-progress: true
+
 name: R-CMD-check
 
 jobs:
