@@ -17,9 +17,6 @@ This function calculates the odds ratios for each variable in your model.
 }
 \examples{
 # Get the odds ratio for each variable in the final model
-
-load(system.file("extdata", "fit2.100km.Rda", package = "sporeg"))
-
 odds_100km <- get_or(fit2.100km) \%>\%
-dplyr::mutate(res_name = "100km")
+  dplyr::mutate(res_name = "100km")
 }

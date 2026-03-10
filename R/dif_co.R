@@ -13,19 +13,17 @@
 #' library(dplyr)
 #' library(sf)
 #' library(data.table)
-#' load(system.file("extdata", "res.Rda", package = "sporeg"))
 #'
 #' depth_limit <- 300 #[m]
 #'
 #' dif_depth <- lapply(res, dif_co) %>%
-#' data.table::rbindlist(., idcol = 'resolution') %>%
-#' left_join(tibble(resolution = 1:4,
-#' res_name = c("100km", "50km", "25km", "10km")),
-#' by = "resolution") %>%
-#' dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#'   data.table::rbindlist(., idcol = 'resolution') %>%
+#'   dplyr::left_join(dplyr::tibble(resolution = 1:4,
+#'     res_name = c("100km", "50km", "25km", "10km")),
+#'     by = "resolution") %>%
+#'   dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
 dif_co <- function(df, depth_limit) {
-
   depth_limit <- 300
 
   tot <- df %>%
@@ -39,7 +37,7 @@ dif_co <- function(df, depth_limit) {
     dplyr::count()
 
   df <- merge(tot, df) %>%
-    dplyr::mutate(perc = n/tot*100)
+    dplyr::mutate(perc = n / tot * 100)
 
   return(df)
 }

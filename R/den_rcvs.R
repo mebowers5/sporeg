@@ -13,7 +13,6 @@
 #' library(dplyr)
 #' library(sf)
 #' library(data.table)
-#' load(system.file("extdata", "res.Rda", package = "sporeg"))
 #'
 #' rcv_dens <- lapply(res, den_rcvs)
 #'
@@ -24,18 +23,19 @@
 #' mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
 
 den_rcvs <- function(df) {
-
   zero_up <- units::set_units(0, "1/km^2")
 
   den_rcv <- df %>%
     as.data.frame() %>%
     dplyr::filter(den_rcs > zero_up) %>%
-    dplyr::summarise(dn_min = min(den_rcs),
-              dn_mean = mean(den_rcs),
-              dn_max = max(den_rcs),
-              c_min = min(count),
-              c_mean = mean(count),
-              c_max = max(count))
+    dplyr::summarise(
+      dn_min = min(den_rcs),
+      dn_mean = mean(den_rcs),
+      dn_max = max(den_rcs),
+      c_min = min(count),
+      c_mean = mean(count),
+      c_max = max(count)
+    )
 
   return(den_rcv)
 }

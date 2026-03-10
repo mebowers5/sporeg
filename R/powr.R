@@ -16,20 +16,19 @@
 #' library(sporeg)
 #' library(dplyr)
 #' library(data.table)
-#' load(system.file("extdata", "results.Rda", package = "sporeg"))
 #'
 #' results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
 #' results <- data.table::rbindlist(results, idcol = 'iteration') %>%
-#' left_join(tibble(resolution = 1:4,
-#' res_name = c("100km", "50km", "25km", "10km")),
-#' by = "resolution")
+#'   dplyr::left_join(dplyr::tibble(resolution = 1:4,
+#'     res_name = c("100km", "50km", "25km", "10km")),
+#'     by = "resolution")
 #'
 #' df_var <- zero_var(results)
 #' pow_stat <- df_var %>%
-#' dplyr::group_by(res_name, gid) %>%
-#' dplyr::summarise(sd = sd(dif)) %>%
-#' dplyr::ungroup() %>%
-#' dplyr::group_by(res_name)
+#'   dplyr::group_by(res_name, gid) %>%
+#'   dplyr::summarise(sd = sd(dif)) %>%
+#'   dplyr::ungroup() %>%
+#'   dplyr::group_by(res_name)
 #'
 #' res <- pow_stat %>% dplyr::filter(res_name == "100km")
 #'
@@ -44,7 +43,13 @@
 #' pwr_100km
 
 powr <- function(output, sig.level, power, delta, n) {
-  stats::power.t.test(n = NULL, sd = max(na.omit(output$sd)),
-                      sig.level = sig.level, power = power, delta = delta,
-                      type = "paired", alternative = "two.sided")
+  stats::power.t.test(
+    n = NULL,
+    sd = max(na.omit(output$sd)),
+    sig.level = sig.level,
+    power = power,
+    delta = delta,
+    type = "paired",
+    alternative = "two.sided"
+  )
 }

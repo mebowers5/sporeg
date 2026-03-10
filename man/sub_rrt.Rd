@@ -28,8 +28,6 @@ library(sporeg)
 library(dplyr)
 library(pathroutr)
 library(sf)
-load(system.file("extdata", "subset.Rda", package = "sporeg"))
-load(system.file("extdata", "atlcoast.Rda", package = "sporeg"))
 
 CRS <- 3857
 barrier <- atlcoast

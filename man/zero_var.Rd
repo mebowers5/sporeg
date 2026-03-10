@@ -19,14 +19,14 @@ This function removes grid cells that lacked any variance.
 # Remove grid cells with zero variance
 library(sporeg)
 library(dplyr)
-load(system.file("extdata", "results.Rda", package = "sporeg"))
 
 results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
 results <- data.table::rbindlist(results, idcol = 'iteration')
 results <- results \%>\%
-left_join(tibble(resolution = 1:4,
-res_name = c("100km", "50km", "25km", "10km")),
-by = "resolution")
+  dplyr::left_join(
+    dplyr::tibble(resolution = 1:4,
+      res_name = c("100km", "50km", "25km", "10km")),
+    by = "resolution")
 
 df_var <- zero_var(results)
 }
