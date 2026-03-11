@@ -10,7 +10,8 @@ rcv_chr(df)
 \item{df}{data frame object consisting of results from iterative reconstruction process}
 }
 \value{
-a data frame object with summary statistics that provide insight into the locations of the receivers in the network receiver array
+a data frame object with summary statistics that provide insight into
+the locations of the receivers in the network receiver array
 }
 \description{
 Receiver characteristics
@@ -18,17 +19,5 @@ Receiver characteristics
 \examples{
 # Apply rcv_chr to list of grid resolutions
 
-library(sporeg)
-library(dplyr)
-library(sf)
-library(data.table)
-
-rcv_chars <- lapply(res, rcv_chr) \%>\%
-data.table::rbindlist(., idcol = 'resolution') \%>\%
-  dplyr::left_join(
-    dplyr::tibble(resolution = 1:4,
-      res_name = c("100km", "50km", "25km", "10km")),
-    by = "resolution") \%>\%
-  dplyr::mutate(res_name = ordered(res_name,
-      levels = c("100km", "50km", "25km", "10km")))
+rcv_chr(res[[1]])
 }

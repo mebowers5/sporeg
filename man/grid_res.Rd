@@ -7,13 +7,15 @@
 grid_res(km, study_site, epsg, what)
 }
 \arguments{
-\item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
+\item{km}{grid cell resolution in km. one-sided length of grid cell, assumes
+desired grid cell is to be squared}
 
 \item{study_site}{simple feature polygon object in which grid cells should be created}
 
 \item{epsg}{epsg numeric code for desired coordinate system transformation}
 
-\item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center points of grid cells}
+\item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center
+points of grid cells}
 }
 \value{
 grid comprised of polygons or points depending on \code{what} parameter
@@ -22,13 +24,9 @@ grid comprised of polygons or points depending on \code{what} parameter
 This function creates a grid inside a specified polygon.
 }
 \examples{
-# NOTE: The study site must be in a projected coordinate system (e.g., WGS 84; EPSG: 3857)
+# NOTE: The study site must be in a projected coordinate system (e.g. EPSG: 3857)
 # when it is initially fed into the function grid_res
 
-library(sporeg)
-library(dplyr)
-library(sf)
-
-site_depth <- site_depth \%>\% sf::st_transform(., 3857)
-HS_100km_grid <- grid_res(100, site_depth, 4269, "polygons")
+site_depth_3857 <- site_depth |> sf::st_transform(3857)
+HS_100km_grid <- grid_res(100, site_depth_3857, 4269, "polygons")
 }

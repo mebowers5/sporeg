@@ -15,25 +15,25 @@ sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
 
 \item{vis_graph}{vis_graph object created from \code{pathroutr::prt_vis_graph} function}
 
-\item{buffer}{desired buffer size for re-routed tracks; generally should relate to range of receivers; distance should use the same units as the final coordinate system}
+\item{buffer}{desired buffer size for re-routed tracks; generally should
+relate to range of receivers; distance should use the same units as the
+final coordinate system}
 }
 \value{
 A simple feature (multi)polygon object
 }
 \description{
-This function allows you to re-route demonstrative movement data that has been reconstructed using a movement model around a polygon barrier.
+This function allows you to re-route demonstrative movement data that has been
+reconstructed using a movement model around a polygon barrier.
 }
 \examples{
-library(sporeg)
-library(dplyr)
-library(pathroutr)
-library(sf)
-
 CRS <- 3857
 barrier <- atlcoast
 vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
+track_data <- sporeg::subset |>
+  dplyr::filter(ID \%in\% c("A69-9001-23338", "A69-9001-25494"))
 
-tbuff650 <- sub_rrt(subset, CRS, barrier, vis_graph, buffer)
+tbuff650 <- sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
 
 }
