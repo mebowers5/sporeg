@@ -37,7 +37,7 @@ Remotes:
     jmlondon/pathroutr,
     ocean-tracking-network/glatos
 Depends: 
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 LazyData: true
 URL: https://mebowers5.github.io/sporeg/
 Config/testthat/edition: 3
