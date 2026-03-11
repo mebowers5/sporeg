@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' # Get the odds ratio for each variable in the final model
-#' odds_100km <- get_or(fit2.100km) %>%
+#' odds_100km <- get_or(fit2.100km) |>
 #'   dplyr::mutate(res_name = "100km")
 
 get_or <- function(model) {
@@ -18,8 +18,8 @@ get_or <- function(model) {
   lower <- coefs[row, 'Estimate'] - 1.96 * coefs[row, 'Std. Error']
   upper <- coefs[row, 'Estimate'] + 1.96 * coefs[row, 'Std. Error']
 
-  edf <- coefs %>%
-    tibble::rownames_to_column(var = "Effect") %>%
+  edf <- coefs |>
+    tibble::rownames_to_column(var = "Effect") |>
     dplyr::select(Effect)
 
   or <- cbind(

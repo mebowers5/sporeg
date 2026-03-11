@@ -9,23 +9,20 @@
 #' @examples
 #' # Apply gd_fts to list of grid resolutions
 #'
-#' library(sporeg)
-#' library(dplyr)
-#' library(sf)
-#' library(data.table)
-#'
-#'
-#' gd_fit_char <- lapply(res, gd_fts) %>%
-#' data.table::rbindlist(., idcol = 'resolution') %>%
-#'  left_join(tibble(resolution = 1:4,
-#'                   res_name = c("100km", "50km", "25km", "10km")),
-#'           by = "resolution") %>%
-#'  dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#' gd_fit_char <- lapply(res, gd_fts) |>
+#'   dplyr::bind_rows(.id = 'resolution') |>
+#'   dplyr::mutate(resolution = as.numeric(resolution)) |>
+#'   dplyr::left_join(dplyr::tibble(resolution = 1:4,
+#'     res_name = c("100km", "50km", "25km", "10km")),
+#'     by = "resolution") |>
+#'   dplyr::mutate(
+#'     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
+#'   )
 
 gd_fts <- function(df) {
-  tot <- df %>%
-    dplyr::filter(g_fit == 1) %>%
-    dplyr::mutate(d_shore_km = d_shore / 1000) %>%
+  tot <- df |>
+    dplyr::filter(g_fit == 1) |>
+    dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
       max_dpth = max(na.omit(mean_depth)),
       min_dpth = min(na.omit(mean_depth)),
@@ -37,7 +34,7 @@ gd_fts <- function(df) {
       min_ct = min(count),
       avg_ct = mean(count),
       n_abs = sum(p_a == 0),
-      tot = n(),
+      tot = dplyr::n(),
       perc_abs = n_abs / tot * 100
     )
 
