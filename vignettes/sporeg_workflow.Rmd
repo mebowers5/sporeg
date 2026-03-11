@@ -440,7 +440,7 @@ new_df <- df_var %>%
 
 results <- new_df %>%
   group_by(res_name, gid) %>%
-  summarise(avg_dif = mean(dif), se = plotrix::std.error(dif))
+  summarise(avg_dif = mean(dif), se = se = sd(dif) / n())
 results
 ```
 
@@ -576,7 +576,7 @@ new_iters_df <- merge(new_iters, df_var) %>%
 
 new_results <- new_iters_df %>%
   group_by(res_name, gid) %>%
-  summarise(avg_dif = mean(dif), se = plotrix::std.error(dif))
+  summarise(avg_dif = mean(dif), se = se = sd(dif) / n())
 new_results
 
 new_how_well <- new_results %>%
