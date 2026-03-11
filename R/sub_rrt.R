@@ -17,7 +17,7 @@
 #' barrier <- atlcoast
 #' vis_graph <- pathroutr::prt_visgraph(barrier)
 #' buffer <- 650
-#' track_data <- subset |>
+#' track_data <- sporeg::subset |>
 #'   dplyr::filter(ID %in% c("A69-9001-23338", "A69-9001-25494"))
 #'
 #' tbuff650 <- sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
@@ -27,7 +27,7 @@
 sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   # convert the track_data to sf and set the CRS; the bb step is just a way to limit
   # the size of the land polygon and save some computation time when creating vis_graph
-  track_path <- subset |>
+  track_path <- track_data |>
     sf::st_as_sf(coords = c("mu.x", "mu.y"), crs = CRS)
 
   # there are multiple paths identified by ID; we'll group and nest for a proper

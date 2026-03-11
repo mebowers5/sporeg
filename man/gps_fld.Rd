@@ -10,23 +10,25 @@ gps_fld(df)
 \item{df}{data frame object consisting of results from iterative reconstruction process}
 }
 \value{
-a data frame object with a percentage of grid cells that contained a good fit out of those that lacked receivers
+a data frame object with a percentage of grid cells that contained a
+good fit out of those that lacked receivers
 }
 \description{
-This function calculates how well the reconstructions closed gaps in the network receiver array
+This function calculates how well the reconstructions closed gaps in the network
+receiver array
 }
 \examples{
 # Apply gps_fld to list of grid resolutions
 
-library(sporeg)
-library(dplyr)
-library(sf)
-library(data.table)
-
-clsd_gps <- lapply(res, gps_fld) \%>\%
-data.table::rbindlist(., idcol = 'resolution') \%>\%
- dplyr::left_join(dplyr::tibble(resolution = 1:4,
-                   res_name = c("100km", "50km", "25km", "10km")),
-           by = "resolution") \%>\%
- dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+clsd_gps <- lapply(res, gps_fld) |>
+  dplyr::bind_rows(.id = 'resolution') |>
+    dplyr::left_join(
+      data.frame(
+        resolution = as.character(1:4),
+        res_name = c("100km", "50km", "25km", "10km")
+      ),
+      by = "resolution") |>
+  dplyr::mutate(
+    res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
+  )
 }

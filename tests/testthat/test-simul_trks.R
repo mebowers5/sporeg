@@ -24,6 +24,18 @@ test_that("returns correct types", {
 })
 
 test_that("data column types are correct", {
+  tracks <- simul_trks(
+    anims = 2,
+    study_site = fo_study_site,
+    theta = c(0, 1.74),
+    vmin = 0.98,
+    vmax = 1.58,
+    rel_site = fo_rel_site,
+    crs = 3857,
+    n_days = 30,
+    initHeading = 0
+  )
+
   expect_s3_class(
     tracks$data[[1]],
     c("sf", "tbl_df", "tbl", "data.frame"),

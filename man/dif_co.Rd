@@ -12,7 +12,9 @@ dif_co(df, depth_limit)
 \item{depth_limit}{a depth value in meters that represents the new depth cut off of interest}
 }
 \value{
-a data frame object containing the percentage of grid cells that contained a good fit out of all grid cells that had an average depth (mean_depth) less than or equal to the depth_limit
+a data frame object containing the percentage of grid cells that contained
+a good fit out of all grid cells that had an average depth (mean_depth) less
+than or equal to the depth_limit
 }
 \description{
 Different cut off
@@ -20,17 +22,13 @@ Different cut off
 \examples{
 # Apply dif_co to list of grid resolutions
 
-library(sporeg)
-library(dplyr)
-library(sf)
-library(data.table)
-
-depth_limit <- 300 #[m]
-
-dif_depth <- lapply(res, dif_co) \%>\%
-  data.table::rbindlist(., idcol = 'resolution') \%>\%
+dif_depth <- lapply(res, dif_co, depth_limit = 300) |>
+  dplyr::bind_rows(.id = 'resolution') |>
+  dplyr::mutate(resolution = as.numeric(resolution)) |>
   dplyr::left_join(dplyr::tibble(resolution = 1:4,
     res_name = c("100km", "50km", "25km", "10km")),
-    by = "resolution") \%>\%
-  dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+    by = "resolution") |>
+  dplyr::mutate(
+    res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
+  )
 }
