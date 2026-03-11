@@ -8,31 +8,29 @@
 #'
 #' @examples
 #' # Remove grid cells with zero variance
-#' library(sporeg)
-#' library(dplyr)
+#' res <- lapply(sporeg::results, `[[`, 1) |>
+#'   dplyr::bind_rows() |>
+#'   dplyr::mutate(res_name = "100km") |>
+#'   # Add 50 rows with no variance for demonstration purposes
+#'   dplyr::bind_rows(
+#'     data.frame(gid = rep(100, 50), dif = rep(100, 50), res_name = "100km")
+#'   )
 #'
-#' results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
-#' results <- data.table::rbindlist(results, idcol = 'iteration')
-#' results <- results %>%
-#'   dplyr::left_join(
-#'     dplyr::tibble(resolution = 1:4,
-#'       res_name = c("100km", "50km", "25km", "10km")),
-#'     by = "resolution")
-#'
-#' df_var <- zero_var(results)
+#' df_var <- zero_var(res)
+#' nrow(res) > nrow(df_var)
 
 zero_var <- function(df) {
   # Extract zero variance variables first
-  zero_var_rows <- df %>%
-    dplyr::group_by(res_name, gid) %>%
-    dplyr::summarise(sd = sd(dif)) %>%
-    dplyr::filter(sd == 0) %>%
-    dplyr::select(res_name, gid) %>%
+  zero_var_rows <- df |>
+    dplyr::group_by(res_name, gid) |>
+    dplyr::summarise(sd = sd(dif)) |>
+    dplyr::filter(sd == 0) |>
+    dplyr::select(res_name, gid) |>
     as.list()
 
   # Drop zero variance rows
-  df <- df %>%
-    dplyr::group_by(res_name, gid) %>%
+  df <- df |>
+    dplyr::group_by(res_name, gid) |>
     dplyr::filter(!(gid %in% zero_var_rows$gid))
 
   return(df)

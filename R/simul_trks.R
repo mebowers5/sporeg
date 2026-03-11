@@ -2,11 +2,13 @@
 #'
 #' This function simulates tracks inside a specified polygon.
 #' @param anims integer. quantity of desired animals to simulate
-#' @param study_site simple feature polygon object that encompasses area where tracks are allowed to be simulated.
+#' @param study_site simple feature polygon object that encompasses area where
+#'   tracks are allowed to be simulated.
 #' @param theta argument from `glatos::crw_in_polygon` function
 #' @param vmin numeric. minimum velocity from which to sample step length
 #' @param vmax numeric. maximum velocity from which to sample step length
-#' @param rel_site simple feature polygon object in which simulated animals are "released" or where simulated tracks begin
+#' @param rel_site simple feature polygon object in which simulated animals are
+#'   "released" or where simulated tracks begin
 #' @param crs EPSG code for study_site polygon. Must be projected coordinate system
 #' @param n_days integer. number of days that tracks should be simulated
 #' @param initHeading argument from `glatos::crw_in_polygon` function
@@ -15,19 +17,15 @@
 #' @export
 #'
 #' @examples
-#' library(sporeg)
-#' library(sf)
-#' library(glatos)
 #'
-#' anims <- 30
+#' anims <- 2
 #' study_site <- fo_study_site
-#' yr <- 1
 #' theta <- c(0, 1.74)
 #' vmin <- 0.98
 #' vmax <- 1.58
 #' rel_site <- fo_rel_site
 #' crs <- 3857
-#' n_days <- 365*yr
+#' n_days <- 30
 #' initHeading <- 0
 #'
 #' tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)
@@ -49,14 +47,15 @@ simul_trks <- function(
       size = 1,
       type = "random",
       exact = TRUE
-    ) %>%
-      as.data.frame() %>%
+    ) |>
+      as.data.frame() |>
       dplyr::mutate(
         lon = sf::st_coordinates(geometry)[, 1],
         lat = sf::st_coordinates(geometry)[, 2]
       )
-
-    stepLen <- as.numeric(sample(vmin:vmax, 1) * 60 * 60 * 24 / 24) # Sample between minimum and maximum velocity of blacktip sharks to set step length per hour for each individual
+    # Sample between minimum and maximum velocity of blacktip sharks to set step
+    #   length per hour for each individual
+    stepLen <- as.numeric(sample(vmin:vmax, 1) * 60 * 60 * 24 / 24)
 
     simu <- glatos::crw_in_polygon(
       study_site,
@@ -66,34 +65,33 @@ simul_trks <- function(
       cartesianCRS = crs,
       nsteps = n_days * 24,
       initHeading = initHeading
-    ) %>%
+    ) |>
       sf::st_as_sf()
 
     return(simu)
   })
 
-  simu <- sim %>%
+  simu <- sim |>
     as.data.frame() %>%
-    setNames(gsub("geometry.", perl = TRUE, "", names(.))) %>%
-    setNames(gsub("geometry", perl = TRUE, "0", names(.))) %>%
+    dplyr::rename_with(~ gsub("geometry\\.", "", .x)) |>
+    dplyr::rename_with(~ gsub("geometry", "0", .x)) |>
     tidyr::pivot_longer(
-      .,
       cols = tidyr::everything(),
       names_to = "AnimalID",
       values_to = "geom"
-    ) %>%
-    dplyr::mutate(ID = as.numeric(AnimalID) + 1) %>%
-    dplyr::group_by(ID) %>%
+    ) |>
+    dplyr::mutate(ID = as.numeric(AnimalID) + 1) |>
+    dplyr::group_by(ID) |>
     dplyr::mutate(uid = seq_along(AnimalID)) #Assign sequential numbers to rows to preserve directionality
 
-  simu <- simu %>%
+  simu <- simu |>
     dplyr::mutate(
       POINT_X = sf::st_coordinates(geom)[, 1],
       POINT_Y = sf::st_coordinates(geom)[, 2]
-    ) %>% #Obtain x and y coordinates so that you can force northward and southward movement
-    dplyr::select(uid, ID, geom, POINT_Y, POINT_X) %>%
-    dplyr::group_by(ID) %>%
-    dplyr::arrange(uid) %>%
+    ) |> #Obtain x and y coordinates so that you can force northward and southward movement
+    dplyr::select(uid, ID, geom, POINT_Y, POINT_X) |>
+    dplyr::group_by(ID) |>
+    dplyr::arrange(uid) |>
     dplyr::mutate(
       time = seq.POSIXt(
         from = as.POSIXct("2000-01-01 01:00:00"),
@@ -104,13 +102,13 @@ simul_trks <- function(
       start_y = POINT_Y,
       end_x = dplyr::lead(POINT_X),
       end_y = dplyr::lead(POINT_Y)
-    ) %>% #Prep data for making lines - ensures proper order
+    ) |> #Prep data for making lines - ensures proper order
     sf::st_as_sf()
 
   #Make lines and unite geometries by uid's so that each line segment maintains time information
-  simu <- simu %>%
-    dplyr::filter(!is.na(end_y)) %>%
-    tidyr::nest() %>%
+  simu <- simu |>
+    dplyr::filter(!is.na(end_y)) |>
+    tidyr::nest() |>
     dplyr::mutate(
       data = purrr::map(
         data,

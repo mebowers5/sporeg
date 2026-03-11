@@ -2,34 +2,23 @@
 #'
 #' @param df data frame object consisting of results from iterative reconstruction process
 #'
-#' @return a data frame object with summary statistics that provide insight into the locations of the receivers in the network receiver array
+#' @return a data frame object with summary statistics that provide insight into
+#'   the locations of the receivers in the network receiver array
 #' @export
 #'
 #' @examples
 #' # Apply rcv_chr to list of grid resolutions
 #'
-#' library(sporeg)
-#' library(dplyr)
-#' library(sf)
-#' library(data.table)
-#'
-#' rcv_chars <- lapply(res, rcv_chr) %>%
-#' data.table::rbindlist(., idcol = 'resolution') %>%
-#'   dplyr::left_join(
-#'     dplyr::tibble(resolution = 1:4,
-#'       res_name = c("100km", "50km", "25km", "10km")),
-#'     by = "resolution") %>%
-#'   dplyr::mutate(res_name = ordered(res_name,
-#'       levels = c("100km", "50km", "25km", "10km")))
+#' rcv_chr(res[[1]])
 
 rcv_chr <- function(df) {
-  tot <- df %>%
-    as.data.frame() %>%
-    dplyr::select(-x) %>%
-    dplyr::filter(p_a == 1) %>%
-    dplyr::mutate(d_shore_km = d_shore / 1000) %>%
+  tot <- df |>
+    as.data.frame() |>
+    dplyr::select(-x) |>
+    dplyr::filter(p_a == 1) |>
+    dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
-      tot = n(),
+      tot = dplyr::n(),
       dpth_200_800 = sum(na.omit(mean_depth >= 200 & mean_depth <= 800)),
       depth_200_500 = sum(na.omit(mean_depth >= 200 & mean_depth <= 500)),
       min_dpth = min(na.omit(mean_depth)),

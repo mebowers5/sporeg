@@ -8,8 +8,8 @@
 #' @export
 
 get_depth <- function(HSgrid, depth) {
-  alt <- sf::st_join(HSgrid, depth, join = sf::st_intersects) %>%
-    dplyr::group_by(gid) %>%
+  alt <- sf::st_join(HSgrid, depth, join = sf::st_intersects) |>
+    dplyr::group_by(gid) |>
     dplyr::summarise(mean_depth = mean(altitude) * -1)
 
   return(alt)

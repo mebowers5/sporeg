@@ -2,28 +2,31 @@
 #'
 #' @param df data frame object consisting of results from iterative reconstruction process
 #'
-#' @return a data frame object with summary statistics that provide insight into the locations of the gaps in the network receiver array that were closed by the reconstruction process
+#' @return a data frame object with summary statistics that provide insight into
+#'   the locations of the gaps in the network receiver array that were closed by
+#'   the reconstruction process
+#'
 #' @export
 #'
 #' @examples
 #' # Apply gps_chr to list of grid resolutions
 #'
-#' library(sporeg)
-#' library(dplyr)
-#' library(sf)
-#' library(data.table)
-#'
-#' clsd_gp_chars <- lapply(res, gps_chr) %>%
-#' data.table::rbindlist(., idcol = 'resolution') %>%
-#'   left_join(tibble(resolution = 1:4,
-#'                    res_name = c("100km", "50km", "25km", "10km")),
-#'             by = "resolution") %>%
-#'             dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#' clsd_gp_chars <- lapply(res, gps_chr) |>
+#'   dplyr::bind_rows(.id = 'resolution') |>
+#'     dplyr::left_join(
+#'       data.frame(
+#'         resolution = as.character(1:4),
+#'         res_name = c("100km", "50km", "25km", "10km")
+#'       ),
+#'       by = "resolution") |>
+#'   dplyr::mutate(
+#'     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
+#'   )
 
 gps_chr <- function(df) {
-  df <- df %>%
-    dplyr::filter(g_fit == 1 & p_a == 0) %>%
-    dplyr::mutate(d_shore_km = d_shore / 1000) %>%
+  df <- df |>
+    dplyr::filter(g_fit == 1 & p_a == 0) |>
+    dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
       max_dpth = max(na.omit(mean_depth)),
       min_dpth = min(na.omit(mean_depth)),
