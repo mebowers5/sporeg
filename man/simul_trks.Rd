@@ -19,7 +19,8 @@ simul_trks(
 \arguments{
 \item{anims}{integer. quantity of desired animals to simulate}
 
-\item{study_site}{simple feature polygon object that encompasses area where tracks are allowed to be simulated.}
+\item{study_site}{simple feature polygon object that encompasses area where
+tracks are allowed to be simulated.}
 
 \item{theta}{argument from \code{glatos::crw_in_polygon} function}
 
@@ -27,7 +28,8 @@ simul_trks(
 
 \item{vmax}{numeric. maximum velocity from which to sample step length}
 
-\item{rel_site}{simple feature polygon object in which simulated animals are "released" or where simulated tracks begin}
+\item{rel_site}{simple feature polygon object in which simulated animals are
+"released" or where simulated tracks begin}
 
 \item{crs}{EPSG code for study_site polygon. Must be projected coordinate system}
 
@@ -42,19 +44,15 @@ simple feature (multi)linestring object that represents individual simulated tra
 This function simulates tracks inside a specified polygon.
 }
 \examples{
-library(sporeg)
-library(sf)
-library(glatos)
 
-anims <- 30
+anims <- 2
 study_site <- fo_study_site
-yr <- 1
 theta <- c(0, 1.74)
 vmin <- 0.98
 vmax <- 1.58
 rel_site <- fo_rel_site
 crs <- 3857
-n_days <- 365*yr
+n_days <- 30
 initHeading <- 0
 
 tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)

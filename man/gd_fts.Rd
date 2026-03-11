@@ -18,16 +18,13 @@ This function summarizes minimum, maximum, and mean statistics for depth (mean_d
 \examples{
 # Apply gd_fts to list of grid resolutions
 
-library(sporeg)
-library(dplyr)
-library(sf)
-library(data.table)
-
-
-gd_fit_char <- lapply(res, gd_fts) \%>\%
-data.table::rbindlist(., idcol = 'resolution') \%>\%
- left_join(tibble(resolution = 1:4,
-                  res_name = c("100km", "50km", "25km", "10km")),
-          by = "resolution") \%>\%
- dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+gd_fit_char <- lapply(res, gd_fts) |>
+  dplyr::bind_rows(.id = 'resolution') |>
+  dplyr::mutate(resolution = as.numeric(resolution)) |>
+  dplyr::left_join(dplyr::tibble(resolution = 1:4,
+    res_name = c("100km", "50km", "25km", "10km")),
+    by = "resolution") |>
+  dplyr::mutate(
+    res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
+  )
 }
