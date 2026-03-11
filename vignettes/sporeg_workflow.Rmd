@@ -177,13 +177,9 @@ clusterEvalQ(cl, {
   library(glatos)
   library(dplyr)
   library(momentuHMM)
-  library(crawl)
   library(lubridate)
   library(pathroutr)
   library(sfnetworks)
-  library(stplanr)
-  library(future)
-  library(doFuture)
 })
 ```
 
@@ -292,10 +288,10 @@ Hmm... these are hard to look at. Let's turn them into a data frame instead.
 #| include: true
 
 # Bind the lists by grid cell resolution
-results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
+results <- lapply(results, dplyr::bind_rows, .id = 'resolution')
 
 # Bind the bound resolution by iteration
-results <- data.table::rbindlist(results, idcol = 'iteration')
+results <- dplyr::bind_rows(results, .id = 'iteration')
 
 head(results)
 ```
@@ -306,8 +302,8 @@ Hooray, we've run `sporeg` using 2 iterations! Deeper investigation requires man
 #| label: import-previous-run
 #| include: true
 results <- sporeg::results |>
-  lapply(data.table::rbindlist, idcol = 'resolution') |>
-  data.table::rbindlist(idcol = 'iteration')
+  lapply(dplyr::bind_rows, .id = 'resolution') |>
+  dplyr::bind_rows(.id = 'iteration')
 ```
 
 
@@ -762,7 +758,7 @@ Let's find out how many grid cells lacked receivers.
 
 grids <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
-grids <- sf::st_as_sf(data.table::rbindlist(grids, idcol = 'resolution')) %>%
+grids <- sf::st_as_sf(dplyr::bind_rows(grids, .id = 'resolution')) %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
@@ -1048,7 +1044,7 @@ res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
 rcv_dens <- lapply(res, den_rcvs)
 
-rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
+rcv_dens <- dplyr::bind_rows(rcv_dens, .id = 'resolution') %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
@@ -1068,7 +1064,7 @@ What are the characteristics of the grid cells that exhibited a good fit?
 #| include: true
 
 gd_fit_char <- lapply(res, gd_fts) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+  dplyr::bind_rows(.id = 'resolution') %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
@@ -1089,7 +1085,7 @@ Let's find out how many of the good fits occurred in grid cells that lacked rece
 #| include: true
 
 clsd_gps <- lapply(res, gps_fld) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+  dplyr::bind_rows(.id = 'resolution') %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
@@ -1109,7 +1105,7 @@ Let's find out where these closed gaps are located (e.g., are they coastal?).
 #| include: true
 
 clsd_gp_chars <- lapply(res, gps_chr) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+  dplyr::bind_rows(.id = 'resolution') %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
@@ -1129,7 +1125,7 @@ Let's find out where most of the receivers are in the current array.
 #| include: true
 
 rcv_chars <- lapply(res, rcv_chr) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+  dplyr::bind_rows(.id = 'resolution') %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
@@ -1152,7 +1148,7 @@ Blacktip sharks, the species chosen to demonstrate the current methods, is known
 depth_limit <- 300 # [m]
 
 dif_depth <- lapply(res, dif_co) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+  dplyr::bind_rows(.id = 'resolution') %>%
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"

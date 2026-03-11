@@ -1,6 +1,6 @@
 Package: sporeg
 Title: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process
-Version: 0.2.0.902
+Version: 0.2.0.903
 Authors@R: 
     person("Mary E.", "Bowers", , "mebowers5@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5823-186X"))
@@ -18,7 +18,6 @@ Suggests:
     oceanmap,
     parallel,
     sp,
-    data.table,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports: 
@@ -34,9 +33,7 @@ Imports:
     tidyr,
     units,
     magrittr,
-    stats,
-    stplanr,
-    doFuture
+    stats
 Remotes: 
     jmlondon/pathroutr,
     ocean-tracking-network/glatos
