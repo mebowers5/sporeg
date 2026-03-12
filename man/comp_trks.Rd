@@ -11,7 +11,8 @@ comp_trks(
   vis_graph,
   multi.grid,
   HSgrid,
-  snap_tolerance
+  snap_tolerance,
+  cores = 2
 )
 }
 \arguments{

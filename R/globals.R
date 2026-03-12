@@ -37,7 +37,6 @@ utils::globalVariables(
     "end_y",
     "res_name",
     "sd",
-    ".",
     "den_rcs",
     "depth_limit",
     "tot"
