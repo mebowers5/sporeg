@@ -37,9 +37,12 @@ utils::globalVariables(
     "end_y",
     "res_name",
     "sd",
-    ".",
     "den_rcs",
     "depth_limit",
     "tot"
   )
 )
+
+#' Need to have doFuture in Imports due to momentuHMM, but we never actually call it.
+#'  This causes a NOTE in R CMD check
+silence_doFuture_note <- function() doFuture::registerDoFuture()

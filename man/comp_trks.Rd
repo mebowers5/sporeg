@@ -11,7 +11,8 @@ comp_trks(
   vis_graph,
   multi.grid,
   HSgrid,
-  snap_tolerance
+  snap_tolerance,
+  cores = 2
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ comp_trks(
 \item{HSgrid}{When multi.grid = FALSE, a sf polygon grid; When multi.grid = TRUE, a list of sf polygon grids}
 
 \item{snap_tolerance}{The tolerance (in meters) at which an intersection between a station and a track should snap to the station centroid. It is recommended that the snap_tolerance be equal to the station buffer size.}
+
+\item{cores}{Number of cores to use during paralllel processing. Defaults to 2.}
 }
 \value{
 A data frame with counts and differences by grid cell ID ("gid")

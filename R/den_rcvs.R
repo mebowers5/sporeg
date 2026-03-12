@@ -7,24 +7,15 @@
 #' @export
 #'
 #' @examples
-#' # Apply den_rcvs to list of grid resolutions
 #'
-#' rcv_dens <- lapply(res, den_rcvs)
-#'
-#' rcv_dens <- dplyr::bind_rows(rcv_dens, .id = 'resolution') |>
-#'  dplyr::mutate(resolution = as.numeric(resolution)) |>
-#'  dplyr::left_join(
-#'    dplyr::tibble(
-#'     resolution = 1:4,
-#'     res_name = c("100km", "50km", "25km", "10km")
-#'    ),
-#'    by = "resolution") |>
-#' dplyr::mutate(res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")))
+#' den_rcvs(res[[1]])
 
 den_rcvs <- function(df) {
   zero_up <- units::set_units(0, "1/km^2")
 
   den_rcv <- df |>
+    # Redundant, but needed to avoid a vctrs error
+    sf::st_as_sf() |>
     as.data.frame() |>
     dplyr::filter(den_rcs > zero_up) |>
     dplyr::summarise(

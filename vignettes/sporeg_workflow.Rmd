@@ -91,9 +91,9 @@ Get the land barrier.
 #| label: land-barrier
 #| include: true
 
-fo_land_barrier <- fo_land_barrier %>%
-  sf::st_transform(3857) %>%
-  sf::st_collection_extract('POLYGON') %>%
+fo_land_barrier <- fo_land_barrier |>
+  sf::st_transform(3857) |>
+  sf::st_collection_extract('POLYGON') |>
   sf::st_cast('POLYGON')
 ```
 
@@ -177,13 +177,9 @@ clusterEvalQ(cl, {
   library(glatos)
   library(dplyr)
   library(momentuHMM)
-  library(crawl)
   library(lubridate)
   library(pathroutr)
   library(sfnetworks)
-  library(stplanr)
-  library(future)
-  library(doFuture)
 })
 ```
 
@@ -292,10 +288,10 @@ Hmm... these are hard to look at. Let's turn them into a data frame instead.
 #| include: true
 
 # Bind the lists by grid cell resolution
-results <- lapply(results, data.table::rbindlist, idcol = 'resolution')
+results <- lapply(results, dplyr::bind_rows, .id = 'resolution')
 
 # Bind the bound resolution by iteration
-results <- data.table::rbindlist(results, idcol = 'iteration')
+results <- dplyr::bind_rows(results, .id = 'iteration')
 
 head(results)
 ```
@@ -306,8 +302,8 @@ Hooray, we've run `sporeg` using 2 iterations! Deeper investigation requires man
 #| label: import-previous-run
 #| include: true
 results <- sporeg::results |>
-  lapply(data.table::rbindlist, idcol = 'resolution') |>
-  data.table::rbindlist(idcol = 'iteration')
+  lapply(dplyr::bind_rows, .id = 'resolution') |>
+  dplyr::bind_rows(.id = 'iteration')
 ```
 
 
@@ -319,7 +315,7 @@ Remove any cases where both `sim_count` and `mod_count` were zero for all iterat
 #| label: prep-power
 #| include: true
 
-results <- results %>%
+results <- results |>
   dplyr::left_join(
     dplyr::tibble(
       resolution = 1:4,
@@ -339,7 +335,7 @@ Test for zero variance.
 df_var <- zero_var(results)
 
 # Find the grid cell with zero variance
-df_zero_var <- anti_join(results, df_var, by = c("res_name", "gid")) %>%
+df_zero_var <- anti_join(results, df_var, by = c("res_name", "gid")) |>
   distinct(res_name, gid)
 ```
 
@@ -377,29 +373,29 @@ Let's calculate standard deviation by grid resolution. Now we're ready to run ou
 #| label: power-analysis
 #| include: true
 
-pow_stat <- df_var %>%
-  group_by(res_name, gid) %>%
-  summarise(sd = sd(dif)) %>%
-  ungroup() %>%
+pow_stat <- df_var |>
+  group_by(res_name, gid) |>
+  summarise(sd = sd(dif)) |>
+  ungroup() |>
   group_by(res_name)
 
-res <- pow_stat %>% dplyr::filter(res_name == "100km")
+res <- pow_stat |> dplyr::filter(res_name == "100km")
 pwr_100km <- powr(res, sig.level, power, delta)
 print("Grid cell resolution: 100 km x 100 km")
 pwr_100km
 
-res <- pow_stat %>% dplyr::filter(res_name == "50km")
+res <- pow_stat |> dplyr::filter(res_name == "50km")
 pwr_50km <- powr(res, sig.level, power, delta)
 print("Grid cell resolution: 50 km x 50 km")
 pwr_50km
 
-res <- pow_stat %>% dplyr::filter(res_name == "25km")
+res <- pow_stat |> dplyr::filter(res_name == "25km")
 pwr_25km <- powr(res, sig.level, power, delta)
 print("Grid cell resolution: 25 km x 25 km")
 pwr_25km
 
 
-res <- pow_stat %>% dplyr::filter(res_name == "10km")
+res <- pow_stat |> dplyr::filter(res_name == "10km")
 pwr_10km <- powr(res, sig.level, power, delta)
 print("Grid cell resolution: 10 km x 10 km")
 pwr_10km
@@ -413,9 +409,9 @@ Do we really need THAT few/many iterations?! Let's do a sanity check here and se
 #| label: sanity-check
 #| include: true
 
-max_sd <- pow_stat %>%
-  ungroup() %>%
-  group_by(res_name) %>%
+max_sd <- pow_stat |>
+  ungroup() |>
+  group_by(res_name) |>
   summarise(max_sd = max(sd))
 max_sd
 ```
@@ -433,7 +429,7 @@ If we ran too many iterations, we can filter for the number required for each it
 ```{r}
 #| label: results-summary
 #| include: true
-new_df <- df_var %>%
+new_df <- df_var |>
   dplyr::filter(
     res_name == "100km" &
       iteration <= 119 |
@@ -442,9 +438,9 @@ new_df <- df_var %>%
       res_name == "10km" & iteration <= 144
   )
 
-results <- new_df %>%
-  group_by(res_name, gid) %>%
-  summarise(avg_dif = mean(dif), se = plotrix::std.error(dif))
+results <- new_df |>
+  group_by(res_name, gid) |>
+  summarise(avg_dif = mean(dif), se = se = sd(dif) / n())
 results
 ```
 
@@ -459,7 +455,7 @@ Let's create a table that shows how closely the modeled tracks compared to the r
 #| include: true
 
 # Counts
-how_well_ct <- results %>%
+how_well_ct <- results |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
     wn_0 = ifelse(avg_dif >= -1 * 0.3 & avg_dif <= 0.3, 1, 0),
@@ -468,8 +464,8 @@ how_well_ct <- results %>%
     wn_3 = ifelse(avg_dif >= -1 * 3 & avg_dif <= 3, 1, 0),
     wn_4 = ifelse(avg_dif >= -1 * 4 & avg_dif <= 4, 1, 0),
     wn_5 = ifelse(avg_dif >= -1 * 5 & avg_dif <= 5, 1, 0)
-  ) %>%
-  group_by(res_name) %>%
+  ) |>
+  group_by(res_name) |>
   summarise(
     maxgid = n(),
     tot_wn_0 = sum(wn_0),
@@ -478,11 +474,11 @@ how_well_ct <- results %>%
     tot_wn_3 = sum(wn_3),
     tot_wn_4 = sum(wn_4),
     tot_wn_5 = sum(wn_5)
-  ) %>%
+  ) |>
   distinct()
 
 # Percentages
-how_well <- results %>%
+how_well <- results |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
     wn_0 = ifelse(avg_dif >= -1 * 0.3 & avg_dif <= 0.3, 1, 0),
@@ -491,8 +487,8 @@ how_well <- results %>%
     wn_3 = ifelse(avg_dif >= -1 * 3 & avg_dif <= 3, 1, 0),
     wn_4 = ifelse(avg_dif >= -1 * 4 & avg_dif <= 4, 1, 0),
     wn_5 = ifelse(avg_dif >= -1 * 5 & avg_dif <= 5, 1, 0)
-  ) %>%
-  group_by(res_name) %>%
+  ) |>
+  group_by(res_name) |>
   summarise(
     maxgid = n(),
     tot_wn_0 = sum(wn_0) / maxgid * 100,
@@ -501,7 +497,7 @@ how_well <- results %>%
     tot_wn_3 = sum(wn_3) / maxgid * 100,
     tot_wn_4 = sum(wn_4) / maxgid * 100,
     tot_wn_5 = sum(wn_5) / maxgid * 100
-  ) %>%
+  ) |>
   distinct()
 ```
 
@@ -514,11 +510,11 @@ We had a problem in the track reconstruction where some iterations did not recon
 #| warning: false
 #| include: true
 
-recon <- df_var %>%
-  group_by(res_name, iteration) %>%
-  summarise(max_recon = max(mod_count)) %>%
-  ungroup() %>%
-  group_by(res_name) %>%
+recon <- df_var |>
+  group_by(res_name, iteration) |>
+  summarise(max_recon = max(mod_count)) |>
+  ungroup() |>
+  group_by(res_name) |>
   summarise(
     max_30 = length(which(max_recon >= 30)) / max(iteration) * 100,
     max_29 = length(which(max_recon >= 29)) / max(iteration) * 100,
@@ -539,10 +535,10 @@ Because some tracks were not re-constructed by the movement model, we may have i
 #| warning: false
 #| include: true
 
-recon_res <- df_var %>%
-  group_by(res_name, iteration) %>%
-  summarise(max_mod = max(mod_count)) %>%
-  dplyr::filter(max_mod == anims) %>%
+recon_res <- df_var |>
+  group_by(res_name, iteration) |>
+  summarise(max_mod = max(mod_count)) |>
+  dplyr::filter(max_mod == anims) |>
   count()
 ```
 
@@ -553,12 +549,12 @@ Let's re-number these iterations where all `anims` were re-constructed.
 #| warning: false
 #| include: true
 
-new_iters <- df_var %>%
-  group_by(res_name, iteration) %>%
-  summarise(max_mod = max(mod_count)) %>%
-  dplyr::filter(max_mod == 30) %>%
-  ungroup() %>%
-  distinct(iteration) %>%
+new_iters <- df_var |>
+  group_by(res_name, iteration) |>
+  summarise(max_mod = max(mod_count)) |>
+  dplyr::filter(max_mod == 30) |>
+  ungroup() |>
+  distinct(iteration) |>
   mutate(new_iter = seq_along(iteration))
 ```
 
@@ -569,7 +565,7 @@ Now we can see how our results would change if we had selected only iterations i
 #| warning: false
 #| include: true
 
-new_iters_df <- merge(new_iters, df_var) %>%
+new_iters_df <- merge(new_iters, df_var) |>
   dplyr::filter(
     res_name == "100km" &
       new_iter <= 119 |
@@ -578,13 +574,13 @@ new_iters_df <- merge(new_iters, df_var) %>%
       res_name == "10km" & new_iter <= 144
   )
 
-new_results <- new_iters_df %>%
-  group_by(res_name, gid) %>%
-  summarise(avg_dif = mean(dif), se = plotrix::std.error(dif))
+new_results <- new_iters_df |>
+  group_by(res_name, gid) |>
+  summarise(avg_dif = mean(dif), se = se = sd(dif) / n())
 new_results
 
-new_how_well <- new_results %>%
-  group_by(res_name) %>%
+new_how_well <- new_results |>
+  group_by(res_name) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km")),
     wn_0 = ifelse(avg_dif >= -1 * 0.1 & avg_dif <= 0.1, 1, 0),
@@ -593,7 +589,7 @@ new_how_well <- new_results %>%
     wn_3 = ifelse(avg_dif >= -1 * 3 & avg_dif <= 3, 1, 0),
     wn_4 = ifelse(avg_dif >= -1 * 4 & avg_dif <= 4, 1, 0),
     wn_5 = ifelse(avg_dif >= -1 * 5 & avg_dif <= 5, 1, 0)
-  ) %>%
+  ) |>
   summarise(
     maxgid = max(gid),
     tot_wn_0 = sum(wn_0) / maxgid * 100,
@@ -602,7 +598,7 @@ new_how_well <- new_results %>%
     tot_wn_3 = sum(wn_3) / maxgid * 100,
     tot_wn_4 = sum(wn_4) / maxgid * 100,
     tot_wn_5 = sum(wn_5) / maxgid * 100
-  ) %>%
+  ) |>
   distinct()
 
 new_how_well
@@ -623,8 +619,8 @@ First, let's gather information on the depth in each grid cell. For this example
 # Objects required for iterations to run
 head(site_depth)
 
-site_depth <- site_depth %>%
-  sf::st_as_sf() %>%
+site_depth <- site_depth |>
+  sf::st_as_sf() |>
   sf::st_transform(4269)
 
 sf::st_bbox(site_depth)
@@ -652,7 +648,7 @@ Save the export.
 
 head(atlcoast)
 
-atlcoast <- atlcoast %>%
+atlcoast <- atlcoast |>
   sf::st_transform(4269)
 ```
 
@@ -665,10 +661,10 @@ Read in depth data. For now, we will load the demonstration depth_data file. Her
 
 head(depth_data)
 
-depth_data <- depth_data %>%
+depth_data <- depth_data |>
   sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4269)
 
-depth_data <- sf::st_filter(depth_data, site_depth) %>%
+depth_data <- sf::st_filter(depth_data, site_depth) |>
   mutate(uid = seq_along(geometry))
 ```
 
@@ -681,8 +677,8 @@ We also need to re-create the grids without the false origin.[^2] The study site
 #| warning: false
 #| include: true
 
-site_depth <- site_depth %>%
-  sf::st_transform(., 3857)
+site_depth <- site_depth |>
+  sf::st_transform(3857)
 
 HS_100km_grid <- grid_res(100, site_depth, 4269, "polygons")
 HS_50km_grid <- grid_res(50, site_depth, 4269, "polygons")
@@ -712,44 +708,44 @@ Calculate distance to shore, density of receivers, presence/absence of receivers
 
 head(fo_sts_pts)
 
-fo_sts_pts <- fo_sts_pts %>%
+fo_sts_pts <- fo_sts_pts |>
   sf::st_centroid()
 
-fo_land_barrier <- fo_land_barrier %>%
-  sf::st_transform(3857) %>%
-  sf::st_collection_extract('POLYGON') %>%
-  sf::st_cast('POLYGON') %>%
-  sf::st_union() %>%
+fo_land_barrier <- fo_land_barrier |>
+  sf::st_transform(3857) |>
+  sf::st_collection_extract('POLYGON') |>
+  sf::st_cast('POLYGON') |>
+  sf::st_union() |>
   sf::st_as_sf()
 
 epsg = 3857
 
 HS_100km_grid <- merge(
-  (HS_100km_grid %>% as.data.frame() %>% dplyr::select(-geometry)),
+  (HS_100km_grid |> as.data.frame() |> dplyr::select(-geometry)),
   d_shore_rcvs(100, fo_study_site, fo_land_barrier, epsg, fo_sts_pts),
   by = "gid"
-) %>%
+) |>
   sf::st_as_sf()
 
 HS_50km_grid <- merge(
-  (HS_50km_grid %>% as.data.frame %>% dplyr::select(-geometry)),
+  (HS_50km_grid |> as.data.frame() |> dplyr::select(-geometry)),
   d_shore_rcvs(50, fo_study_site, fo_land_barrier, epsg, fo_sts_pts),
   by = "gid"
-) %>%
+) |>
   sf::st_as_sf()
 
 HS_25km_grid <- merge(
-  (HS_25km_grid %>% as.data.frame %>% dplyr::select(-geometry)),
+  (HS_25km_grid |> as.data.frame() |> dplyr::select(-geometry)),
   d_shore_rcvs(25, fo_study_site, fo_land_barrier, epsg, fo_sts_pts),
   by = "gid"
-) %>%
+) |>
   sf::st_as_sf()
 
 HS_10km_grid <- merge(
-  (HS_10km_grid %>% as.data.frame %>% dplyr::select(-geometry)),
+  (HS_10km_grid |> as.data.frame() |> dplyr::select(-geometry)),
   d_shore_rcvs(10, fo_study_site, fo_land_barrier, epsg, fo_sts_pts),
   by = "gid"
-) %>%
+) |>
   sf::st_as_sf()
 ```
 
@@ -762,22 +758,22 @@ Let's find out how many grid cells lacked receivers.
 
 grids <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
-grids <- sf::st_as_sf(data.table::rbindlist(grids, idcol = 'resolution')) %>%
+grids <- sf::st_as_sf(dplyr::bind_rows(grids, .id = 'resolution')) |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
 
-no_rcv <- grids %>%
-  group_by(res_name) %>%
+no_rcv <- grids |>
+  group_by(res_name) |>
   summarise(
     n_zeroes = sum(p_a == "0"),
     perc_zeroes = n_zeroes / max(gid) * 100
-  ) %>%
-  as.data.frame %>%
+  ) |>
+  as.data.frame() |>
   dplyr::select(-x)
 ```
 
@@ -788,37 +784,37 @@ Merge the results to these grid cell metadata and determine which grid cells exh
 #| warning: false
 #| include: true
 
-results <- results %>%
+results <- results |>
   mutate(
     g_fit = ifelse(avg_dif >= -1 * 0.1 * anims & avg_dif <= 0.1 * anims, 1, 0)
   )
 
 HS_100km_grid <- merge(
-  results %>% dplyr::filter(res_name == "100km"),
+  results |> dplyr::filter(res_name == "100km"),
   HS_100km_grid,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 
 HS_50km_grid <- merge(
-  results %>% dplyr::filter(res_name == "50km"),
+  results |> dplyr::filter(res_name == "50km"),
   HS_50km_grid,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 
 HS_25km_grid <- merge(
-  results %>% dplyr::filter(res_name == "25km"),
+  results |> dplyr::filter(res_name == "25km"),
   HS_25km_grid,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 
 HS_10km_grid <- merge(
-  results %>% dplyr::filter(res_name == "10km"),
+  results |> dplyr::filter(res_name == "10km"),
   HS_10km_grid,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 ```
 
@@ -856,31 +852,31 @@ HS10km <- grid_res(10, study_site, 3857, "polygons")
 
 # Merge results data to new geometries
 HS100km <- merge(
-  (HS_100km_grid %>% as.data.frame() %>% dplyr::select(-x)),
+  (HS_100km_grid |> as.data.frame() |> dplyr::select(-x)),
   HS100km,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 
 HS50km <- merge(
-  (HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)),
+  (HS_50km_grid |> as.data.frame() |> dplyr::select(-x)),
   HS50km,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 
 HS25km <- merge(
-  (HS_25km_grid %>% as.data.frame() %>% dplyr::select(-x)),
+  (HS_25km_grid |> as.data.frame() |> dplyr::select(-x)),
   HS25km,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 
 HS10km <- merge(
-  (HS_10km_grid %>% as.data.frame() %>% dplyr::select(-x)),
+  (HS_10km_grid |> as.data.frame() |> dplyr::select(-x)),
   HS10km,
   by = c("gid")
-) %>%
+) |>
   sf::st_as_sf()
 ```
 
@@ -1020,16 +1016,16 @@ We want to know how much each main effect increases (or decreases) the odds of a
 #| warning: false
 #| include: true
 
-odds_100km <- get_or(fit2.100km) %>%
+odds_100km <- get_or(fit2.100km) |>
   mutate(res_name = "100km")
 
-odds_50km <- get_or(fit3.50km) %>%
+odds_50km <- get_or(fit3.50km) |>
   mutate(res_name = "50km")
 
-odds_25km <- get_or(fit2.25km) %>%
+odds_25km <- get_or(fit2.25km) |>
   mutate(res_name = "25km")
 
-odds_10km <- get_or(fit1.10km) %>%
+odds_10km <- get_or(fit1.10km) |>
   mutate(res_name = "10km")
 
 odds_ratios <- rbind(odds_100km, odds_50km, odds_25km, odds_10km)
@@ -1048,11 +1044,11 @@ res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
 rcv_dens <- lapply(res, den_rcvs)
 
-rcv_dens <- data.table::rbindlist(rcv_dens, idcol = 'resolution') %>%
+rcv_dens <- dplyr::bind_rows(rcv_dens, .id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
@@ -1067,12 +1063,12 @@ What are the characteristics of the grid cells that exhibited a good fit?
 #| warning: false
 #| include: true
 
-gd_fit_char <- lapply(res, gd_fts) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+gd_fit_char <- lapply(res, gd_fts) |>
+  dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
@@ -1088,12 +1084,12 @@ Let's find out how many of the good fits occurred in grid cells that lacked rece
 #| warning: false
 #| include: true
 
-clsd_gps <- lapply(res, gps_fld) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+clsd_gps <- lapply(res, gps_fld) |>
+  dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
@@ -1108,12 +1104,12 @@ Let's find out where these closed gaps are located (e.g., are they coastal?).
 #| warning: false
 #| include: true
 
-clsd_gp_chars <- lapply(res, gps_chr) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+clsd_gp_chars <- lapply(res, gps_chr) |>
+  dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
@@ -1128,12 +1124,12 @@ Let's find out where most of the receivers are in the current array.
 #| warning: false
 #| include: true
 
-rcv_chars <- lapply(res, rcv_chr) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+rcv_chars <- lapply(res, rcv_chr) |>
+  dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
@@ -1151,12 +1147,12 @@ Blacktip sharks, the species chosen to demonstrate the current methods, is known
 
 depth_limit <- 300 # [m]
 
-dif_depth <- lapply(res, dif_co) %>%
-  data.table::rbindlist(., idcol = 'resolution') %>%
+dif_depth <- lapply(res, dif_co) |>
+  dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
     by = "resolution"
-  ) %>%
+  ) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
@@ -1173,18 +1169,18 @@ Let's apply these methods to real acoustic telemetry data so we can derive distr
 
 head(demo_dets)
 
-demo_dets <- demo_dets %>%
-  dplyr::arrange(ID, time) %>%
-  dplyr::group_by(ID, time) %>%
-  dplyr::summarize(mean_pos = sf::st_combine(geometry)) %>%
-  sf::st_centroid() %>%
+demo_dets <- demo_dets |>
+  dplyr::arrange(ID, time) |>
+  dplyr::group_by(ID, time) |>
+  dplyr::summarize(mean_pos = sf::st_combine(geometry)) |>
+  sf::st_centroid() |>
   dplyr::mutate(
     time = as.POSIXct(time),
     x = sf::st_coordinates(mean_pos)[, 1],
     y = sf::st_coordinates(mean_pos)[, 2],
     locType = "o"
-  ) %>% # Obtain x and y coordinates so that you can merge with predicted locations later
-  sf::st_drop_geometry() %>%
+  ) |> # Obtain x and y coordinates so that you can merge with predicted locations later
+  sf::st_drop_geometry() |>
   as.data.frame
 ```
 
@@ -1217,13 +1213,13 @@ Turn the movement model product into a data frame and label the predicted locati
 #| warning: false
 #| include: true
 
-demo_dets <- demo_dets %>%
-  dplyr::select(ID, locType, time, mu.x, mu.y, speed) %>%
-  dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) %>% #Specify predicted locs
-  as.data.frame
+demo_dets <- demo_dets |>
+  dplyr::select(ID, locType, time, mu.x, mu.y, speed) |>
+  dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) |> #Specify predicted locs
+  as.data.frame()
 
-demo_dets <- demo_dets %>%
-  dplyr::select(ID, time, mu.x, mu.y) %>%
+demo_dets <- demo_dets |>
+  dplyr::select(ID, time, mu.x, mu.y) |>
   dplyr::mutate(
     time = lubridate::ymd_hms(format(
       as.POSIXct(time, tz = "UTC"),
@@ -1242,7 +1238,7 @@ Since the movement model does not recognize land, let's re-route the parts that 
 
 CRS <- 3857
 
-barrier <- atlcoast %>% sf::st_transform(., 3857)
+barrier <- atlcoast |> sf::st_transform(3857)
 vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
 
@@ -1287,20 +1283,20 @@ What if we connected those data with straight lines?
 #| warning: false
 #| include: true
 
-at_lines <- at_dly_locs %>%
-  group_by(ID, time) %>%
-  sf::st_transform(3857) %>%
-  summarise(pt = sf::st_combine(geometry)) %>%
-  sf::st_centroid() %>%
+at_lines <- at_dly_locs |>
+  group_by(ID, time) |>
+  sf::st_transform(3857) |>
+  summarise(pt = sf::st_combine(geometry)) |>
+  sf::st_centroid() |>
   mutate(
     lat = sf::st_coordinates(pt)[, 2],
     lon = sf::st_coordinates(pt)[, 1]
-  ) %>%
-  arrange(ID, time) %>%
-  mutate(start_x = lon, start_y = lat, end_x = lead(lon), end_y = lead(lat)) %>% #Prep data for making lines - ensures proper order
-  sf::st_as_sf(coords = c("lon", "lat"), crs = 3857) %>%
-  filter(!is.na(end_y)) %>%
-  tidyr::nest() %>%
+  ) |>
+  arrange(ID, time) |>
+  mutate(start_x = lon, start_y = lat, end_x = lead(lon), end_y = lead(lat)) |> #Prep data for making lines - ensures proper order
+  sf::st_as_sf(coords = c("lon", "lat"), crs = 3857) |>
+  filter(!is.na(end_y)) |>
+  tidyr::nest() |>
   mutate(
     data = purrr::map(
       data,
@@ -1312,14 +1308,14 @@ at_lines <- at_dly_locs %>%
         )
       )
     )
-  ) %>%
+  ) |>
   mutate(
     data = purrr::map(data, ~ mutate(.x, x = sf::st_sfc(x))),
     x = purrr::map(data, ~ sf::st_union(sf::st_set_geometry(.x, 'x'))), ##Preserves order
     x = purrr::map(x, ~ sf::st_cast(.x, 'MULTILINESTRING'))
-  ) %>%
-  dplyr::select(-data) %>%
-  tidyr::unnest(x) %>%
+  ) |>
+  dplyr::select(-data) |>
+  tidyr::unnest(x) |>
   sf::st_as_sf(sf_column_name = 'x', crs = 3857)
 
 sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
@@ -1338,10 +1334,10 @@ Let's merge the results that have a false origin with the distribution data so w
 #| include: true
 
 goodfts_50km <- merge(
-  (HS_50km_grid %>% as.data.frame() %>% dplyr::select(-x)),
+  (HS_50km_grid |> as.data.frame() |> dplyr::select(-x)),
   at_line_cts,
   by = "gid"
-) %>%
+) |>
   sf::st_as_sf()
 ```
 

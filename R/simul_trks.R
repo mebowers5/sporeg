@@ -72,7 +72,7 @@ simul_trks <- function(
   })
 
   simu <- sim |>
-    as.data.frame() %>%
+    as.data.frame() |>
     dplyr::rename_with(~ gsub("geometry\\.", "", .x)) |>
     dplyr::rename_with(~ gsub("geometry", "0", .x)) |>
     tidyr::pivot_longer(
