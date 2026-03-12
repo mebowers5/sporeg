@@ -367,7 +367,11 @@ comp_trks <- function(
       dplyr::ungroup() |>
       sf::st_as_sf(sf_column_name = "geom")
 
-    ### Need to create workflow to handle multiple grid cell resolutions
+    # If HSgrid is a single data.frame, convert to list for lapply
+    if (is.data.frame(HSgrid)) {
+      HSgrid <- list(HSgrid)
+    }
+
     # Apply function over list of grid cell HSgrid's
     results <- lapply(HSgrid, FUN = function(HSgrid) {
       ### Count distinct AnimalIDs in each grid cell
