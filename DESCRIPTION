@@ -21,6 +21,7 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports: 
+    doFuture,
     dplyr,
     glatos (>= 0.8.0),
     pathroutr (>= 0.2.1),
