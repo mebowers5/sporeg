@@ -33,7 +33,7 @@ Suggests:
     sp,
     testthat (>= 3.0.0)
 Remotes: 
-    jmlondon/pathroutr,
+    mhpob/pathroutr,
     ocean-tracking-network/glatos
 LazyData: true
 VignetteBuilder: knitr
