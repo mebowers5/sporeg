@@ -8,6 +8,7 @@
 #' @param multi.grid boolean
 #' @param HSgrid When multi.grid = FALSE, a sf polygon grid; When multi.grid = TRUE, a list of sf polygon grids
 #' @param snap_tolerance The tolerance (in meters) at which an intersection between a station and a track should snap to the station centroid. It is recommended that the snap_tolerance be equal to the station buffer size.
+#' @param cores Number of cores to use during paralllel processing. Defaults to 2.
 #'
 #' @return A data frame with counts and differences by grid cell ID ("gid")
 #' @export
