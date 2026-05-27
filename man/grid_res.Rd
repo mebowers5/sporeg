@@ -4,7 +4,7 @@
 \alias{grid_res}
 \title{Create grid}
 \usage{
-grid_res(km, study_site, epsg, what)
+grid_res(km, study_site, epsg, what = c("polygons", "centers"), simplify = 0.2)
 }
 \arguments{
 \item{km}{grid cell resolution in km. one-sided length of grid cell, assumes
@@ -16,6 +16,10 @@ desired grid cell is to be squared}
 
 \item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center
 points of grid cells}
+
+\item{simplify}{numeric. By what proportion of \code{km} do you wish to simplify
+the \code{study_site} polygon? Higher numbers give faster run times at the expense
+of resolution. Defaults to 0.2.}
 }
 \value{
 grid comprised of polygons or points depending on \code{what} parameter
