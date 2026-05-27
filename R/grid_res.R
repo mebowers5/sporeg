@@ -56,7 +56,7 @@ grid_res <- function(
     # Simplify polygon by 20% of the grid spacing to speed up st_intersection
     study_site_proj <- study_site |>
       sf::st_transform(epsg) |>
-      st_simplify(preserveTopology = TRUE, dTolerance = grid_spacing * 0.2)
+      sf::st_simplify(preserveTopology = TRUE, dTolerance = grid_spacing * 0.2)
 
     grid <- sf::st_intersection(
       study_site_proj,
