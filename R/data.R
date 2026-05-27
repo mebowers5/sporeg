@@ -25,7 +25,15 @@
 #'
 "fit2.100km"
 
+#' American coastal Atlantic states polygon
 #'
+#' @format An sf object with 435 rows and three columns:
+#' \describe{
+#'   \item{poly_uid}{Polygon ID, ranging from 1 to 434}
+#'   \item{line_uid}{Values of 1 (States) or 2 (Washington, DC)}
+#'   \item{geometry}{Well-known text POLYGON of the American Atlantic coastal shelf
+#'     in WGS84/Pseudo-Mercator, EPSG:3857}
+#' }
 "fo_land_barrier"
 
 #'
@@ -37,7 +45,14 @@
 #'
 "fo_sts_pts"
 
+#' American Atlantic coastal shelf to the 500m isobath from Florida to Cape Code, MA
 #'
+#' @format An sf object with 1 row and two columns:
+#' \describe{
+#'   \item{poly_uid}
+#'   \item{geometry}{Well-known text POLYGON of the American Atlantic coastal shelf
+#'     in WGS84/Pseudo-Mercator, EPSG:3857}
+#' }
 "fo_study_site"
 
 #'
