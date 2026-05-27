@@ -24,8 +24,8 @@ gd_fts <- function(df) {
     dplyr::filter(g_fit == 1) |>
     dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
-      max_dpth = max(na.omit(mean_depth)),
-      min_dpth = min(na.omit(mean_depth)),
+      max_depth = max(na.omit(mean_depth)),
+      min_depth = min(na.omit(mean_depth)),
       avg_depth = mean(na.omit(mean_depth)),
       max_d = max(na.omit(d_shore_km)),
       min_d = min(na.omit(d_shore_km)),

@@ -4,7 +4,7 @@ test_that("returns correct types", {
   expect_s3_class(result, c("sf", "data.frame"), exact = TRUE)
   expect_named(
     result,
-    c("max_dpth", "min_dpth", "avg_depth", "max_d", "min_d", "avg_d", "x")
+    c("max_depth", "min_depth", "avg_depth", "max_d", "min_d", "avg_d", "x")
   )
 })
 
