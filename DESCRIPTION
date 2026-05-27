@@ -1,6 +1,6 @@
 Package: sporeg
 Title: A package to reconstruct sporadic passive tracking data and measure the bias and uncertainty incurred through the process
-Version: 0.2.0.910
+Version: 0.2.0.911
 Authors@R: 
     person("Mary E.", "Bowers", , "mebowers5@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5823-186X"))
@@ -39,5 +39,5 @@ LazyData: true
 VignetteBuilder: knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

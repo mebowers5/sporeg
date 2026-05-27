@@ -18,5 +18,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Mary E. Bowers \email{mebowers5@gmail.com} (\href{https://orcid.org/0000-0002-5823-186X}{ORCID})
 
+Authors:
+\itemize{
+  \item Mary E. Bowers \email{mebowers5@gmail.com} (\href{https://orcid.org/0000-0002-5823-186X}{ORCID})
+}
+
 }
 \keyword{internal}

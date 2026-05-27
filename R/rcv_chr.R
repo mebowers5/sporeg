@@ -19,9 +19,9 @@ rcv_chr <- function(df) {
     dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
       tot = dplyr::n(),
-      dpth_200_800 = sum(na.omit(mean_depth >= 200 & mean_depth <= 800)),
+      depth_200_800 = sum(na.omit(mean_depth >= 200 & mean_depth <= 800)),
       depth_200_500 = sum(na.omit(mean_depth >= 200 & mean_depth <= 500)),
-      min_dpth = min(na.omit(mean_depth)),
+      min_depth = min(na.omit(mean_depth)),
       avg_depth = mean(na.omit(mean_depth)),
       max_depth = max(na.omit(mean_depth)),
       max_d = max(na.omit(d_shore_km)),
