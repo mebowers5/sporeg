@@ -3,8 +3,8 @@ test_that("returns correct types", {
     expect_s3_class(c("sf", "data.frame"), exact = TRUE) |>
     expect_type("list") |>
     expect_named(c(
-      "max_dpth",
-      "min_dpth",
+      "max_depth",
+      "min_depth",
       "avg_depth",
       "max_d",
       "min_d",

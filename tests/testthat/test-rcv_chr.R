@@ -4,9 +4,9 @@ test_that("returns correct types", {
     expect_named(
       c(
         "tot",
-        "dpth_200_800",
+        "depth_200_800",
         "depth_200_500",
-        "min_dpth",
+        "min_depth",
         "avg_depth",
         "max_depth",
         "max_d",
