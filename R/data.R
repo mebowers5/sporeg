@@ -3,7 +3,7 @@
 #' \describe{
 #'   \item{ID}{transmitter identifier, a factor with 105 levels}
 #'   \item{time}{POSIXct timestamp of detection, UTC time zone}
-#'   \item{locType}{}
+#'   \item{locType}{Type of location}
 #'   \item{geometry}{Well-known text of the location of the identified transmitter
 #'     in WGS84/Pseudo-Mercator, EPSG:3857}
 #' }
@@ -49,7 +49,7 @@
 #'
 #' @format An sf object with 1 row and two columns:
 #' \describe{
-#'   \item{poly_uid}
+#'   \item{poly_uid}{Polygon ID}
 #'   \item{geometry}{Well-known text POLYGON of the American Atlantic coastal shelf
 #'     in WGS84/Pseudo-Mercator, EPSG:3857}
 #' }
