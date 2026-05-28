@@ -11,6 +11,7 @@
 \alias{gps_chr}
 \alias{gps_fld}
 \alias{grid_res}
+\alias{powr}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -42,6 +43,8 @@ gps_chr(df)
 gps_fld(df)
 
 grid_res(km, study_site, epsg, what)
+
+powr(output, sig.level, power, delta, n = NULL)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -77,6 +80,10 @@ desired grid cell is to be squared}
 
 \item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center
 points of grid cells}
+
+\item{output}{the resulting data frame from the iterative methods process}
+
+\item{sig.level}{numeric. the desired level of significance to achieve}
 }
 \description{
 These functions are provided for backwards compatibility and will be removed

@@ -241,3 +241,14 @@ grid_res <- function(km, study_site, epsg, what) {
 
   create_grid(resolution, study_site, crs, type)
 }
+
+#' @param output the resulting data frame from the iterative methods process
+#' @param sig.level numeric. the desired level of significance to achieve
+#' @rdname deprecated
+#' @export
+powr <- function(output, sig.level, power, delta, n = NULL) {
+  warn_deprecated("powr", "power_analysis")
+  .check_deprecated_dots(dots = list(...))
+
+  power_analysis(results, significance_level, power, delta, n)
+}

@@ -3,9 +3,9 @@
 #' This is a wrapper function for running a power analysis on iterative simulation
 #'   and reconstruction methods process.
 #'
-#' @param output the resulting data frame from the iterative methods process
-#' @param sig.level numeric. the desired level of significance to achieve
-#' @param power numeric. the desired level of power to achieve
+#' @param results the resulting data frame from the iterative methods process
+#' @param significance_level numeric. the desired level of significance to achieve
+#' @param power the desired level of power to achieve
 #' @param delta numeric. the desired effect size to achieve
 #' @param n integer. the number of replicates/sample size. should be assigned
 #'   `NULL` if desiring sample size
@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' # Use powr wrapper function on example results
+#' # Use power_analysis wrapper function on example results
 #' # Grab 100km resolution
 #' res <- lapply(sporeg::results, `[[`, 1) |>
 #'   dplyr::bind_rows() |>
@@ -28,13 +28,19 @@
 #' delta <- anims * 0.01 # a delta within 1% of the total number of animals
 #' sig.level <- 0.95
 #'
-#' powr(res, sig.level, power, delta)
+#' power_analysis(res, sig.level, power, delta)
 
-powr <- function(output, sig.level, power, delta, n = NULL) {
+power_analysis <- function(
+  results,
+  significance_level,
+  power,
+  delta,
+  n = NULL
+) {
   stats::power.t.test(
     n = n,
-    sd = max(na.omit(output$sd)),
-    sig.level = sig.level,
+    sd = max(na.omit(results$sd)),
+    sig.level = significance_level,
     power = power,
     delta = delta,
     type = "paired",
