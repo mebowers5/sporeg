@@ -14,6 +14,7 @@
 \alias{powr}
 \alias{rcv_chr}
 \alias{simul_trks}
+\alias{sub_rrt}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -61,6 +62,8 @@ simul_trks(
   n_days,
   initHeading
 )
+
+sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -69,7 +72,7 @@ simul_trks(
 
 \item{land_barrier}{A sf polygon of a barrier object around which tracks should be re-routed}
 
-\item{vis_graph}{A visibility graph created from the barrier object @seealso \link[pathroutr:prt_visgraph]{pathroutr::prt_visgraph}}
+\item{vis_graph}{vis_graph object created from \code{pathroutr::prt_vis_graph} function}
 
 \item{HSgrid}{When multi_grid = FALSE, a sf polygon grid; When multi_grid = TRUE, a list of sf polygon grids}
 
@@ -94,6 +97,8 @@ desired grid cell is to be squared}
 
 \item{depth_limit}{a depth value in meters that represents the new depth cut off of interest}
 
+\item{model}{A model object created from the \code{nlme} package}
+
 \item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center
 points of grid cells}
 
@@ -101,7 +106,16 @@ points of grid cells}
 
 \item{sig.level}{numeric. the desired level of significance to achieve}
 
+\item{power}{the desired level of power to achieve}
+
+\item{delta}{numeric. the desired effect size to achieve}
+
+\item{n}{integer. the number of replicates/sample size. should be assigned
+\code{NULL} if desiring sample size}
+
 \item{anims}{integer. quantity of desired animals to simulate}
+
+\item{theta}{argument from \code{glatos::crw_in_polygon} function}
 
 \item{vmin}{numeric. minimum velocity from which to sample step length}
 
@@ -111,7 +125,19 @@ points of grid cells}
 
 \item{crs}{coordinate reference system specification for transformation}
 
+\item{n_days}{integer. number of days that tracks should be simulated}
+
 \item{initHeading}{argument from \code{glatos::crw_in_polygon} function}
+
+\item{track_data}{point location data with latitude and longitude information}
+
+\item{CRS}{epsg code for desired coordinate system transformation}
+
+\item{barrier}{polygon or multipolygon sf object}
+
+\item{buffer}{desired buffer size for re-routed tracks; generally should
+relate to range of receivers; distance should use the same units as the
+final coordinate system}
 }
 \description{
 These functions are provided for backwards compatibility and will be removed

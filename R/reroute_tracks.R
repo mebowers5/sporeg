@@ -3,9 +3,9 @@
 #' This function allows you to re-route demonstrative movement data that has been
 #'   reconstructed using a movement model around a polygon barrier.
 #' @param track_data point location data with latitude and longitude information
-#' @param CRS epsg code for desired coordinate system transformation
+#' @param crs epsg code for desired coordinate system transformation
 #' @param barrier polygon or multipolygon sf object
-#' @param vis_graph vis_graph object created from `pathroutr::prt_vis_graph` function
+#' @param visibility_graph visibility_graph object created from `pathroutr::prt_vis_graph` function
 #' @param buffer desired buffer size for re-routed tracks; generally should
 #'   relate to range of receivers; distance should use the same units as the
 #'   final coordinate system
@@ -13,22 +13,22 @@
 #' @return A simple feature (multi)polygon object
 #'
 #' @examples
-#' CRS <- 3857
+#' crs <- 3857
 #' barrier <- atlcoast
-#' vis_graph <- pathroutr::prt_visgraph(barrier)
+#' visibility_graph <- pathroutr::prt_visgraph(barrier)
 #' buffer <- 650
 #' track_data <- sporeg::subset |>
 #'   dplyr::filter(ID %in% c("A69-9001-23338", "A69-9001-25494"))
 #'
-#' tbuff650 <- sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
+#' tbuff650 <- reroute_tracks(track_data, crs, barrier, visibility_graph, buffer)
 #'
 #' @export
 
-sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
-  # convert the track_data to sf and set the CRS; the bb step is just a way to limit
-  # the size of the land polygon and save some computation time when creating vis_graph
+reroute_tracks <- function(track_data, crs, barrier, visibility_graph, buffer) {
+  # convert the track_data to sf and set the crs; the bb step is just a way to limit
+  # the size of the land polygon and save some computation time when creating visibility_graph
   track_path <- track_data |>
-    sf::st_as_sf(coords = c("mu.x", "mu.y"), crs = CRS)
+    sf::st_as_sf(coords = c("mu.x", "mu.y"), crs = crs)
 
   # there are multiple paths identified by ID; we'll group and nest for a proper
   # tidyverse/list-column workflow
@@ -40,13 +40,13 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   # we need to get our land polygon into a proper format; essentially, we want it to be
   # a series of POLYGONs (and not MULTIPOLYGONs or GEOMETRYCOLLECTION).
   land_barrier <- barrier |>
-    sf::st_transform(CRS) |>
+    sf::st_transform(crs) |>
     sf::st_collection_extract('POLYGON') |>
     sf::st_cast('POLYGON')
 
   # prt_visgraph will build our visual graph network from our land barrier object and
   # return a SpatialLinesNetwork / sfNetwork that has no edges that cross land
-  # vis_graph <- pathroutr::prt_visgraph(land_barrier)
+  # visibility_graph <- pathroutr::prt_visgraph(land_barrier)
 
   # the track cannot start or end within the land barrier; prt_trim() trims those out
   track_path <- track_path |>
@@ -59,7 +59,11 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   t <- track_path |>
     dplyr::rowwise() |>
     dplyr::mutate(
-      rrt_pts = list(pathroutr::prt_reroute(trim_data, land_barrier, vis_graph))
+      rrt_pts = list(pathroutr::prt_reroute(
+        trim_data,
+        land_barrier,
+        visibility_graph
+      ))
     )
 
   # NOTE: previous versions of prt_update_points() had the argument order reversed from
@@ -79,7 +83,7 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
 
   # we need to rbind all of our lines and points into single objects that can be plotted
   t$geom <- do.call(rbind, t$path_lines)
-  t$geom <- sf::st_set_crs(t$geom, CRS)
+  t$geom <- sf::st_set_crs(t$geom, crs)
 
   t <- t |> dplyr::select(ID, geom)
 

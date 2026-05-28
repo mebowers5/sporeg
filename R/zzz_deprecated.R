@@ -45,7 +45,9 @@
     "rel_site" = "release_site",
     "n_days" = "n_days",
     "intHeading" = "initial_heading"
-  )
+  ),
+
+  "sub_rrt" = c("CRS" = "crs", "vis_graph" = "visibility_graph")
 )
 
 
@@ -211,6 +213,7 @@ gd_fts <- function(df) {
   summarize_good_fits(reconstructed)
 }
 
+#' @inheritParams get_odds_ratio
 #' @rdname deprecated
 #' @export
 get_or <- function(model) {
@@ -242,7 +245,7 @@ gps_fld <- function(df) {
 #' @param epsg specification for desired coordinate reference system transformation
 #' @param what `"polygons"` for grid cell polygons or `"centers"` for center
 #'   points of grid cells
-#'
+#' @inheritParams create_grid
 #' @rdname deprecated
 #' @export
 grid_res <- function(km, study_site, epsg, what) {
@@ -254,6 +257,7 @@ grid_res <- function(km, study_site, epsg, what) {
 
 #' @param output the resulting data frame from the iterative methods process
 #' @param sig.level numeric. the desired level of significance to achieve
+#' @inheritParams power_analysis
 #' @rdname deprecated
 #' @export
 powr <- function(output, sig.level, power, delta, n = NULL) {
@@ -278,6 +282,7 @@ rcv_chr <- function(df) {
 #' @param vmax numeric. maximum velocity from which to sample step length
 #' @param rel_site simple feature polygon object in which simulated animals are
 #' @param initHeading argument from `glatos::crw_in_polygon` function
+#' @inheritParams simulate_tracks
 #' @rdname deprecated
 #' @export
 simul_trks <- function(
@@ -305,4 +310,16 @@ simul_trks <- function(
     n_days,
     initial_heading
   )
+}
+
+#' @param CRS epsg code for desired coordinate system transformation
+#' @param vis_graph vis_graph object created from `pathroutr::prt_vis_graph` function
+#' @inheritParams reroute_tracks
+#' @rdname deprecated
+#' @export
+sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
+  warn_deprecated("sub_rrt", "reroute_tracks")
+  .check_deprecated_dots(dots = list(...))
+
+  reroute_tracks(results, significance_level, power, delta, n)
 }
