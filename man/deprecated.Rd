@@ -6,6 +6,7 @@
 \alias{d_shore_rcvs}
 \alias{den_rcvs}
 \alias{dif_co}
+\alias{gd_fts}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -27,6 +28,8 @@ d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
 den_rcvs(df)
 
 dif_co(df, depth_limit)
+
+gd_fts(df)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -47,7 +50,7 @@ dif_co(df, depth_limit)
 
 \item{sg}{spatial grid created from \code{grid_res} function}
 
-\item{df}{data frame object consisting of results from iterative reconstruction process.}
+\item{df}{data frame object consisting of results from iterative reconstruction process}
 
 \item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
 

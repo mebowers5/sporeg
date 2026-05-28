@@ -186,3 +186,17 @@ dif_co <- function(df, depth_limit) {
 
   depth_cutoff(reconstructed, depth_limit)
 }
+
+#' @param df data frame object consisting of results from iterative reconstruction process
+#' @rdname deprecated
+#' @inheritParams depth_cutoff
+#' @export
+gd_fts <- function(df) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"summarize_good_fits\" instead."
+  ))
+  .check_deprecated_dots(dots = list(...))
+
+  summarize_good_fits(reconstructed)
+}

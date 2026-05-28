@@ -1,7 +1,7 @@
 #' Good fits summary statistics
 #'
 #'This function summarizes minimum, maximum, and mean statistics for depth (mean_depth), distance from shore (d_shore), receiver count (count), receiver presence/absence (p_a), and the percentage of grid cells missing receivers for all of the good fits (g_fit).
-#' @param df data frame object consisting of results from iterative reconstruction process
+#' @param reconstructed data frame object consisting of results from iterative reconstruction process
 #'
 #' @return a data frame object with summary statistics from grid cells that contained good fits
 #' @export
@@ -9,7 +9,7 @@
 #' @examples
 #' # Apply gd_fts to list of grid resolutions
 #'
-#' gd_fit_char <- lapply(res, gd_fts) |>
+#' gd_fit_char <- lapply(res, summarize_good_fits) |>
 #'   dplyr::bind_rows(.id = 'resolution') |>
 #'   dplyr::mutate(resolution = as.numeric(resolution)) |>
 #'   dplyr::left_join(dplyr::tibble(resolution = 1:4,
@@ -19,8 +19,8 @@
 #'     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
 #'   )
 
-gd_fts <- function(df) {
-  tot <- df |>
+summarize_good_fits <- function(reconstructed) {
+  tot <- reconstructed |>
     dplyr::filter(g_fit == 1) |>
     dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
