@@ -7,7 +7,6 @@
 #' @keywords internal
 #' @name DEPRECATED_ARG_MAP
 .DEPRECATED_ARG_MAP <- list(
-  # from comp_trks
   "comp_trks" = c(
     "HSgrid" = "grid",
     "multi.grid" = "multi_grid",
@@ -15,27 +14,38 @@
     "vis_graph" = "visibility_graph"
   ),
 
-  # from cts
   "cts" = c("sg" = "grid", "df" = "rerouted_tracks"),
 
-  # from d_shore_rcvs
   "d_shore_rcvs" = c(
     "km" = "resolution",
     "sts_points" = "stations",
     "epsg" = "crs"
   ),
 
-  # from den_rcvs
   "den_rcvs" = c("df" = "gridded_receivers"),
 
-  # from dif_co
   "dif_co" = c("df" = "reconstructed"),
 
-  # from get_depth
   "get_depth" = c("HSgrid" = "grid"),
 
-  # from gps_chr
-  "gps_chr" = c("df" = "reconstructed")
+  "gps_chr" = c("df" = "reconstructed"),
+
+  "gps_fld" = c("df" = "reconstructed"),
+
+  "grid_res" = c("km" = "resolution", "epsg" = "crs", "what" = "type"),
+
+  "powr" = c("output" = "results", "sig.level" = "significance_level"),
+
+  "rcv_chr" = c("df" = "reconstructed"),
+
+  "simul_trks" = c(
+    "anims" = "n_animals",
+    "vmin" = "min_velocity",
+    "vmax" = "max_velocity",
+    "rel_site" = "release_site",
+    "n_days" = "n_days",
+    "intHeading" = "initial_heading"
+  )
 )
 
 
@@ -260,4 +270,39 @@ rcv_chr <- function(df) {
   .check_deprecated_dots(dots = list(...))
 
   receiver_summary(reconstructed)
+}
+
+
+#' @param anims integer. quantity of desired animals to simulate
+#' @param vmin numeric. minimum velocity from which to sample step length
+#' @param vmax numeric. maximum velocity from which to sample step length
+#' @param rel_site simple feature polygon object in which simulated animals are
+#' @param initHeading argument from `glatos::crw_in_polygon` function
+#' @rdname deprecated
+#' @export
+simul_trks <- function(
+  anims,
+  study_site,
+  theta,
+  vmin,
+  vmax,
+  rel_site,
+  crs,
+  n_days,
+  initHeading
+) {
+  warn_deprecated("simul_trks", "simulate_tracks")
+  .check_deprecated_dots(dots = list(...))
+
+  simulate_tracks(
+    n_animals,
+    study_site,
+    theta,
+    min_velocity,
+    max_velocity,
+    release_site,
+    crs,
+    n_days,
+    initial_heading
+  )
 }

@@ -13,6 +13,7 @@
 \alias{grid_res}
 \alias{powr}
 \alias{rcv_chr}
+\alias{simul_trks}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -48,6 +49,18 @@ grid_res(km, study_site, epsg, what)
 powr(output, sig.level, power, delta, n = NULL)
 
 rcv_chr(df)
+
+simul_trks(
+  anims,
+  study_site,
+  theta,
+  vmin,
+  vmax,
+  rel_site,
+  crs,
+  n_days,
+  initHeading
+)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -87,6 +100,18 @@ points of grid cells}
 \item{output}{the resulting data frame from the iterative methods process}
 
 \item{sig.level}{numeric. the desired level of significance to achieve}
+
+\item{anims}{integer. quantity of desired animals to simulate}
+
+\item{vmin}{numeric. minimum velocity from which to sample step length}
+
+\item{vmax}{numeric. maximum velocity from which to sample step length}
+
+\item{rel_site}{simple feature polygon object in which simulated animals are}
+
+\item{crs}{coordinate reference system specification for transformation}
+
+\item{initHeading}{argument from \code{glatos::crw_in_polygon} function}
 }
 \description{
 These functions are provided for backwards compatibility and will be removed

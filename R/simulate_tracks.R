@@ -1,49 +1,49 @@
 #' Simulate tracks
 #'
 #' This function simulates tracks inside a specified polygon.
-#' @param anims integer. quantity of desired animals to simulate
+#' @param n_animals integer. quantity of desired animals to simulate
 #' @param study_site simple feature polygon object that encompasses area where
 #'   tracks are allowed to be simulated.
 #' @param theta argument from `glatos::crw_in_polygon` function
-#' @param vmin numeric. minimum velocity from which to sample step length
-#' @param vmax numeric. maximum velocity from which to sample step length
-#' @param rel_site simple feature polygon object in which simulated animals are
+#' @param min_velocity numeric. minimum velocity from which to sample step length
+#' @param max_velocity numeric. maximum velocity from which to sample step length
+#' @param release_site simple feature polygon object in which simulated animals are
 #'   "released" or where simulated tracks begin
 #' @param crs EPSG code for study_site polygon. Must be projected coordinate system
 #' @param n_days integer. number of days that tracks should be simulated
-#' @param initHeading argument from `glatos::crw_in_polygon` function
+#' @param initial_heading argument from `glatos::crw_in_polygon` function
 #'
 #' @return simple feature (multi)linestring object that represents individual simulated tracks
 #' @export
 #'
 #' @examples
 #'
-#' anims <- 2
+#' n_animals <- 2
 #' study_site <- fo_study_site
 #' theta <- c(0, 1.74)
-#' vmin <- 0.98
-#' vmax <- 1.58
-#' rel_site <- fo_rel_site
+#' min_velocity <- 0.98
+#' max_velocity <- 1.58
+#' release_site <- fo_rel_site
 #' crs <- 3857
 #' n_days <- 30
-#' initHeading <- 0
+#' initial_heading <- 0
 #'
-#' tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)
+#' tracks <- simulate_tracks(n_animals, study_site, theta, min_velocity, max_velocity, release_site, crs, n_days, initial_heading)
 
-simul_trks <- function(
-  anims,
+simulate_tracks <- function(
+  n_animals,
   study_site,
   theta,
-  vmin,
-  vmax,
-  rel_site,
+  min_velocity,
+  max_velocity,
+  release_site,
   crs,
   n_days,
-  initHeading
+  initial_heading
 ) {
-  sim <- base::replicate(n = anims, expr = {
+  sim <- base::replicate(n = n_animals, expr = {
     initPos <- sf::st_sample(
-      rel_site$geometry,
+      release_site$geometry,
       size = 1,
       type = "random",
       exact = TRUE
@@ -55,7 +55,9 @@ simul_trks <- function(
       )
     # Sample between minimum and maximum velocity of blacktip sharks to set step
     #   length per hour for each individual
-    stepLen <- as.numeric(sample(vmin:vmax, 1) * 60 * 60 * 24 / 24)
+    stepLen <- as.numeric(
+      sample(min_velocity:max_velocity, 1) * 60 * 60 * 24 / 24
+    )
 
     simu <- glatos::crw_in_polygon(
       study_site,
@@ -64,7 +66,7 @@ simul_trks <- function(
       initPos = c(initPos$lon, initPos$lat),
       cartesianCRS = crs,
       nsteps = n_days * 24,
-      initHeading = initHeading
+      initial_heading = initial_heading
     ) |>
       sf::st_as_sf()
 
