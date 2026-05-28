@@ -1,6 +1,6 @@
 #' Receiver characteristics
 #'
-#' @param df data frame object consisting of results from iterative reconstruction process
+#' @param reconstructed data frame object consisting of results from iterative reconstruction process
 #'
 #' @return a data frame object with summary statistics that provide insight into
 #'   the locations of the receivers in the network receiver array
@@ -9,10 +9,10 @@
 #' @examples
 #' # Apply rcv_chr to list of grid resolutions
 #'
-#' rcv_chr(res[[1]])
+#' receiver_summary(res[[1]])
 
-rcv_chr <- function(df) {
-  tot <- df |>
+receiver_summary <- function(reconstructed) {
+  tot <- reconstructed |>
     as.data.frame() |>
     dplyr::select(-x) |>
     dplyr::filter(p_a == 1) |>

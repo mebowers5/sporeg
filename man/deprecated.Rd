@@ -12,6 +12,7 @@
 \alias{gps_fld}
 \alias{grid_res}
 \alias{powr}
+\alias{rcv_chr}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -45,6 +46,8 @@ gps_fld(df)
 grid_res(km, study_site, epsg, what)
 
 powr(output, sig.level, power, delta, n = NULL)
+
+rcv_chr(df)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}

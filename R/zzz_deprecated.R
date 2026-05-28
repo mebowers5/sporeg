@@ -252,3 +252,12 @@ powr <- function(output, sig.level, power, delta, n = NULL) {
 
   power_analysis(results, significance_level, power, delta, n)
 }
+
+#' @rdname deprecated
+#' @export
+rcv_chr <- function(df) {
+  warn_deprecated("rcv_chr", "receiver_summary")
+  .check_deprecated_dots(dots = list(...))
+
+  receiver_summary(reconstructed)
+}
