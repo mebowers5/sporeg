@@ -7,6 +7,7 @@
 \alias{den_rcvs}
 \alias{dif_co}
 \alias{gd_fts}
+\alias{get_or}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -30,6 +31,8 @@ den_rcvs(df)
 dif_co(df, depth_limit)
 
 gd_fts(df)
+
+get_or(model)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}

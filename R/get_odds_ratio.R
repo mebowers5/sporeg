@@ -8,10 +8,10 @@
 #'
 #' @examples
 #' # Get the odds ratio for each variable in the final model
-#' odds_100km <- get_or(fit2.100km) |>
+#' odds_100km <- get_odds_ratio(fit2.100km) |>
 #'   dplyr::mutate(res_name = "100km")
 
-get_or <- function(model) {
+get_odds_ratio <- function(model) {
   coefs <- as.data.frame(summary(model)$coefficients)
   row <- row.names(coefs) %in%
     c('(Intercept)', 'p_a1', 'mean_depth', 'den_rcs', 'd_shore')

@@ -203,3 +203,14 @@ gd_fts <- function(df) {
 
   summarize_good_fits(reconstructed)
 }
+
+#' @rdname deprecated
+#' @export
+get_or <- function(model) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"get_odds_ratio\" instead."
+  ))
+
+  get_odds_ratio(model)
+}
