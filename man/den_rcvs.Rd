@@ -4,10 +4,12 @@
 \alias{den_rcvs}
 \title{Summarize receiver density and counts}
 \usage{
-den_rcvs(df)
+den_rcvs(gridded_receivers)
 }
 \arguments{
-\item{df}{A simple feature polygon object (a grid)}
+\item{gridded_receivers}{A simple feature polygon object (a grid) which has columns of \code{den_rcs} and \code{count}.
+This is usually the result of \code{res_grid} which has been passed through \code{d_shore_rcvs};
+i.e.: \code{res_grid() |> d_shore_rcvs()}.}
 }
 \value{
 A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2

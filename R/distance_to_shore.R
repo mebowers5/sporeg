@@ -4,7 +4,7 @@
 #' @param resolution grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared
 #' @param study_site simple feature polygon object that encompasses the entire study site
 #' @param land_barrier simple feature (multi)polygon object to route tracks around
-#' @param epsg epsg code for desired coordinated system transformation
+#' @param crs coordinate reference system specification for transformation
 #' @param stations a simple feature (multi)point object representing receiver locations with detection range buffer
 #'
 #' @return A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
@@ -14,7 +14,7 @@ distance_to_shore <- function(
   resolution,
   study_site,
   land_barrier,
-  epsg,
+  crs,
   stations
 ) {
   grid_spacing <- resolution * 1000

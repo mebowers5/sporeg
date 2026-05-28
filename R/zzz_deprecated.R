@@ -19,7 +19,11 @@
   "cts" = c("sg" = "grid", "df" = "rerouted_tracks"),
 
   # from d_shore_rcvs
-  "d_shore_rcvs" = c("km" = "resolution", "sts_points" = "stations"),
+  "d_shore_rcvs" = c(
+    "km" = "resolution",
+    "sts_points" = "stations",
+    "epsg" = "crs"
+  ),
 
   # from den_rcvs
   "den_rcvs" = c("df" = "gridded_receivers"),
@@ -141,6 +145,7 @@ cts <- function(sg, df) {
 #' This function determines the distance to shore and the density of receivers for each grid cell.
 #' @param km grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared
 #' @param sts_pts a simple feature (multi)point object representing receiver locations with detection range buffer
+#' @param epsg coordinate reference system specification for transformation
 #'
 #' @return A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
 #' @rdname deprecated

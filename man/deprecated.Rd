@@ -2,6 +2,8 @@
 % Please edit documentation in R/zzz_deprecated.R
 \name{comp_trks}
 \alias{comp_trks}
+\alias{cts}
+\alias{d_shore_rcvs}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -15,6 +17,10 @@ comp_trks(
   cores = 2,
   ...
 )
+
+cts(sg, df)
+
+d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -32,8 +38,29 @@ comp_trks(
 \item{snap_tolerance}{The tolerance (in meters) at which an intersection between a station and a track should snap to the station centroid. It is recommended that the snap_tolerance be equal to the station buffer size.}
 
 \item{cores}{Number of cores to use during paralllel processing. Defaults to 2.}
+
+\item{sg}{spatial grid created from \code{grid_res} function}
+
+\item{df}{sf object of reconstructed, re-routed, optionally buffered tracks created from \code{sub_rrt} function}
+
+\item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
+
+\item{study_site}{simple feature polygon object that encompasses the entire study site}
+
+\item{epsg}{coordinate reference system specification for transformation}
+
+\item{sts_pts}{a simple feature (multi)point object representing receiver locations with detection range buffer}
+}
+\value{
+A simple feature object with counts associated with grid cell IDs \code{"gid"}
+
+A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
 }
 \description{
 These functions are provided for backwards compatibility and will be removed
 in a future release.
+
+The function allows you to calculate counts per grid cell in demonstrative modeled movement data.
+
+This function determines the distance to shore and the density of receivers for each grid cell.
 }
