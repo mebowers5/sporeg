@@ -2,6 +2,7 @@
 
 export(comp_trks)
 export(compare_tracks)
+export(create_grid)
 export(cts)
 export(d_shore_rcvs)
 export(den_rcvs)

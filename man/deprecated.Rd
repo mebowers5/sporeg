@@ -10,6 +10,7 @@
 \alias{get_or}
 \alias{gps_chr}
 \alias{gps_fld}
+\alias{grid_res}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -39,6 +40,8 @@ get_or(model)
 gps_chr(df)
 
 gps_fld(df)
+
+grid_res(km, study_site, epsg, what)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -61,15 +64,19 @@ gps_fld(df)
 
 \item{df}{data frame object consisting of results from iterative reconstruction process}
 
-\item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
+\item{km}{grid cell resolution in km. one-sided length of grid cell, assumes
+desired grid cell is to be squared}
 
 \item{study_site}{simple feature polygon object that encompasses the entire study site}
 
-\item{epsg}{coordinate reference system specification for transformation}
+\item{epsg}{specification for desired coordinate reference system transformation}
 
 \item{sts_pts}{a simple feature (multi)point object representing receiver locations with detection range buffer}
 
 \item{depth_limit}{a depth value in meters that represents the new depth cut off of interest}
+
+\item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center
+points of grid cells}
 }
 \description{
 These functions are provided for backwards compatibility and will be removed

@@ -82,7 +82,19 @@
   }
 }
 
-
+#' Utility function to warn about function deprecation
+#' @param old_name old function name
+#' @param new_name new function name
+#' @keywords internal
+warn_deprecated <- function(old_name, new_name) {
+  warning(c(
+    old_name,
+    " is deprecated and will be removed in future versions.\n",
+    "Please use ",
+    new_name,
+    " instead."
+  ))
+}
 #' Deprecated functions
 #'
 #' These functions are provided for backwards compatibility and will be removed
@@ -107,10 +119,7 @@ comp_trks <- function(
   cores = 2,
   ...
 ) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"compare_tracks\" instead."
-  ))
+  warn_deprecated("comp_trks", "compare_tracks")
   .check_deprecated_dots(dots = list(...))
 
   compare_tracks(
@@ -132,10 +141,7 @@ comp_trks <- function(
 #' @rdname deprecated
 #' @export
 cts <- function(sg, df) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"grid_counts\" instead."
-  ))
+  warn_deprecated("cts", "grid_counts")
   .check_deprecated_dots(dots = list(...))
 
   grid_counts(grid, rerouted_tracks)
@@ -150,10 +156,7 @@ cts <- function(sg, df) {
 #' @inheritParams distance_to_shore
 #' @export
 d_shore_rcvs <- function(km, study_site, land_barrier, epsg, sts_pts) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"distance_to_shore\" instead."
-  ))
+  warn_deprecated("d_shore_rcvs", "distance_to_shore")
   .check_deprecated_dots(dots = list(...))
 
   distance_to_shore(
@@ -170,10 +173,7 @@ d_shore_rcvs <- function(km, study_site, land_barrier, epsg, sts_pts) {
 #' @inheritParams receiver_density
 #' @export
 den_rcvs <- function(df) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"receiver_density\" instead."
-  ))
+  warn_deprecated("den_rcvs", "receiver_density")
   .check_deprecated_dots(dots = list(...))
 
   receiver_density(gridded_receivers)
@@ -184,10 +184,7 @@ den_rcvs <- function(df) {
 #' @inheritParams depth_cutoff
 #' @export
 dif_co <- function(df, depth_limit) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"depth_cutoff\" instead."
-  ))
+  warn_deprecated("dif_co", "depth_cutoff")
   .check_deprecated_dots(dots = list(...))
 
   depth_cutoff(reconstructed, depth_limit)
@@ -198,10 +195,7 @@ dif_co <- function(df, depth_limit) {
 #' @inheritParams depth_cutoff
 #' @export
 gd_fts <- function(df) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"summarize_good_fits\" instead."
-  ))
+  warn_deprecated("gd_fts", "summarize_good_fits")
   .check_deprecated_dots(dots = list(...))
 
   summarize_good_fits(reconstructed)
@@ -210,10 +204,7 @@ gd_fts <- function(df) {
 #' @rdname deprecated
 #' @export
 get_or <- function(model) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"get_odds_ratio\" instead."
-  ))
+  warn_deprecated("get_or", "get_odds_ratio")
 
   get_odds_ratio(model)
 }
@@ -221,11 +212,7 @@ get_or <- function(model) {
 #' @rdname deprecated
 #' @export
 gps_chr <- function(df) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"summarize_gaps\" instead."
-  ))
-
+  warn_deprecated("gps_chr", "summarize_gaps")
   .check_deprecated_dots(dots = list(...))
 
   summarize_gaps(reconstructed)
@@ -234,12 +221,23 @@ gps_chr <- function(df) {
 #' @rdname deprecated
 #' @export
 gps_fld <- function(df) {
-  warning(c(
-    "This function is deprecated and will be removed in future versions.\n",
-    "Please use \"gaps_filled\" instead."
-  ))
-
+  warn_deprecated("gps_fld", "gaps_filled")
   .check_deprecated_dots(dots = list(...))
 
   gaps_filled(reconstructed)
+}
+
+#' @param km grid cell resolution in km. one-sided length of grid cell, assumes
+#'   desired grid cell is to be squared
+#' @param epsg specification for desired coordinate reference system transformation
+#' @param what `"polygons"` for grid cell polygons or `"centers"` for center
+#'   points of grid cells
+#'
+#' @rdname deprecated
+#' @export
+grid_res <- function(km, study_site, epsg, what) {
+  warn_deprecated("grid_res", "create_grid")
+  .check_deprecated_dots(dots = list(...))
+
+  create_grid(resolution, study_site, crs, type)
 }
