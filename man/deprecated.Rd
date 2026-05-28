@@ -5,6 +5,7 @@
 \alias{cts}
 \alias{d_shore_rcvs}
 \alias{den_rcvs}
+\alias{dif_co}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -24,6 +25,8 @@ cts(sg, df)
 d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
 
 den_rcvs(df)
+
+dif_co(df, depth_limit)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -44,7 +47,7 @@ den_rcvs(df)
 
 \item{sg}{spatial grid created from \code{grid_res} function}
 
-\item{df}{A simple feature polygon object (a grid)}
+\item{df}{data frame object consisting of results from iterative reconstruction process.}
 
 \item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
 
@@ -53,6 +56,8 @@ den_rcvs(df)
 \item{epsg}{coordinate reference system specification for transformation}
 
 \item{sts_pts}{a simple feature (multi)point object representing receiver locations with detection range buffer}
+
+\item{depth_limit}{a depth value in meters that represents the new depth cut off of interest}
 }
 \description{
 These functions are provided for backwards compatibility and will be removed

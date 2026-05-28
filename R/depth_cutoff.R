@@ -1,6 +1,8 @@
 #' Different cut off
 #'
-#' @param df data frame object consisting of results from iterative reconstruction process
+#' @param reconstructed data frame object consisting of results from iterative reconstruction process.
+#'   Needs columns `mean_depth` and `g_fit`; i.e., needs to have been passed through
+#'   `get_depth` and `gd_fts`.
 #' @param depth_limit a depth value in meters that represents the new depth cut off of interest
 #'
 #' @return a data frame object containing the percentage of grid cells that contained
@@ -9,9 +11,9 @@
 #' @export
 #'
 #' @examples
-#' # Apply dif_co to list of grid resolutions
+#' # Apply depth_cutoff to list of grid resolutions
 #'
-#' dif_depth <- lapply(res, dif_co, depth_limit = 300) |>
+#' dif_depth <- lapply(res, depth_cutoff, depth_limit = 300) |>
 #'   dplyr::bind_rows(.id = 'resolution') |>
 #'   dplyr::mutate(resolution = as.numeric(resolution)) |>
 #'   dplyr::left_join(dplyr::tibble(resolution = 1:4,
@@ -21,19 +23,19 @@
 #'     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
 #'   )
 
-dif_co <- function(df, depth_limit) {
-  tot <- df |>
+depth_cutoff <- function(reconstructed, depth_limit) {
+  tot <- reconstructed |>
     as.data.frame() |>
     dplyr::filter(mean_depth <= depth_limit) |>
     dplyr::count() |>
     dplyr::rename(tot = n)
 
-  df <- df |>
+  reconstructed <- reconstructed |>
     dplyr::filter(mean_depth <= depth_limit & g_fit == 1) |>
     dplyr::count()
 
-  df <- merge(tot, df) |>
+  reconstructed <- merge(tot, reconstructed) |>
     dplyr::mutate(perc = n / tot * 100)
 
-  return(df)
+  return(reconstructed)
 }

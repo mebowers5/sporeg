@@ -29,7 +29,7 @@
   "den_rcvs" = c("df" = "gridded_receivers"),
 
   # from dif_co
-  "dif_co" = c("df")
+  "dif_co" = c("df" = "reconstructed")
 )
 
 
@@ -171,4 +171,18 @@ den_rcvs <- function(df) {
   .check_deprecated_dots(dots = list(...))
 
   receiver_density(gridded_receivers)
+}
+
+#' @param df data frame object consisting of results from iterative reconstruction process.
+#' @rdname deprecated
+#' @inheritParams depth_cutoff
+#' @export
+dif_co <- function(df, depth_limit) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"depth_cutoff\" instead."
+  ))
+  .check_deprecated_dots(dots = list(...))
+
+  depth_cutoff(reconstructed, depth_limit)
 }
