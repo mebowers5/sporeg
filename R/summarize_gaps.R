@@ -1,6 +1,6 @@
 #' Gaps characteristics
 #'
-#' @param df data frame object consisting of results from iterative reconstruction process
+#' @param reconstructed data frame object consisting of results from iterative reconstruction process
 #'
 #' @return a data frame object with summary statistics that provide insight into
 #'   the locations of the gaps in the network receiver array that were closed by
@@ -9,9 +9,9 @@
 #' @export
 #'
 #' @examples
-#' # Apply gps_chr to list of grid resolutions
+#' # Apply summarize_gaps to list of grid resolutions
 #'
-#' clsd_gp_chars <- lapply(res, gps_chr) |>
+#' clsd_gp_chars <- lapply(res, summarize_gaps) |>
 #'   dplyr::bind_rows(.id = 'resolution') |>
 #'     dplyr::left_join(
 #'       data.frame(
@@ -23,8 +23,8 @@
 #'     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
 #'   )
 
-gps_chr <- function(df) {
-  df <- df |>
+summarize_gaps <- function(reconstructed) {
+  reconstructed <- reconstructed |>
     dplyr::filter(g_fit == 1 & p_a == 0) |>
     dplyr::mutate(d_shore_km = d_shore / 1000) |>
     dplyr::summarise(
@@ -36,5 +36,5 @@ gps_chr <- function(df) {
       avg_d = mean(na.omit(d_shore_km))
     )
 
-  return(df)
+  return(reconstructed)
 }

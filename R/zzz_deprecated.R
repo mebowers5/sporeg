@@ -32,7 +32,10 @@
   "dif_co" = c("df" = "reconstructed"),
 
   # from get_depth
-  "get_depth" = c("HSgrid" = "grid")
+  "get_depth" = c("HSgrid" = "grid"),
+
+  # from gps_chr
+  "gps_chr" = c("df" = "reconstructed")
 )
 
 
@@ -213,4 +216,17 @@ get_or <- function(model) {
   ))
 
   get_odds_ratio(model)
+}
+
+#' @rdname deprecated
+#' @export
+gps_chr <- function(df) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"summarize_gaps\" instead."
+  ))
+
+  .check_deprecated_dots(dots = list(...))
+
+  summarize_gaps(reconstructed)
 }
