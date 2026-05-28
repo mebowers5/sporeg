@@ -321,5 +321,5 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   warn_deprecated("sub_rrt", "reroute_tracks")
   .check_deprecated_dots(dots = list(...))
 
-  reroute_tracks(results, significance_level, power, delta, n)
+  reroute_tracks(track_data, crs, barrier, visibility_graph, buffer)
 }
