@@ -17,9 +17,17 @@ comp_trks(
 )
 }
 \arguments{
+\item{sim_trks}{Tracks to which modeled tracks should be compared}
+
 \item{stations}{A sf object comprised of receiver station locations with a buffer around them that represents the range of the receiver (polygons)}
 
 \item{land_barrier}{A sf polygon of a barrier object around which tracks should be re-routed}
+
+\item{vis_graph}{A visibility graph created from the barrier object @seealso \link[pathroutr:prt_visgraph]{pathroutr::prt_visgraph}}
+
+\item{HSgrid}{When multi_grid = FALSE, a sf polygon grid; When multi_grid = TRUE, a list of sf polygon grids}
+
+\item{multi.grid}{boolean}
 
 \item{snap_tolerance}{The tolerance (in meters) at which an intersection between a station and a track should snap to the station centroid. It is recommended that the snap_tolerance be equal to the station buffer size.}
 

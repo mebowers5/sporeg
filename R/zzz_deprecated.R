@@ -78,6 +78,11 @@
 #' These functions are provided for backwards compatibility and will be removed
 #' in a future release.
 #'
+#' @param sim_trks Tracks to which modeled tracks should be compared
+#' @param vis_graph A visibility graph created from the barrier object @seealso [pathroutr::prt_visgraph]
+#' @param HSgrid When multi_grid = FALSE, a sf polygon grid; When multi_grid = TRUE, a list of sf polygon grids
+#' @param multi.grid boolean
+#'
 #' @rdname deprecated
 #' @inheritParams compare_tracks
 #' @export
@@ -109,4 +114,23 @@ comp_trks <- function(
     cores = 2,
     ...
   )
+}
+
+#' Grid counts
+#'
+#' The function allows you to calculate counts per grid cell in demonstrative modeled movement data.
+#' @param sg spatial grid created from `grid_res` function
+#' @param df sf object of reconstructed, re-routed, optionally buffered tracks created from `sub_rrt` function
+#'
+#' @return A simple feature object with counts associated with grid cell IDs `"gid"`
+#' @export
+
+cts <- function(sg, df) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"grid_counts\" instead."
+  ))
+  .check_deprecated_dots(dots = list(...))
+
+  grid_counts(grid, rerouted_tracks)
 }
