@@ -230,3 +230,16 @@ gps_chr <- function(df) {
 
   summarize_gaps(reconstructed)
 }
+
+#' @rdname deprecated
+#' @export
+gps_fld <- function(df) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"gaps_filled\" instead."
+  ))
+
+  .check_deprecated_dots(dots = list(...))
+
+  gaps_filled(reconstructed)
+}

@@ -9,6 +9,7 @@
 \alias{gd_fts}
 \alias{get_or}
 \alias{gps_chr}
+\alias{gps_fld}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -36,6 +37,8 @@ gd_fts(df)
 get_or(model)
 
 gps_chr(df)
+
+gps_fld(df)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
