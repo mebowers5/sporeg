@@ -4,6 +4,7 @@
 \alias{comp_trks}
 \alias{cts}
 \alias{d_shore_rcvs}
+\alias{den_rcvs}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -21,6 +22,8 @@ comp_trks(
 cts(sg, df)
 
 d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
+
+den_rcvs(df)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}
@@ -41,7 +44,7 @@ d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
 
 \item{sg}{spatial grid created from \code{grid_res} function}
 
-\item{df}{sf object of reconstructed, re-routed, optionally buffered tracks created from \code{sub_rrt} function}
+\item{df}{A simple feature polygon object (a grid)}
 
 \item{km}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
 
@@ -51,16 +54,7 @@ d_shore_rcvs(km, study_site, land_barrier, epsg, sts_pts)
 
 \item{sts_pts}{a simple feature (multi)point object representing receiver locations with detection range buffer}
 }
-\value{
-A simple feature object with counts associated with grid cell IDs \code{"gid"}
-
-A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
-}
 \description{
 These functions are provided for backwards compatibility and will be removed
 in a future release.
-
-The function allows you to calculate counts per grid cell in demonstrative modeled movement data.
-
-This function determines the distance to shore and the density of receivers for each grid cell.
 }
