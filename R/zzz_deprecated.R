@@ -123,8 +123,8 @@ comp_trks <- function(
 #' @param df sf object of reconstructed, re-routed, optionally buffered tracks created from `sub_rrt` function
 #'
 #' @return A simple feature object with counts associated with grid cell IDs `"gid"`
+#' @rdname deprecated
 #' @export
-
 cts <- function(sg, df) {
   warning(c(
     "This function is deprecated and will be removed in future versions.\n",
@@ -133,4 +133,31 @@ cts <- function(sg, df) {
   .check_deprecated_dots(dots = list(...))
 
   grid_counts(grid, rerouted_tracks)
+}
+
+
+#' Distance to shore and density of receivers
+#'
+#' This function determines the distance to shore and the density of receivers for each grid cell.
+#' @param km grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared
+#' @param sts_pts a simple feature (multi)point object representing receiver locations with detection range buffer
+#'
+#' @return A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
+#' @rdname deprecated
+#' @inheritParams distance_to_shore
+#' @export
+d_shore_rcvs <- function(km, study_site, land_barrier, epsg, sts_pts) {
+  warning(c(
+    "This function is deprecated and will be removed in future versions.\n",
+    "Please use \"distance_to_shore\" instead."
+  ))
+  .check_deprecated_dots(dots = list(...))
+
+  distance_to_shore(
+    resolution,
+    study_site,
+    land_barrier,
+    epsg,
+    stations
+  )
 }
