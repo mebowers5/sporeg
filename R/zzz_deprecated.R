@@ -29,7 +29,10 @@
   "den_rcvs" = c("df" = "gridded_receivers"),
 
   # from dif_co
-  "dif_co" = c("df" = "reconstructed")
+  "dif_co" = c("df" = "reconstructed"),
+
+  # from get_depth
+  "get_depth" = c("HSgrid" = "grid")
 )
 
 

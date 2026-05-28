@@ -4,10 +4,10 @@
 \alias{get_depth}
 \title{Calculate mean depth}
 \usage{
-get_depth(HSgrid, depth)
+get_depth(grid, depth, ...)
 }
 \arguments{
-\item{HSgrid}{list object of multiple grids}
+\item{grid}{list object of multiple grids}
 
 \item{depth}{simple feature point object with \code{"altitude"} attribute data}
 }
