@@ -1,7 +1,7 @@
 #' Remove zero variance
 #'
 #'This function removes grid cells that lacked any variance.
-#' @param df data frame object of iterative methods results
+#' @param reconstructed data frame object of iterative methods results
 #'
 #' @return a data frame object with grid IDs that did not exhibit zero variance
 #' @export
@@ -16,12 +16,12 @@
 #'     data.frame(gid = rep(100, 50), dif = rep(100, 50), res_name = "100km")
 #'   )
 #'
-#' df_var <- zero_var(res)
+#' df_var <- drop_zero_variance(res)
 #' nrow(res) > nrow(df_var)
 
-zero_var <- function(df) {
+drop_zero_variance <- function(reconstructed) {
   # Extract zero variance variables first
-  zero_var_rows <- df |>
+  zero_var_rows <- reconstructed |>
     dplyr::group_by(res_name, gid) |>
     dplyr::summarise(sd = sd(dif)) |>
     dplyr::filter(sd == 0) |>
@@ -29,9 +29,9 @@ zero_var <- function(df) {
     as.list()
 
   # Drop zero variance rows
-  df <- df |>
+  reconstructed <- reconstructed |>
     dplyr::group_by(res_name, gid) |>
     dplyr::filter(!(gid %in% zero_var_rows$gid))
 
-  return(df)
+  return(reconstructed)
 }

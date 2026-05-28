@@ -15,6 +15,7 @@
 \alias{rcv_chr}
 \alias{simul_trks}
 \alias{sub_rrt}
+\alias{zero_var}
 \title{Deprecated functions}
 \usage{
 comp_trks(
@@ -64,6 +65,8 @@ simul_trks(
 )
 
 sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
+
+zero_var(df)
 }
 \arguments{
 \item{sim_trks}{Tracks to which modeled tracks should be compared}

@@ -47,7 +47,9 @@
     "intHeading" = "initial_heading"
   ),
 
-  "sub_rrt" = c("CRS" = "crs", "vis_graph" = "visibility_graph")
+  "sub_rrt" = c("CRS" = "crs", "vis_graph" = "visibility_graph"),
+
+  "zero_var" = c("df" = "reconstructed")
 )
 
 
@@ -322,4 +324,13 @@ sub_rrt <- function(track_data, CRS, barrier, vis_graph, buffer) {
   .check_deprecated_dots(dots = list(...))
 
   reroute_tracks(track_data, crs, barrier, visibility_graph, buffer)
+}
+
+#' @rdname deprecated
+#' @export
+zero_var <- function(df) {
+  warn_deprecated("sub_rrt", "reroute_tracks")
+  .check_deprecated_dots(dots = list(...))
+
+  drop_zero_variance(reconstructed)
 }
