@@ -21,13 +21,13 @@ test_that("returns polygons", {
 test_that("returns centers", {
   result <- grid_res(1000, site_depth, 4269, "centers")
 
-  expect_named(result, c("gid", "x"))
-  expect_s3_class(result$x, c("sfc_POINT", "sfc"), exact = TRUE)
+  expect_named(result, c("gid", "geometry"))
+  expect_s3_class(result$geometry, c("sfc_POINT", "sfc"), exact = TRUE)
 })
 
 test_that("errors with incorrect 'what' argument", {
   grid_res(1000, site_depth, 4269, "gibberish") |>
-    expect_error("Error: Not a valid argument for parameter 'what'")
+    expect_error("`what` must be one of \"polygons\" or \"centers\"")
 })
 
 test_that("errors if not in a projected coordinate system", {
