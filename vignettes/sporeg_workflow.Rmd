@@ -617,9 +617,9 @@ First, let's gather information on the depth in each grid cell. For this example
 #| include: true
 
 # Objects required for iterations to run
-head(site_depth)
+head(study_site)
 
-site_depth <- site_depth |>
+site_depth <- study_site |>
   sf::st_as_sf() |>
   sf::st_transform(4269)
 
@@ -706,9 +706,9 @@ Calculate distance to shore, density of receivers, presence/absence of receivers
 #| warning: false
 #| include: true
 
-head(fo_sts_pts)
+head(fo_stations)
 
-fo_sts_pts <- fo_sts_pts |>
+fo_sts_pts <- fo_stations |>
   sf::st_centroid()
 
 fo_land_barrier <- fo_land_barrier |>
@@ -1040,9 +1040,9 @@ Let's find out how the density of receivers varied for each grid cell resolution
 #| warning: false
 #| include: true
 
-res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
+resolutions <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
-rcv_dens <- lapply(res, den_rcvs)
+rcv_dens <- lapply(resolutions, den_rcvs)
 
 rcv_dens <- dplyr::bind_rows(rcv_dens, .id = 'resolution') |>
   left_join(
