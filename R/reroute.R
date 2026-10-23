@@ -2,11 +2,9 @@
 #'
 #' This function provides summary statistics on the densities and counts of receivers in a grid.
 #' @param df A data frame output from a movement model including ID, time, mu.x, mu.y, and study_yr
-#' @param sex A character representing sex of the animal as in "Female"
-#' @param season A character representing meteorological season as in "Autumn"
-#' @param rc A character representing reproductive cycle as in "P" for pregnant or "NP" for not pregnant
 #' @param barrier A simple feature polygon object representing a barrier
 #' @param det_range Numeric quantity representing detection range of receivers
+#' @param epsg epsg code for desired coordinated system transformation
 #'
 #' @return A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2
 #' @export
@@ -19,18 +17,18 @@
 #'
 #' reroute(df, barrier = sporeg::atlcoast, det_range = 500)
 
-reroute <- function(df, barrier, det_range, CRS) {
+reroute <- function(df, barrier, det_range, epsg) {
   # prt_visgraph will build our visual graph network from our land barrier object and
   # return a SpatialLinesNetwork / sfNetwork that has no edges that cross land
-  vis_graph <- pathroutr::prt_visgraph(barrier |> sf::st_transform(, CRS))
+  vis_graph <- pathroutr::prt_visgraph(barrier |> sf::st_transform(, epsg))
 
   t$path_lines <- t$geom <- NULL
-  CRS <- 3857
+  epsg <- 3857
 
   track_path <- df |>
       dplyr::mutate(time = lubridate::ymd_hms(time), ID = as.factor(ID)) |>
       dplyr::select(ID, time, mu.x, mu.y, study_yr) |>
-      sf::st_as_sf(coords = c("mu.x","mu.y"), CRS) |>
+      sf::st_as_sf(coords = c("mu.x","mu.y"), epsg) |>
       arrange(ID, time)
 
     # there are multiple paths identified by ID; we'll group and nest for a proper
@@ -61,7 +59,7 @@ reroute <- function(df, barrier, det_range, CRS) {
     # we need to rbind all of our lines and points into single objects that can be plotted
     # Need to maintain "ID" column here - THIS WORKS!
     t$geom <- do.call(rbind, t$path_lines)
-    t$geom <- sf::st_set_crs(t$geom, CRS)
+    t$geom <- sf::st_set_crs(t$geom, epsg)
 
     t <- t |> dplyr::select(ID, geom)
 

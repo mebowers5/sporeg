@@ -1,12 +1,12 @@
 #' Create grid
 #'
 #' This function creates a grid inside a specified polygon.
+#' @param study_site simple feature polygon object in which grid cells should be created
 #' @param km grid cell resolution in km. one-sided length of grid cell, assumes
 #'   desired grid cell is to be squared
-#' @param study_site simple feature polygon object in which grid cells should be created
-#' @param epsg epsg numeric code for desired coordinate system transformation
 #' @param what `"polygons"` for grid cell polygons or `"centers"` for center
 #'   points of grid cells
+#' @param epsg epsg numeric code for desired coordinate system transformation
 #'
 #' @return grid comprised of polygons or points depending on `what` parameter
 #' @export
@@ -18,7 +18,7 @@
 #' site_depth_3857 <- site_depth |> sf::st_transform(3857)
 #' HS_100km_grid <- grid_res(100, site_depth_3857, 4269, "polygons")
 
-grid_res <- function(km, study_site, epsg, what) {
+grid_res <- function(study_site, km, what, epsg) {
   grid_spacing <- km * 1000 # Desired kilometers times 1000 m per 1 km
 
   if (sf::st_is_longlat(study_site)) {
