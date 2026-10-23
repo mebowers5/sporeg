@@ -1063,7 +1063,7 @@ What are the characteristics of the grid cells that exhibited a good fit?
 #| warning: false
 #| include: true
 
-gd_fit_char <- lapply(res, gd_fts) |>
+gd_fit_char <- lapply(resolutions, gd_fts) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1084,7 +1084,7 @@ Let's find out how many of the good fits occurred in grid cells that lacked rece
 #| warning: false
 #| include: true
 
-clsd_gps <- lapply(res, gps_fld) |>
+clsd_gps <- lapply(resolutions, gps_fld) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1104,7 +1104,7 @@ Let's find out where these closed gaps are located (e.g., are they coastal?).
 #| warning: false
 #| include: true
 
-clsd_gp_chars <- lapply(res, gps_chr) |>
+clsd_gp_chars <- lapply(resolutions, gps_chr) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1124,7 +1124,7 @@ Let's find out where most of the receivers are in the current array.
 #| warning: false
 #| include: true
 
-rcv_chars <- lapply(res, rcv_chr) |>
+rcv_chars <- lapply(resolutions, rcv_chr) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1147,7 +1147,7 @@ Blacktip sharks, the species chosen to demonstrate the current methods, is known
 
 depth_limit <- 300 # [m]
 
-dif_depth <- lapply(res, dif_co) |>
+dif_depth <- lapply(resolutions, dif_co) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1239,10 +1239,9 @@ Since the movement model does not recognize land, let's re-route the parts that 
 CRS <- 3857
 
 barrier <- atlcoast |> sf::st_transform(3857)
-vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
 
-tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
+tbuff650 <- reroute(demo_dets, barrier, buffer, CRS)
 
 # Check map
 mapview::mapView(tbuff650)
