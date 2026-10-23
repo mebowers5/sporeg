@@ -16,7 +16,7 @@
 #' # when it is initially fed into the function grid_res
 #'
 #' site_depth_3857 <- site_depth |> sf::st_transform(3857)
-#' HS_100km_grid <- grid_res(100, site_depth_3857, 4269, "polygons")
+#' HS_100km_grid <- grid_res(site_depth_3857, 100, "centers", 4269)
 
 grid_res <- function(study_site, km, what, epsg) {
   grid_spacing <- km * 1000 # Desired kilometers times 1000 m per 1 km
@@ -58,6 +58,7 @@ grid_res <- function(study_site, km, what, epsg) {
     ) |> # Create a grid inside the coastal 500 m isobath polygon
       sf::st_as_sf() |>
       dplyr::mutate(gid = seq_along(x)) |>
+      dplyr::rename(geometry = x) |>
       sf::st_make_valid() |>
       sf::st_transform(epsg) |>
       sf::st_cast('POINT')
