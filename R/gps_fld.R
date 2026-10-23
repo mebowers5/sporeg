@@ -11,7 +11,7 @@
 #' @examples
 #' # Apply gps_fld to list of grid resolutions
 #'
-#' clsd_gps <- lapply(res, gps_fld) |>
+#' clsd_gps <- lapply(resolutions, gps_fld) |>
 #'   dplyr::bind_rows(.id = 'resolution') |>
 #'     dplyr::left_join(
 #'       data.frame(

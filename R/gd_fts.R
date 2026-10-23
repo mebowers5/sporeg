@@ -9,7 +9,7 @@
 #' @examples
 #' # Apply gd_fts to list of grid resolutions
 #'
-#' gd_fit_char <- lapply(res, gd_fts) |>
+#' gd_fit_char <- lapply(resolutions, gd_fts) |>
 #'   dplyr::bind_rows(.id = 'resolution') |>
 #'   dplyr::mutate(resolution = as.numeric(resolution)) |>
 #'   dplyr::left_join(dplyr::tibble(resolution = 1:4,
