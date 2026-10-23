@@ -37,7 +37,7 @@ library(car)
 
 ## Get the objects required for simulating tracks
 
-Get the study site and set the projected coordinate system. To accommodate the acoustic receiver station owners, we have applied a false origin to the spatial objects to occlude the actual locations of acoustic receivers.
+Get the study site and set the projected coordinate system. To accommodate the acoustic receiver station owners, we have applied an undisclosed false origin that shifts all features to the southeast to the spatial objects to occlude the actual locations of acoustic receivers.
 
 ```{r}
 #| label: study-site
@@ -610,7 +610,7 @@ In this section, we want to find out why the results are the way they are. Can w
 
 First, let's gather information on the depth in each grid cell. For this example, I have logged onto the National Oceanic and Atmospheric Administration (NOAA) [ERDDAP server](https://coastwatch.pfeg.noaa.gov/erddap/search/advanced.html?page=1&itemsPerPage=1000) and gathered depth information for the bounding box of the study site, which must be in a geographic coordinate system (e.g., NAD 1983). Let's get the bounding box of our study site.[^1]
 
-[^1]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with a false origin and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
+[^1]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with an undisclosed false origin that shifts all features to the southeast and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
 
 ```{r}
 #| label: get-bbox
@@ -670,7 +670,7 @@ depth_data <- sf::st_filter(depth_data, site_depth) |>
 
 We also need to re-create the grids without the false origin.[^2] The study site must be in a projected coordinate system (WGS 84; EPSG: 3857) when it is initially fed into the function `grid_res`.
 
-[^2]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with a false origin and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
+[^2]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with an undisclosed false origin that shifts all features to the southeast and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
 
 ```{r}
 #| label: true-grids
