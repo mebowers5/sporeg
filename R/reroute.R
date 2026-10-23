@@ -19,17 +19,18 @@
 #'
 #' reroute(df, barrier = sporeg::atlcoast, det_range = 500)
 
-reroute <- function(df, barrier, det_range) {
+reroute <- function(df, barrier, det_range, CRS) {
   # prt_visgraph will build our visual graph network from our land barrier object and
   # return a SpatialLinesNetwork / sfNetwork that has no edges that cross land
-  vis_graph <- pathroutr::prt_visgraph(barrier)
+  vis_graph <- pathroutr::prt_visgraph(barrier |> sf::st_transform(, CRS))
 
   t$path_lines <- t$geom <- NULL
+  CRS <- 3857
 
   track_path <- df |>
       dplyr::mutate(time = lubridate::ymd_hms(time), ID = as.factor(ID)) |>
       dplyr::select(ID, time, mu.x, mu.y, study_yr) |>
-      sf::st_as_sf(coords = c("mu.x","mu.y"), crs = 3857) |>
+      sf::st_as_sf(coords = c("mu.x","mu.y"), CRS) |>
       arrange(ID, time)
 
     # there are multiple paths identified by ID; we'll group and nest for a proper
@@ -60,7 +61,7 @@ reroute <- function(df, barrier, det_range) {
     # we need to rbind all of our lines and points into single objects that can be plotted
     # Need to maintain "ID" column here - THIS WORKS!
     t$geom <- do.call(rbind, t$path_lines)
-    t$geom <- sf::st_set_crs(t$geom, 3857)
+    t$geom <- sf::st_set_crs(t$geom, CRS)
 
     t <- t |> dplyr::select(ID, geom)
 
