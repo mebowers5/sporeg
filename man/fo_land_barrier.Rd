@@ -9,7 +9,7 @@ An sf object with 435 rows and three columns:
 \describe{
 \item{poly_uid}{Polygon ID, ranging from 1 to 434}
 \item{line_uid}{Values of 1 (States) or 2 (Washington, DC)}
-\item{geometry}{Well-known text POLYGON of the American Atlantic coastal shelf
+\item{geometry}{Well-known text POLYGON of the United States Atlantic coastal shelf
 in WGS84/Pseudo-Mercator, EPSG:3857}
 }
 }

@@ -22,7 +22,7 @@ Different cut off
 \examples{
 # Apply dif_co to list of grid resolutions
 
-dif_depth <- lapply(res, dif_co, depth_limit = 300) |>
+dif_depth <- lapply(resolutions, dif_co, depth_limit = 300) |>
   dplyr::bind_rows(.id = 'resolution') |>
   dplyr::mutate(resolution = as.numeric(resolution)) |>
   dplyr::left_join(dplyr::tibble(resolution = 1:4,

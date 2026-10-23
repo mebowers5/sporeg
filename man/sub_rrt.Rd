@@ -31,8 +31,8 @@ CRS <- 3857
 barrier <- atlcoast
 vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
-track_data <- sporeg::subset |>
-  dplyr::filter(ID \%in\% c("A69-9001-23338", "A69-9001-25494"))
+track_data <- sporeg::demo_dets |>
+  dplyr::filter(ID \%in\% c("1", "2"))
 
 tbuff650 <- sub_rrt(track_data, CRS, barrier, vis_graph, buffer)
 
