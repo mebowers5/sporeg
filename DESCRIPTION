@@ -34,7 +34,7 @@ Suggests:
     sp,
     testthat (>= 3.0.0)
 Remotes: 
-    mhpob/pathroutr,
+    jmlondon/pathroutr,
     ocean-tracking-network/glatos
 LazyData: true
 VignetteBuilder: knitr
@@ -42,3 +42,4 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.2

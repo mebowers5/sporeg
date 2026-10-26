@@ -9,7 +9,7 @@
 #' @examples
 #' # Apply rcv_chr to list of grid resolutions
 #'
-#' rcv_chr(res[[1]])
+#' rcv_chr(resolutions[[1]])
 
 rcv_chr <- function(df) {
   tot <- df |>

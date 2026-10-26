@@ -9,7 +9,7 @@ An sf object with 1 row and two columns:
 \describe{
 \item{poly_uid}{Polygon ID}
 \item{geometry}{Well-known text POLYGON of the American Atlantic coastal shelf
-in WGS84/Pseudo-Mercator, EPSG:3857}
+in WGS84/Pseudo-Mercator, EPSG:3857, and shifted southeast using an undisclosed false origin}
 }
 }
 \usage{

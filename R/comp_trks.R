@@ -5,8 +5,8 @@
 #' @param stations A sf object comprised of receiver station locations with a buffer around them that represents the range of the receiver (polygons)
 #' @param land_barrier A sf polygon of a barrier object around which tracks should be re-routed
 #' @param vis_graph A visibility graph created from the barrier object @seealso [pathroutr::prt_visgraph]
-#' @param multi.grid boolean
-#' @param HSgrid When multi.grid = FALSE, a sf polygon grid; When multi.grid = TRUE, a list of sf polygon grids
+#' @param multi_grid boolean
+#' @param hotspot_grid When multi_grid = FALSE, a sf polygon grid; When multi_grid = TRUE, a list of sf polygon grids
 #' @param snap_tolerance The tolerance (in meters) at which an intersection between a station and a track should snap to the station centroid. It is recommended that the snap_tolerance be equal to the station buffer size.
 #' @param cores Number of cores to use during paralllel processing. Defaults to 2.
 #'
@@ -17,12 +17,12 @@ comp_trks <- function(
   stations,
   land_barrier,
   vis_graph,
-  multi.grid,
-  HSgrid,
+  multi_grid,
+  hotspot_grid,
   snap_tolerance,
   cores = 2
 ) {
-  if (multi.grid == FALSE) {
+  if (multi_grid == FALSE) {
     # Maintain detailed time info in lines to derive acoustic telemetry detection data later
     mod_trks <- sim_trks |>
       tidyr::unnest(data) |>
@@ -178,21 +178,21 @@ comp_trks <- function(
 
     ### Count distinct AnimalIDs in each grid cell
     # Count IDs per grid cell for derived data
-    mod_count <- sf::st_join(HSgrid, mod_trks, join = sf::st_intersects) |>
+    mod_count <- sf::st_join(hotspot_grid, mod_trks, join = sf::st_intersects) |>
       dplyr::distinct(gid, ID, geometry)
 
     mod_count <- aggregate(ID ~ gid, data = mod_count, FUN = length) |>
       dplyr::rename(mod_count = ID)
 
     # Count IDs per grid cell for complete data
-    sim_count <- sf::st_join(HSgrid, sim_trks, join = sf::st_intersects) |>
+    sim_count <- sf::st_join(hotspot_grid, sim_trks, join = sf::st_intersects) |>
       dplyr::distinct(gid, ID, geometry)
 
     sim_count <- aggregate(ID ~ gid, data = sim_count, FUN = length) |>
       dplyr::rename(sim_count = ID)
 
     #Make a new table with all gid's to create a basis by which tables should be merged
-    gid <- seq(1:max(HSgrid$gid)) #Create a range of every grid cell
+    gid <- seq(1:max(hotspot_grid$gid)) #Create a range of every grid cell
     all <- as.data.frame(gid) #Create every combination of iteration and gid
 
     #Now that we have every combination of gid and Iteration in one variable, merge one of the count files to it - doesn't really matter which on but we'll use the complete data one here
@@ -367,30 +367,30 @@ comp_trks <- function(
       dplyr::ungroup() |>
       sf::st_as_sf(sf_column_name = "geom")
 
-    # If HSgrid is a single data.frame, convert to list for lapply
-    if (is.data.frame(HSgrid)) {
-      HSgrid <- list(HSgrid)
+    # If hotspot_grid is a single data.frame, convert to list for lapply
+    if (is.data.frame(hotspot_grid)) {
+      hotspot_grid <- list(hotspot_grid)
     }
 
-    # Apply function over list of grid cell HSgrid's
-    results <- lapply(HSgrid, FUN = function(HSgrid) {
+    # Apply function over list of grid cell hotspot_grid's
+    results <- lapply(hotspot_grid, FUN = function(hotspot_grid) {
       ### Count distinct AnimalIDs in each grid cell
       # Count IDs per grid cell for derived data
-      mod_count <- sf::st_join(HSgrid, mod_trks, join = sf::st_intersects) |>
+      mod_count <- sf::st_join(hotspot_grid, mod_trks, join = sf::st_intersects) |>
         dplyr::distinct(gid, ID, geometry)
 
       mod_count <- aggregate(ID ~ gid, data = mod_count, FUN = length) |>
         dplyr::rename(mod_count = ID)
 
       # Count IDs per grid cell for complete data
-      sim_count <- sf::st_join(HSgrid, sim_trks, join = sf::st_intersects) |>
+      sim_count <- sf::st_join(hotspot_grid, sim_trks, join = sf::st_intersects) |>
         dplyr::distinct(gid, ID, geometry)
 
       sim_count <- aggregate(ID ~ gid, data = sim_count, FUN = length) |>
         dplyr::rename(sim_count = ID)
 
       #Make a new table with all gid's to create a basis by which tables should be merged
-      gid <- seq(1:max(HSgrid$gid)) #Create a range of every grid cell
+      gid <- seq(1:max(hotspot_grid$gid)) #Create a range of every grid cell
       all <- as.data.frame(gid) #Create every combination of iteration and gid
 
       #Now that we have every combination of gid and Iteration in one variable, merge one of the count files to it - doesn't really matter which on but we'll use the complete data one here

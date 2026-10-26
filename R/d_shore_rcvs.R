@@ -1,16 +1,16 @@
 #' Distance to shore and density of receivers
 #'
 #' This function determines the distance to shore and the density of receivers for each grid cell.
-#' @param km grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared
-#' @param study_site simple feature polygon object that encompasses the entire study site
-#' @param land_barrier simple feature (multi)polygon object to route tracks around
-#' @param epsg epsg code for desired coordinated system transformation
 #' @param sts_pts a simple feature (multi)point object representing receiver locations
+#' @param study_site simple feature polygon object that encompasses the entire study site
+#' @param km grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared
+#' @param land_barrier simple feature (multi)polygon object to represent the shoreline
+#' @param epsg epsg code for desired coordinated system transformation
 #'
 #' @return A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
 #' @export
 #'
-d_shore_rcvs <- function(km, study_site, land_barrier, epsg, sts_pts) {
+d_shore_rcvs <- function(sts_pts, study_site, km, land_barrier, epsg) {
   grid_spacing <- km * 1000
 
   full_grid <- sf::st_make_grid(

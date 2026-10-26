@@ -8,7 +8,7 @@
 #'
 #' @examples
 #'
-#' den_rcvs(res[[1]])
+#' den_rcvs(resolutions[[1]])
 
 den_rcvs <- function(df) {
   zero_up <- units::set_units(0, "1/km^2")

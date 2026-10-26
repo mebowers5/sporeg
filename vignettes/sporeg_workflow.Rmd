@@ -37,7 +37,7 @@ library(car)
 
 ## Get the objects required for simulating tracks
 
-Get the study site and set the projected coordinate system. To accommodate the acoustic receiver station owners, we have applied a false origin to the spatial objects to occlude the actual locations of acoustic receivers.
+Get the study site and set the projected coordinate system. To accommodate the acoustic receiver station owners, we have applied an undisclosed false origin that shifts all features to the southeast to the spatial objects to occlude the actual locations of acoustic receivers.
 
 ```{r}
 #| label: study-site
@@ -610,16 +610,16 @@ In this section, we want to find out why the results are the way they are. Can w
 
 First, let's gather information on the depth in each grid cell. For this example, I have logged onto the National Oceanic and Atmospheric Administration (NOAA) [ERDDAP server](https://coastwatch.pfeg.noaa.gov/erddap/search/advanced.html?page=1&itemsPerPage=1000) and gathered depth information for the bounding box of the study site, which must be in a geographic coordinate system (e.g., NAD 1983). Let's get the bounding box of our study site.[^1]
 
-[^1]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with a false origin and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
+[^1]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with an undisclosed false origin that shifts all features to the southeast and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
 
 ```{r}
 #| label: get-bbox
 #| include: true
 
 # Objects required for iterations to run
-head(site_depth)
+head(study_site)
 
-site_depth <- site_depth |>
+site_depth <- study_site |>
   sf::st_as_sf() |>
   sf::st_transform(4269)
 
@@ -665,12 +665,12 @@ depth_data <- depth_data |>
   sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4269)
 
 depth_data <- sf::st_filter(depth_data, site_depth) |>
-  mutate(uid = seq_along(geometry))
+  dplyr::mutate(uid = seq_along(geometry))
 ```
 
 We also need to re-create the grids without the false origin.[^2] The study site must be in a projected coordinate system (WGS 84; EPSG: 3857) when it is initially fed into the function `grid_res`.
 
-[^2]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with a false origin and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
+[^2]: Note: Some acoustic telemetry users along the U.S. Eastern Seaboard have experienced theft of their equipment and so they are hesitant to share exact locations of receivers. For that reason, the real receiver locations in this vignette have been obscured with an undisclosed false origin that shifts all features to the southeast and the related shapefiles were altered in kind to visually match the obscured receiver locations. However, to get the actual environmental information required to make meaningful inferences about these results, we need to pull information from the actual study site. Therefore, we call in the actual study site for this section.
 
 ```{r}
 #| label: true-grids
@@ -706,9 +706,9 @@ Calculate distance to shore, density of receivers, presence/absence of receivers
 #| warning: false
 #| include: true
 
-head(fo_sts_pts)
+head(fo_stations)
 
-fo_sts_pts <- fo_sts_pts |>
+fo_sts_pts <- fo_stations |>
   sf::st_centroid()
 
 fo_land_barrier <- fo_land_barrier |>
@@ -1040,9 +1040,9 @@ Let's find out how the density of receivers varied for each grid cell resolution
 #| warning: false
 #| include: true
 
-res <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
+resolutions <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
-rcv_dens <- lapply(res, den_rcvs)
+rcv_dens <- lapply(resolutions, den_rcvs)
 
 rcv_dens <- dplyr::bind_rows(rcv_dens, .id = 'resolution') |>
   left_join(
@@ -1063,7 +1063,7 @@ What are the characteristics of the grid cells that exhibited a good fit?
 #| warning: false
 #| include: true
 
-gd_fit_char <- lapply(res, gd_fts) |>
+gd_fit_char <- lapply(resolutions, gd_fts) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1084,7 +1084,7 @@ Let's find out how many of the good fits occurred in grid cells that lacked rece
 #| warning: false
 #| include: true
 
-clsd_gps <- lapply(res, gps_fld) |>
+clsd_gps <- lapply(resolutions, gps_fld) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1104,7 +1104,7 @@ Let's find out where these closed gaps are located (e.g., are they coastal?).
 #| warning: false
 #| include: true
 
-clsd_gp_chars <- lapply(res, gps_chr) |>
+clsd_gp_chars <- lapply(resolutions, gps_chr) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1124,7 +1124,7 @@ Let's find out where most of the receivers are in the current array.
 #| warning: false
 #| include: true
 
-rcv_chars <- lapply(res, rcv_chr) |>
+rcv_chars <- lapply(resolutions, rcv_chr) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1147,7 +1147,7 @@ Blacktip sharks, the species chosen to demonstrate the current methods, is known
 
 depth_limit <- 300 # [m]
 
-dif_depth <- lapply(res, dif_co) |>
+dif_depth <- lapply(resolutions, dif_co) |>
   dplyr::bind_rows(.id = 'resolution') |>
   left_join(
     tibble(resolution = 1:4, res_name = c("100km", "50km", "25km", "10km")),
@@ -1239,10 +1239,9 @@ Since the movement model does not recognize land, let's re-route the parts that 
 CRS <- 3857
 
 barrier <- atlcoast |> sf::st_transform(3857)
-vis_graph <- pathroutr::prt_visgraph(barrier)
 buffer <- 650
 
-tbuff650 <- sub_rrt(demo_dets, CRS, barrier, vis_graph, buffer)
+tbuff650 <- reroute(demo_dets, barrier, buffer, CRS)
 
 # Check map
 mapview::mapView(tbuff650)

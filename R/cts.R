@@ -1,13 +1,13 @@
 #' Counts
 #'
 #' The function allows you to calculate counts per grid cell in demonstrative modeled movement data.
+#' @param df sf object of reconstructed, re-routed, optionally buffered tracks created from `reroute` function
 #' @param sg spatial grid created from `grid_res` function
-#' @param df sf object of reconstructed, re-routed, optionally buffered tracks created from `sub_rrt` function
 #'
 #' @return A simple feature object with counts associated with grid cell IDs `"gid"`
 #' @export
 
-cts <- function(sg, df) {
+cts <- function(df, sg) {
   gid <- seq(1:max(sg$gid)) #Create a range of every grid cell
   all <- as.data.frame(gid)
 

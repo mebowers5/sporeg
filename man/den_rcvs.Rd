@@ -17,5 +17,5 @@ This function provides summary statistics on the densities and counts of receive
 }
 \examples{
 
-den_rcvs(res[[1]])
+den_rcvs(resolutions[[1]])
 }
