@@ -16,8 +16,8 @@
 
 randomize_receivers <- function(study_site, quantity, receiver_range, view) {
 
-  quantity = size
-  receiver_range = dist
+  size <- quantity
+  dist <- receiver_range
 
   if(view == TRUE) {
 
