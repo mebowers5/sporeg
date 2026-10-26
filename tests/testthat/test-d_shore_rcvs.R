@@ -13,8 +13,17 @@ test_that("returns correct types", {
   result |>
     expect_s3_class(c("sf", "data.frame")) |>
     expect_named(
-      c("gid2", "gid", "d_shore", "poly_uid", "x", "count", "p_a", "den_rcs")
+      c(
+        "gid2",
+        "gid",
+        "d_shore",
+        "poly_uid",
+        "geometry",
+        "count",
+        "p_a",
+        "den_rcs"
+      )
     )
-  expect_s3_class(result$x, c("sfc_GEOMETRY", "sfc"), exact = TRUE)
+  expect_s3_class(result$geometry, c("sfc_GEOMETRY", "sfc"), exact = TRUE)
   expect_s3_class(result$den_rcs, "units")
 })
