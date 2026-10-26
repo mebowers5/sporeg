@@ -1,7 +1,8 @@
 #' Run a power analysis
 #'
 #' This is a wrapper function for running a power analysis on iterative simulation
-#'   and reconstruction methods process.
+#'   and reconstruction methods process. Currently, it is required that the user calculate
+#'   sd manually and supply it along with `output`. See example.
 #'
 #' @param output the resulting data frame from the iterative methods process
 #' @param sig.level numeric. the desired level of significance to achieve
