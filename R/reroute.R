@@ -76,4 +76,3 @@ reroute <- function(df, barrier, det_range, epsg) {
 
     return(tbuff)
   }
-}
