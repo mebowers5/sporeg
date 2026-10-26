@@ -4,20 +4,16 @@
 \alias{reroute}
 \title{Reroute tracks off a barrier}
 \usage{
-reroute(df, sex, season, rc, barrier, det_range)
+reroute(df, barrier, det_range, epsg)
 }
 \arguments{
 \item{df}{A data frame output from a movement model including ID, time, mu.x, mu.y, and study_yr}
 
-\item{sex}{A character representing sex of the animal as in "Female"}
-
-\item{season}{A character representing meteorological season as in "Autumn"}
-
-\item{rc}{A character representing reproductive cycle as in "P" for pregnant or "NP" for not pregnant}
-
 \item{barrier}{A simple feature polygon object representing a barrier}
 
 \item{det_range}{Numeric quantity representing detection range of receivers}
+
+\item{epsg}{epsg code for desired coordinated system transformation}
 }
 \value{
 A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2
@@ -26,6 +22,10 @@ A data frame object with minimum, mean, and maximum of receiver densities and co
 This function provides summary statistics on the densities and counts of receivers in a grid.
 }
 \examples{
-df <- sporeg::demo_dets |> dplyr::filter(FID \%in\% c("4", "5", "6"))
-reroute(df, sex = "Female", season = "Autumn", RC = "P", barrier = sporeg::atlcoast, det_range = 500)
+
+df <- sporeg::demo_dets |>
+dplyr::filter(FID \%in\% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P") |>
+sf::st_transform(4269)
+
+reroute(df, barrier = sporeg::atlcoast, det_range = 500)
 }

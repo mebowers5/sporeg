@@ -23,7 +23,8 @@ A data frame object
 }
 \description{
 This is a wrapper function for running a power analysis on iterative simulation
-and reconstruction methods process.
+and reconstruction methods process. Currently, it is required that the user calculate
+sd manually and supply it along with \code{output}. See example.
 }
 \examples{
 # Use powr wrapper function on example results

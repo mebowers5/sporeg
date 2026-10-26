@@ -17,9 +17,10 @@ export(randomize_receivers)
 export(rcv_chr)
 export(reroute)
 export(simul_trks)
-export(sub_rrt)
 export(zero_var)
-importFrom(stats,aggregate)
-importFrom(stats,na.omit)
-importFrom(stats,sd)
-importFrom(stats,setNames)
+importFrom(stats,
+  aggregate,
+  na.omit,
+  sd,
+  setNames
+)
