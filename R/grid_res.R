@@ -12,11 +12,10 @@
 #' @export
 #'
 #' @examples
-#' # NOTE: The study site must be in a projected coordinate system (e.g. EPSG: 3857)
+#' # NOTE: The study site must be in a projected coordinate system (e.g., EPSG: 3857)
 #' # when it is initially fed into the function grid_res
 #'
-#' site_depth_3857 <- site_depth |> sf::st_transform(3857)
-#' HS_100km_grid <- grid_res(site_depth_3857, 100, "centers", 4269)
+#' HS_100km_grid <- grid_res(study_site, 100, "centers", 4269)
 
 grid_res <- function(study_site, km, what, epsg) {
   grid_spacing <- km * 1000 # Desired kilometers times 1000 m per 1 km
