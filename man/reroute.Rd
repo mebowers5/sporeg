@@ -7,7 +7,7 @@
 reroute(df, barrier, det_range, epsg)
 }
 \arguments{
-\item{df}{A data frame output from a movement model including ID, time, mu.x, mu.y, and study_yr}
+\item{df}{A data frame output from a movement model including FID, time, mu.x, mu.y, and study_yr}
 
 \item{barrier}{A simple feature polygon object representing a barrier}
 
@@ -23,9 +23,9 @@ This function provides summary statistics on the densities and counts of receive
 }
 \examples{
 
-df <- sporeg::demo_dets |>
-dplyr::filter(FID \%in\% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P") |>
-sf::st_transform(4269)
+df <- demo_dets |>
+ sf::st_transform(4269) |>
+ dplyr::filter(FID \%in\% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P")
 
-reroute(df, barrier = sporeg::atlcoast, det_range = 500)
+reroute(df, barrier = atlcoast, det_range = 500, epsg = 3857)
 }

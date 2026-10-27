@@ -171,30 +171,6 @@ references:
     email: Roger.Bivand@nhh.no
   year: '2024'
 - type: software
-  title: data.table
-  abstract: 'data.table: Extension of `data.frame`'
-  notes: Suggests
-  url: https://r-datatable.com
-  repository: https://CRAN.R-project.org/package=data.table
-  authors:
-  - family-names: Barrett
-    given-names: Tyson
-    email: t.barrett88@gmail.com
-  - family-names: Dowle
-    given-names: Matt
-    email: mattjdowle@gmail.com
-  - family-names: Srinivasan
-    given-names: Arun
-    email: asrini@pm.me
-  - family-names: Gorecki
-    given-names: Jan
-  - family-names: Chirico
-    given-names: Michael
-  - family-names: Hocking
-    given-names: Toby
-    orcid: https://orcid.org/0000-0002-3146-0865
-  year: '2024'
-- type: software
   title: dplyr
   abstract: 'dplyr: A Grammar of Data Manipulation'
   notes: Imports
