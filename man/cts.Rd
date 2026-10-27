@@ -4,12 +4,12 @@
 \alias{cts}
 \title{Counts}
 \usage{
-cts(sg, df)
+cts(df, sg)
 }
 \arguments{
-\item{sg}{spatial grid created from \code{grid_res} function}
+\item{df}{sf object of reconstructed, re-routed, optionally buffered tracks created from \code{reroute} function}
 
-\item{df}{sf object of reconstructed, re-routed, optionally buffered tracks created from \code{sub_rrt} function}
+\item{sg}{spatial grid created from \code{grid_res} function}
 }
 \value{
 A simple feature object with counts associated with grid cell IDs \code{"gid"}

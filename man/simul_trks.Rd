@@ -11,7 +11,7 @@ simul_trks(
   vmin,
   vmax,
   rel_site,
-  crs,
+  epsg,
   n_days,
   initHeading
 )
@@ -31,7 +31,7 @@ tracks are allowed to be simulated.}
 \item{rel_site}{simple feature polygon object in which simulated animals are
 "released" or where simulated tracks begin}
 
-\item{crs}{EPSG code for study_site polygon. Must be projected coordinate system}
+\item{epsg}{EPSG code for study_site polygon. Must be projected coordinate system}
 
 \item{n_days}{integer. number of days that tracks should be simulated}
 
@@ -51,9 +51,9 @@ theta <- c(0, 1.74)
 vmin <- 0.98
 vmax <- 1.58
 rel_site <- fo_rel_site
-crs <- 3857
+epsg <- 3857
 n_days <- 30
 initHeading <- 0
 
-tracks <- simul_trks(anims, study_site, theta, vmin, vmax, rel_site, crs, n_days, initHeading)
+tracks <- simul_trks(study_site, epsg, anims, rel_site, initHeading, theta, vmin, vmax, n_days)
 }
