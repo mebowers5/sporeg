@@ -4,7 +4,7 @@
 \alias{randomize_receivers}
 \title{Generate random receivers within a polygon}
 \usage{
-randomize_receivers(study_site, quantity, receiver_range, view)
+randomize_receivers(study_site, quantity = 100, receiver_range = 500, view)
 }
 \arguments{
 \item{study_site}{simple feature polygon object that encompasses the entire study site; must be in projected coordinate system for receiver range to be in meters}
@@ -23,6 +23,7 @@ This functions creates a line by connecting start and end points.
 }
 \examples{
 
-randomize_receivers(sporeg::study_site |> sf::st_transform(., 4326), 100, 500, TRUE)
-
+sporeg::study_site |>
+  sf::st_transform(4326)
+  randomize_receivers(100, 500, TRUE)
 }
