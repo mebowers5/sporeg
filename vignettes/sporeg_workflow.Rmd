@@ -23,7 +23,6 @@ Let's load the packages that we will need to run the steps in this vignette.
 ```{r}
 #| label: load-packages
 #| include: true
-
 library(sporeg)
 library(dplyr)
 library(sf)
@@ -42,7 +41,6 @@ Get the study site and set the projected coordinate system. To accommodate the a
 ```{r}
 #| label: study-site
 #| include: true
-
 data(fo_study_site)
 ```
 
@@ -51,7 +49,6 @@ Get the release site.
 ```{r}
 #| label: release-site
 #| include: true
-
 data(fo_rel_site)
 ```
 
@@ -62,8 +59,7 @@ Make the different resolution grid cells and put them all in a list.
 ```{r}
 #| label: grids
 #| include: true
-
-HSgrid <- lapply(
+hotspot_grids <- lapply(
   c(10, 25, 50, 100),
   grid_res,
   study_site = fo_study_site,
@@ -79,7 +75,6 @@ Get the stations.
 ```{r}
 #| label: stations
 #| include: true
-
 data(fo_stations)
 ```
 
@@ -90,7 +85,6 @@ Get the land barrier.
 ```{r}
 #| label: land-barrier
 #| include: true
-
 fo_land_barrier <- fo_land_barrier |>
   sf::st_transform(3857) |>
   sf::st_collection_extract('POLYGON') |>
@@ -102,7 +96,6 @@ Create a visibility graph from the land barrier object.
 ```{r}
 #| label: visibility-graph
 #| include: true
-
 vis_graph <- pathroutr::prt_visgraph(fo_land_barrier)
 ```
 
@@ -113,7 +106,6 @@ For simulating tracks:
 ```{r}
 #| label: track-params
 #| include: true
-
 # Number of animals
 anims <- 3
 # Number of years
@@ -144,7 +136,6 @@ For the iterations:
 ```{r}
 #| label: parallel-params
 #| include: true
-
 total_iterations <- 2 # Total number of iterations desired
 reps <- 2 # Number of replicates that will result in desired iterations given reps
 runs <- 1:(total_iterations / reps) # Interval at which outputs should be written to file
@@ -157,7 +148,6 @@ This will allow us to run these processes in parallel. Here, we find out how man
 ```{r, eval=FALSE}
 #| label: create-cluster
 #| include: true
-
 numCores <- detectCores(logical = F)
 numCores
 
@@ -169,7 +159,6 @@ Creating a cluster will create multiple instances of R on your computer. Now, we
 ```{r, eval=FALSE}
 #| label: cluster-libraries
 #| include: true
-
 clusterEvalQ(cl, {
   library(sporeg)
   library(sf)
@@ -188,12 +177,11 @@ Let's create an output file where our results will go. We only want to create th
 ```{r}
 #| label: empty-list
 #| include: true
-
 # Create empty list object and save it
 # results <- list()
 
 # Assign the filename
-filename <- "results.Rda"
+filename <- tempfile(fileext = ".rda")
 
 # Save the empty list object to the filename
 # save(results, file = filename)
@@ -204,7 +192,6 @@ Now we're ready to mirror our global environment to the cluster cores.
 ```{r, eval=FALSE}
 #| label: cluster-environment
 #| include: true
-
 parallel::clusterExport(cl, varlist = ls(envir = .GlobalEnv))
 ```
 
@@ -215,7 +202,6 @@ We should now have everything in place to iterate our methods. Here, we are usin
 ```{r, eval=FALSE}
 #| label: iterate-methods
 #| include: true
-
 base::replicate(n = reps, expr = {
   iterated_results <- parallel::parLapply(cl, runs, fun = function(I) {
     # Simulate tracks
@@ -237,8 +223,8 @@ base::replicate(n = reps, expr = {
       fo_stations,
       fo_land_barrier,
       vis_graph,
-      HSgrid,
-      multi.grid = TRUE,
+      multi_grid = TRUE,
+      hotspot_grid = hotspot_grids,
       snap_tolerance = 650
     )
 
@@ -264,7 +250,6 @@ You always want to stop the cluster when you are finished using it.
 ```{r, eval=FALSE}
 #| label: stop-cluster
 #| include: true
-
 parallel::stopCluster(cl)
 ```
 
@@ -277,7 +262,6 @@ First, let's load the results.
 ```{r}
 #| label: view-results
 #| include: true
-
 load(filename)
 ```
 
@@ -286,7 +270,6 @@ Hmm... these are hard to look at. Let's turn them into a data frame instead.
 ```{r}
 #| label: flatten-results
 #| include: true
-
 # Bind the lists by grid cell resolution
 results <- lapply(results, dplyr::bind_rows, .id = 'resolution')
 
@@ -314,7 +297,6 @@ Remove any cases where both `sim_count` and `mod_count` were zero for all iterat
 ```{r}
 #| label: prep-power
 #| include: true
-
 results <- results |>
   dplyr::left_join(
     dplyr::tibble(
@@ -330,7 +312,6 @@ Test for zero variance.
 ```{r}
 #| label: remove-zeroes
 #| include: true
-
 # Remove grid cells with zero variance
 df_var <- zero_var(results)
 
@@ -346,7 +327,6 @@ Prep the results for a power analysis by setting some parameters for our power a
 ```{r}
 #| label: power-params
 #| include: true
-
 # The number of animals
 anims <- anims
 
@@ -372,7 +352,6 @@ Let's calculate standard deviation by grid resolution. Now we're ready to run ou
 ```{r}
 #| label: power-analysis
 #| include: true
-
 pow_stat <- df_var |>
   group_by(res_name, gid) |>
   summarise(sd = sd(dif)) |>
@@ -408,7 +387,6 @@ Do we really need THAT few/many iterations?! Let's do a sanity check here and se
 ```{r}
 #| label: sanity-check
 #| include: true
-
 max_sd <- pow_stat |>
   ungroup() |>
   group_by(res_name) |>
@@ -440,7 +418,7 @@ new_df <- df_var |>
 
 results <- new_df |>
   group_by(res_name, gid) |>
-  summarise(avg_dif = mean(dif), se = se = sd(dif) / n())
+  summarise(avg_dif = mean(dif), se = se <- sd(dif) / n())
 results
 ```
 
@@ -453,7 +431,6 @@ Let's create a table that shows how closely the modeled tracks compared to the r
 #| tbl-cap: Results of iterative methods
 #| warning: false
 #| include: true
-
 # Counts
 how_well_ct <- results |>
   mutate(
@@ -509,7 +486,6 @@ We had a problem in the track reconstruction where some iterations did not recon
 #| label: recon-info
 #| warning: false
 #| include: true
-
 recon <- df_var |>
   group_by(res_name, iteration) |>
   summarise(max_recon = max(mod_count)) |>
@@ -523,7 +499,6 @@ recon <- df_var |>
     max_26 = length(which(max_recon >= 26)) / max(iteration) * 100,
     max_25 = length(which(max_recon >= 25)) / max(iteration) * 100
   )
-
 ```
 
 ## Additional Bias
@@ -534,7 +509,6 @@ Because some tracks were not re-constructed by the movement model, we may have i
 #| label: recon-results
 #| warning: false
 #| include: true
-
 recon_res <- df_var |>
   group_by(res_name, iteration) |>
   summarise(max_mod = max(mod_count)) |>
@@ -548,7 +522,6 @@ Let's re-number these iterations where all `anims` were re-constructed.
 #| label: new-iterations
 #| warning: false
 #| include: true
-
 new_iters <- df_var |>
   group_by(res_name, iteration) |>
   summarise(max_mod = max(mod_count)) |>
@@ -564,7 +537,6 @@ Now we can see how our results would change if we had selected only iterations i
 #| label: new-results
 #| warning: false
 #| include: true
-
 new_iters_df <- merge(new_iters, df_var) |>
   dplyr::filter(
     res_name == "100km" &
@@ -576,7 +548,7 @@ new_iters_df <- merge(new_iters, df_var) |>
 
 new_results <- new_iters_df |>
   group_by(res_name, gid) |>
-  summarise(avg_dif = mean(dif), se = se = sd(dif) / n())
+  summarise(avg_dif = mean(dif), se = se <- sd(dif) / n())
 new_results
 
 new_how_well <- new_results |>
@@ -615,7 +587,6 @@ First, let's gather information on the depth in each grid cell. For this example
 ```{r}
 #| label: get-bbox
 #| include: true
-
 # Objects required for iterations to run
 head(study_site)
 
@@ -645,7 +616,6 @@ Save the export.
 ```{r}
 #| label: gather-depth
 #| include: true
-
 head(atlcoast)
 
 atlcoast <- atlcoast |>
@@ -658,7 +628,6 @@ Read in depth data. For now, we will load the demonstration depth_data file. Her
 #| label: depth-data
 #| warning: false
 #| include: true
-
 head(depth_data)
 
 depth_data <- depth_data |>
@@ -676,7 +645,6 @@ We also need to re-create the grids without the false origin.[^2] The study site
 #| label: true-grids
 #| warning: false
 #| include: true
-
 site_depth <- site_depth |>
   sf::st_transform(3857)
 
@@ -692,7 +660,6 @@ Merge depth data with different grid cell resolutions.
 #| label: true-depth
 #| warning: false
 #| include: true
-
 HS_100km_grid <- get_depth(HS_100km_grid, depth_data)
 HS_50km_grid <- get_depth(HS_50km_grid, depth_data)
 HS_25km_grid <- get_depth(HS_25km_grid, depth_data)
@@ -718,7 +685,7 @@ fo_land_barrier <- fo_land_barrier |>
   sf::st_union() |>
   sf::st_as_sf()
 
-epsg = 3857
+epsg <- 3857
 
 HS_100km_grid <- merge(
   (HS_100km_grid |> as.data.frame() |> dplyr::select(-geometry)),
@@ -755,7 +722,6 @@ Let's find out how many grid cells lacked receivers.
 #| label: rcv-absence
 #| warning: false
 #| include: true
-
 grids <- list(HS_100km_grid, HS_50km_grid, HS_25km_grid, HS_10km_grid)
 
 grids <- sf::st_as_sf(dplyr::bind_rows(grids, .id = 'resolution')) |>
@@ -783,7 +749,6 @@ Merge the results to these grid cell metadata and determine which grid cells exh
 #| label: results-vars
 #| warning: false
 #| include: true
-
 results <- results |>
   mutate(
     g_fit = ifelse(avg_dif >= -1 * 0.1 * anims & avg_dif <= 0.1 * anims, 1, 0)
@@ -826,7 +791,6 @@ Let's map these and see what kind of spatial trends we can see.
 #| label: results-maps
 #| warning: false
 #| include: true
-
 mapview::mapView(HS_100km_grid)
 mapview::mapView(HS_50km_grid)
 mapview::mapView(HS_25km_grid)
@@ -841,7 +805,6 @@ Let's marry our results to a sf object that lacks a false origin so that we can 
 #| label: results-sfmaps
 #| warning: false
 #| include: true
-
 # Create grids without false origin
 head(study_site)
 
@@ -892,7 +855,6 @@ We need to check for multicollinearity between main effects to see if we need to
 #| label: vif
 #| warning: false
 #| include: true
-
 vif.fit <- glm(
   formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
   family = binomial(),
@@ -906,7 +868,6 @@ car::vif(vif.fit)
 #| label: model-selection
 #| warning: false
 #| include: true
-
 # 100 x 100km resolution
 fit1.100km <- glm(
   formula = g_fit ~ den_rcs + p_a + mean_depth + d_shore,
@@ -985,25 +946,24 @@ Now that we've constructed the model using backward selection by p-value, let's 
 #| label: model-usefulness
 #| warning: false
 #| include: true
-
 summary(fit2.100km)
 
-p_value.100km = 1 - pchisq(120.090 - 59.388, 3)
+p_value.100km <- 1 - pchisq(120.090 - 59.388, 3)
 p_value.100km
 
 summary(fit3.50km)
 
-p_value.50km = 1 - pchisq(327.03 - 233.64, 3)
+p_value.50km <- 1 - pchisq(327.03 - 233.64, 3)
 p_value.50km
 
 summary(fit2.25km)
 
-p_value.25km = 1 - pchisq(975.40 - 750.33, 3)
+p_value.25km <- 1 - pchisq(975.40 - 750.33, 3)
 p_value.25km
 
 summary(fit1.10km)
 
-p_value.10km = 1 - pchisq(5012.5 - 4012.9, 3)
+p_value.10km <- 1 - pchisq(5012.5 - 4012.9, 3)
 p_value.10km
 ```
 
@@ -1015,7 +975,6 @@ We want to know how much each main effect increases (or decreases) the odds of a
 #| label: odds-ratios
 #| warning: false
 #| include: true
-
 odds_100km <- get_or(fit2.100km) |>
   mutate(res_name = "100km")
 
@@ -1072,7 +1031,6 @@ gd_fit_char <- lapply(resolutions, gd_fts) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
-
 ```
 
 # Do the methods close gaps?
@@ -1133,7 +1091,6 @@ rcv_chars <- lapply(resolutions, rcv_chr) |>
   mutate(
     res_name = ordered(res_name, levels = c("100km", "50km", "25km", "10km"))
   )
-
 ```
 
 ## What if we had chosen a different depth cutoff?
@@ -1144,7 +1101,6 @@ Blacktip sharks, the species chosen to demonstrate the current methods, is known
 #| label: diff-cutoff
 #| warning: false
 #| include: true
-
 depth_limit <- 300 # [m]
 
 dif_depth <- lapply(resolutions, dif_co) |>
@@ -1166,7 +1122,6 @@ Let's apply these methods to real acoustic telemetry data so we can derive distr
 #| label: eco-app
 #| warning: false
 #| include: true
-
 head(demo_dets)
 
 demo_dets <- demo_dets |>
@@ -1190,7 +1145,6 @@ Now we can run the movement model, a continuous-time correlated random walk mode
 #| label: real-tracks
 #| warning: false
 #| include: true
-
 demo_dets <- momentuHMM::crawlWrap(
   obsData = demo_dets,
   timeStep = "15 min",
@@ -1212,7 +1166,6 @@ Turn the movement model product into a data frame and label the predicted locati
 #| label: label-locs
 #| warning: false
 #| include: true
-
 demo_dets <- demo_dets |>
   dplyr::select(ID, locType, time, mu.x, mu.y, speed) |>
   dplyr::mutate(locType = ifelse(is.na(locType), "p", locType)) |> #Specify predicted locs
@@ -1235,7 +1188,6 @@ Since the movement model does not recognize land, let's re-route the parts that 
 #| label: real-reroute
 #| warning: false
 #| include: true
-
 CRS <- 3857
 
 barrier <- atlcoast |> sf::st_transform(3857)
@@ -1255,7 +1207,6 @@ Here, we need to calculate the number of unique individuals in each grid cell so
 #| label: real-gridcount
 #| warning: false
 #| include: true
-
 sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
 
 subset_cts <- cts(sg, tbuff650)
@@ -1267,7 +1218,6 @@ How would it differ if we just used the daily summarized acoustic telemetry data
 #| label: daily-summs
 #| warning: false
 #| include: true
-
 head(at_dly_locs)
 
 sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
@@ -1281,7 +1231,6 @@ What if we connected those data with straight lines?
 #| label: straight-line
 #| warning: false
 #| include: true
-
 at_lines <- at_dly_locs |>
   group_by(ID, time) |>
   sf::st_transform(3857) |>
@@ -1320,7 +1269,6 @@ at_lines <- at_dly_locs |>
 sg <- grid_res(50, study_site, epsg = 3857, what = "polygons")
 
 at_line_cts <- cts(sg, at_lines)
-
 ```
 
 ## Map good fits over ecological data
@@ -1331,7 +1279,6 @@ Let's merge the results that have a false origin with the distribution data so w
 #| label: reliability
 #| warning: false
 #| include: true
-
 goodfts_50km <- merge(
   (HS_50km_grid |> as.data.frame() |> dplyr::select(-x)),
   at_line_cts,
@@ -1348,6 +1295,5 @@ Let's map the mean differences with the corrected map projection.
 #| label: real-map
 #| warning: false
 #| include: true
-
 mapview::mapView(goodfts_50km, zcol = "avg_dif")
 ```
