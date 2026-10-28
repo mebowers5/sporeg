@@ -10,12 +10,31 @@
 #' }
 "at_dly_locs"
 
+#' Atlantic coast of the USA
+#'
+#' @format An sf object with 1 row and 2 variables:
+#' \describe{
+#'   \item{FID_}{polygon ID, consisting of num 0}
+#'   \item{geometry}{Well-known text of the location of the identified transmitter
+#'     in WGS84/Pseudo-Mercator, EPSG:3857}
+#' }
+"atlcoast"
+
 #' Detections for demonstration
 #'
 #' @format An sf object with 62358 rows and 3 variables:
 #' \describe{
-#'   \item{ID}{transmitter identifier, an integer ranging from 1-10}
+#'   \item{ID}{transmitter identifier, an integer ranging from 1-6}
+#'   \item{Sex}{sex of individual, a character consisting of either "Female", "Male", or "Unknown"}
 #'   \item{time}{POSIXct timestamp of detection, local time zone}
+#'   \item{mu.x}{numerical longitude coordinate in NAD 1983, EPSG: 4269}
+#'   \item{mu.y}{numerical latitude coordinate in NAD 1983, EPSG: 4269}
+#'   \item{loc_type}{character representation of whether location was observed "o" or predicted "p" with a movement model}
+#'   \item{RC}{reproductive cycle of individual, dependent upon date, consisting of either "NP" not pregnant,
+#'   "P" pregnant, "U" unknown, or NA}
+#'   \item{met_seas}{meteorological season consisting of either "Spring", "Summer", "Autumn", or "Winter"}
+#'   \item{study_yr}{character representation of study year where study year began when the first individual
+#'   was tagged and year transitioned at June 1 of each year, the date of the reproductive cycle transition}
 #'   \item{geometry}{Well-known text of the location of the identified transmitter
 #'     in WGS84/Pseudo-Mercator, EPSG:3857}
 #' }
@@ -125,8 +144,8 @@
 #'
 #' @format A large list of length 4:
 #' \describe{
-#'   \item{[["1"]]}{A sf data frame with 93 rows and 13 columns}
-#'    \itemize{
+#'   \item{\code{[[1]]}}{A sf data frame with 93 rows and 13 columns}
+#'    \describe{
 #'      \item{gid}{Polygon ID, consisting of 0}
 #'      \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 #'      \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
@@ -143,8 +162,8 @@
 #'      \item{den_rcs}{Numeric density of receivers per grid cell}
 #'      \item{x}{Well-known text POLYGON of grid cells in WGS84/Pseudo-Mercator, EPSG:3857}
 #'      }
-#'   \item{[["2"]]}{A sf data frame with 292 rows and 13 columns}
-#'    \itemize{
+#'   \item{\code{[[2]]}}{A sf data frame with 292 rows and 13 columns}
+#'    \describe{
 #'      \item{gid}{Polygon ID, consisting of 0}
 #'      \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 #'      \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
@@ -161,8 +180,8 @@
 #'      \item{den_rcs}{Numeric density of receivers per grid cell}
 #'      \item{x}{Well-known text POLYGON of grid cells in WGS84/Pseudo-Mercator, EPSG:3857}
 #'      }
-#'  \item{[["3"]]}{A sf data frame with 986 rows and 13 columns}
-#'    \itemize{
+#'  \item{\code{[[3]]}}{A sf data frame with 986 rows and 13 columns}
+#'    \describe{
 #'      \item{gid}{Polygon ID, consisting of 0}
 #'      \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 #'      \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
@@ -179,8 +198,8 @@
 #'      \item{den_rcs}{Numeric density of receivers per grid cell}
 #'      \item{x}{Well-known text POLYGON of grid cells in WGS84/Pseudo-Mercator, EPSG:3857}
 #'      }
-#'  \item{[["4"]]}{A sf data frame with 5338 rows and 13 columns}
-#'    \itemize{
+#'  \item{\code{[[4]]}}{A sf data frame with 5338 rows and 13 columns}
+#'    \describe{
 #'      \item{gid}{Polygon ID, consisting of 0}
 #'      \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 #'      \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
