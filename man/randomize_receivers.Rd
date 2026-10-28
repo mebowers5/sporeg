@@ -23,6 +23,6 @@ This functions creates a line by connecting start and end points.
 }
 \examples{
 
-randomize_receivers(sporeg::study_site |> sf::st_transform(., 4326), 100, 500, TRUE)
+randomize_receivers(sporeg::study_site |> sf::st_transform(4326), 100, 500, TRUE)
 
 }

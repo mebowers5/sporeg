@@ -7,8 +7,8 @@
 \format{
 A large list of length 4:
 \describe{
-\item{[\link{1}}{A sf data frame with 93 rows and 13 columns}
-\itemize{
+\item{\code{[[1]]}}{A sf data frame with 93 rows and 13 columns}
+\describe{
 \item{gid}{Polygon ID, consisting of 0}
 \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
@@ -25,8 +25,8 @@ absent "a"}
 \item{den_rcs}{Numeric density of receivers per grid cell}
 \item{x}{Well-known text POLYGON of grid cells in WGS84/Pseudo-Mercator, EPSG:3857}
 }
-\item{[\link{2}}{A sf data frame with 292 rows and 13 columns}
-\itemize{
+\item{\code{[[2]]}}{A sf data frame with 292 rows and 13 columns}
+\describe{
 \item{gid}{Polygon ID, consisting of 0}
 \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
@@ -43,8 +43,8 @@ absent "a"}
 \item{den_rcs}{Numeric density of receivers per grid cell}
 \item{x}{Well-known text POLYGON of grid cells in WGS84/Pseudo-Mercator, EPSG:3857}
 }
-\item{[\link{3}}{A sf data frame with 986 rows and 13 columns}
-\itemize{
+\item{\code{[[3]]}}{A sf data frame with 986 rows and 13 columns}
+\describe{
 \item{gid}{Polygon ID, consisting of 0}
 \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding
@@ -61,8 +61,8 @@ absent "a"}
 \item{den_rcs}{Numeric density of receivers per grid cell}
 \item{x}{Well-known text POLYGON of grid cells in WGS84/Pseudo-Mercator, EPSG:3857}
 }
-\item{[\link{4}}{A sf data frame with 5338 rows and 13 columns}
-\itemize{
+\item{\code{[[4]]}}{A sf data frame with 5338 rows and 13 columns}
+\describe{
 \item{gid}{Polygon ID, consisting of 0}
 \item{res_name}{Character, name of grid resolution, one of 100km, 50km, 25km, 10km}
 \item{avg_dif}{Numeric average difference in unique IDs counted between simulated and modeled corresponding

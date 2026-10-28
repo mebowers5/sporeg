@@ -24,8 +24,8 @@ This function provides summary statistics on the densities and counts of receive
 \examples{
 
 df <- sporeg::demo_dets |>
-dplyr::filter(FID \%in\% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P") |>
+dplyr::filter(ID \%in\% c("3", "4", "5") & Sex == "Female" & met_seas == "Autumn" & RC == "P") |>
 sf::st_transform(4269)
 
-reroute(df, barrier = sporeg::atlcoast, det_range = 500)
+reroute(df, barrier = sporeg::atlcoast, det_range = 500, epsg = 3857)
 }

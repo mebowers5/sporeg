@@ -25,6 +25,6 @@ res_name = c("100km", "50km", "25km", "10km")),
 by = "resolution")
 
 df_var <- results |>
-group_by(res_name) |>
+dplyr::group_by(res_name) |>
 zero_var()
 }
