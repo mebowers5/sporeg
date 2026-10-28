@@ -11,7 +11,7 @@
 #'
 #' @examples
 #'
-#' randomize_receivers(sporeg::study_site |> sf::st_transform(., 4326), 100, 500, TRUE)
+#' randomize_receivers(sporeg::study_site |> sf::st_transform(4326), 100, 500, TRUE)
 #'
 
 randomize_receivers <- function(study_site, quantity, receiver_range, view) {
@@ -21,17 +21,17 @@ randomize_receivers <- function(study_site, quantity, receiver_range, view) {
 
   if(view == TRUE) {
 
-receivers_rand <- st_sample(study_site, size = 100)
+receivers_rand <- sf::st_sample(study_site, size = 100)
 
 # Turn receivers into polygons
-receivers_rand <- st_buffer(receivers_rand, dist = 500)
+receivers_rand <- sf::st_buffer(receivers_rand, dist = 500)
 
 mapview::mapView(receivers_rand)
   }
   else {
-    receivers_rand <- st_sample(study_site, size = 100)
+    receivers_rand <- sf::st_sample(study_site, size = 100)
 
     # Turn receivers into polygons
-    receivers_rand <- st_buffer(receivers_rand, dist = 500)
+    receivers_rand <- sf::st_buffer(receivers_rand, dist = 500)
   }
 }

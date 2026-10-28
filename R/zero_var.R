@@ -16,7 +16,7 @@
 #' by = "resolution")
 #'
 #' df_var <- results |>
-#' group_by(res_name) |>
+#' dplyr::group_by(res_name) |>
 #' zero_var()
 
 zero_var <- function(df) {
