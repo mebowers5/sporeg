@@ -39,6 +39,7 @@ utils::globalVariables(
     "sd",
     "den_rcs",
     "depth_limit",
+    "study_yr",
     "tot"
   )
 )
