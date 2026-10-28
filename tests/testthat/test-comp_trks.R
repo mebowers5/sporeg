@@ -6,12 +6,12 @@ test_that("", {
     vmin = 0.98,
     vmax = 1.58,
     rel_site = fo_rel_site,
-    crs = 3857,
+    epsg = 3857,
     n_days = 30,
     initHeading = 0
   )
   vis_graph <- pathroutr::prt_visgraph(fo_land_barrier)
-  HSgrid <- grid_res(
+  hotspot_grid <- grid_res(
     100,
     study_site = fo_study_site,
     epsg = 3857,
@@ -23,8 +23,8 @@ test_that("", {
     fo_stations,
     fo_land_barrier,
     vis_graph,
-    HSgrid,
-    multi.grid = TRUE,
+    hotspot_grid,
+    multi_grid = TRUE,
     snap_tolerance = 650
   )
 })

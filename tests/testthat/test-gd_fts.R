@@ -1,5 +1,5 @@
 test_that("returns correct types", {
-  gd_fts(res[[2]]) |>
+  gd_fts(resolutions[[2]]) |>
     expect_s3_class(c("sf", "data.frame"), exact = TRUE) |>
     expect_type("list") |>
     expect_named(c(
@@ -20,9 +20,9 @@ test_that("returns correct types", {
 })
 
 test_that("retains projection", {
-  res_projection <- sf::st_crs(res[[2]])
+  res_projection <- sf::st_crs(resolutions[[2]])
 
-  gd_projection <- gd_fts(res[[2]]) |>
+  gd_projection <- gd_fts(resolutions[[2]]) |>
     sf::st_crs()
 
   expect_equal(gd_projection, res_projection)

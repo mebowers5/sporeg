@@ -1,5 +1,5 @@
 test_that("returns correct types", {
-  receiver_density <- den_rcvs(res[[1]])
+  receiver_density <- den_rcvs(resolutions[[1]])
 
   expect_s3_class(receiver_density, "data.frame")
   expect_type(receiver_density, "list")

@@ -6,7 +6,7 @@ test_that("returns correct types", {
     vmin = 0.98,
     vmax = 1.58,
     rel_site = fo_rel_site,
-    crs = 3857,
+    epsg = 3857,
     n_days = 30,
     initHeading = 0
   ) |>
@@ -31,7 +31,7 @@ test_that("data column types are correct", {
     vmin = 0.98,
     vmax = 1.58,
     rel_site = fo_rel_site,
-    crs = 3857,
+    epsg = 3857,
     n_days = 30,
     initHeading = 0
   )

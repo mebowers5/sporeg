@@ -1,5 +1,5 @@
 test_that("returns correct types", {
-  rcv_chr(res[[1]]) |>
+  rcv_chr(resolutions[[1]]) |>
     expect_s3_class("data.frame") |>
     expect_named(
       c(
