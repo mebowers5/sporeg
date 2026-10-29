@@ -10,12 +10,31 @@
 #' }
 "at_dly_locs"
 
+#' Atlantic coast of the USA
+#'
+#' @format An sf object with 1 row and 2 variables:
+#' \describe{
+#'   \item{FID_}{polygon ID, consisting of num 0}
+#'   \item{geometry}{Well-known text of the location of the identified transmitter
+#'     in WGS84/Pseudo-Mercator, EPSG:3857}
+#' }
+"atlcoast"
+
 #' Detections for demonstration
 #'
 #' @format An sf object with 62358 rows and 3 variables:
 #' \describe{
-#'   \item{ID}{transmitter identifier, an integer ranging from 1-10}
+#'   \item{ID}{transmitter identifier, an integer ranging from 1-6}
+#'   \item{Sex}{sex of individual, a character consisting of either "Female", "Male", or "Unknown"}
 #'   \item{time}{POSIXct timestamp of detection, local time zone}
+#'   \item{mu.x}{numerical longitude coordinate in NAD 1983, EPSG: 4269}
+#'   \item{mu.y}{numerical latitude coordinate in NAD 1983, EPSG: 4269}
+#'   \item{loc_type}{character representation of whether location was observed "o" or predicted "p" with a movement model}
+#'   \item{RC}{reproductive cycle of individual, dependent upon date, consisting of either "NP" not pregnant,
+#'   "P" pregnant, "U" unknown, or NA}
+#'   \item{met_seas}{meteorological season consisting of either "Spring", "Summer", "Autumn", or "Winter"}
+#'   \item{study_yr}{character representation of study year where study year began when the first individual
+#'   was tagged and year transitioned at June 1 of each year, the date of the reproductive cycle transition}
 #'   \item{geometry}{Well-known text of the location of the identified transmitter
 #'     in WGS84/Pseudo-Mercator, EPSG:3857}
 #' }

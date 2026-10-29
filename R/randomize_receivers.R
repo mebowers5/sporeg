@@ -17,9 +17,9 @@
 
 randomize_receivers <- function(
   study_site,
-  quantity = 100,
-  receiver_range = 500,
-  view
+  quantity,
+  receiver_range,
+  view = FALSE
 ) {
   receivers_rand <- sf::st_sample(study_site, size = quantity)
 

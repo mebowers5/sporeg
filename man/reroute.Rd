@@ -24,8 +24,11 @@ This function provides summary statistics on the densities and counts of receive
 \examples{
 
 df <- demo_dets |>
- sf::st_transform(4269) |>
- dplyr::filter(FID \%in\% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P")
+  dplyr::filter(
+    Sex == "Female",
+    met_seas == "Autumn",
+    RC == "P") |>
+  sf::st_transform(3857)
 
 reroute(df, barrier = atlcoast, det_range = 500, epsg = 3857)
 }

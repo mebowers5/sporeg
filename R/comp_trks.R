@@ -185,7 +185,7 @@ comp_trks <- function(
     ) |>
       dplyr::distinct(gid, ID, geometry)
 
-    mod_count <- aggregate(ID ~ gid, data = mod_count, FUN = length) |>
+    mod_count <- stats::aggregate(ID ~ gid, data = mod_count, FUN = length) |>
       dplyr::rename(mod_count = ID)
 
     # Count IDs per grid cell for complete data
@@ -196,7 +196,7 @@ comp_trks <- function(
     ) |>
       dplyr::distinct(gid, ID, geometry)
 
-    sim_count <- aggregate(ID ~ gid, data = sim_count, FUN = length) |>
+    sim_count <- stats::aggregate(ID ~ gid, data = sim_count, FUN = length) |>
       dplyr::rename(sim_count = ID)
 
     #Make a new table with all gid's to create a basis by which tables should be merged
@@ -391,7 +391,7 @@ comp_trks <- function(
       ) |>
         dplyr::distinct(gid, ID, geometry)
 
-      mod_count <- aggregate(ID ~ gid, data = mod_count, FUN = length) |>
+      mod_count <- stats::aggregate(ID ~ gid, data = mod_count, FUN = length) |>
         dplyr::rename(mod_count = ID)
 
       # Count IDs per grid cell for complete data
@@ -402,7 +402,7 @@ comp_trks <- function(
       ) |>
         dplyr::distinct(gid, ID, geometry)
 
-      sim_count <- aggregate(ID ~ gid, data = sim_count, FUN = length) |>
+      sim_count <- stats::aggregate(ID ~ gid, data = sim_count, FUN = length) |>
         dplyr::rename(sim_count = ID)
 
       #Make a new table with all gid's to create a basis by which tables should be merged

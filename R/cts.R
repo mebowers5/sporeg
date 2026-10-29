@@ -14,7 +14,7 @@ cts <- function(df, sg) {
   counts <- sf::st_join(sg, df, join = sf::st_intersects) |>
     dplyr::distinct(gid, ID, geometry)
 
-  counts <- aggregate(ID ~ gid, data = counts, FUN = length) |>
+  counts <- stats::aggregate(ID ~ gid, data = counts, FUN = length) |>
     dplyr::rename(count = ID)
 
   counts <- dplyr::left_join(all, counts, by = "gid") |>

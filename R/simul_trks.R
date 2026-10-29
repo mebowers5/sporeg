@@ -17,18 +17,9 @@
 #' @export
 #'
 #' @examples
-#'
-#' anims <- 2
-#' study_site <- fo_study_site
-#' theta <- c(0, 1.74)
-#' vmin <- 0.98
-#' vmax <- 1.58
-#' rel_site <- fo_rel_site
-#' epsg <- 3857
-#' n_days <- 30
-#' initHeading <- 0
-#'
-#' tracks <- simul_trks(study_site, epsg, anims, rel_site, initHeading, theta, vmin, vmax, n_days)
+#' tracks <- simul_trks(study_site = fo_study_site, epsg = 3857, anims = 2,
+#'   rel_site = fo_rel_site, initHeading = 0, theta = c(0,1.74), vmin = 0.98,
+#'   vmax = 1.58, n_days = 30)
 
 simul_trks <- function(
   anims,
