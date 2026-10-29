@@ -178,14 +178,22 @@ comp_trks <- function(
 
     ### Count distinct AnimalIDs in each grid cell
     # Count IDs per grid cell for derived data
-    mod_count <- sf::st_join(hotspot_grid, mod_trks, join = sf::st_intersects) |>
+    mod_count <- sf::st_join(
+      hotspot_grid,
+      mod_trks,
+      join = sf::st_intersects
+    ) |>
       dplyr::distinct(gid, ID, geometry)
 
     mod_count <- stats::aggregate(ID ~ gid, data = mod_count, FUN = length) |>
       dplyr::rename(mod_count = ID)
 
     # Count IDs per grid cell for complete data
-    sim_count <- sf::st_join(hotspot_grid, sim_trks, join = sf::st_intersects) |>
+    sim_count <- sf::st_join(
+      hotspot_grid,
+      sim_trks,
+      join = sf::st_intersects
+    ) |>
       dplyr::distinct(gid, ID, geometry)
 
     sim_count <- stats::aggregate(ID ~ gid, data = sim_count, FUN = length) |>
@@ -376,14 +384,22 @@ comp_trks <- function(
     results <- lapply(hotspot_grid, FUN = function(hotspot_grid) {
       ### Count distinct AnimalIDs in each grid cell
       # Count IDs per grid cell for derived data
-      mod_count <- sf::st_join(hotspot_grid, mod_trks, join = sf::st_intersects) |>
+      mod_count <- sf::st_join(
+        hotspot_grid,
+        mod_trks,
+        join = sf::st_intersects
+      ) |>
         dplyr::distinct(gid, ID, geometry)
 
       mod_count <- stats::aggregate(ID ~ gid, data = mod_count, FUN = length) |>
         dplyr::rename(mod_count = ID)
 
       # Count IDs per grid cell for complete data
-      sim_count <- sf::st_join(hotspot_grid, sim_trks, join = sf::st_intersects) |>
+      sim_count <- sf::st_join(
+        hotspot_grid,
+        sim_trks,
+        join = sf::st_intersects
+      ) |>
         dplyr::distinct(gid, ID, geometry)
 
       sim_count <- stats::aggregate(ID ~ gid, data = sim_count, FUN = length) |>

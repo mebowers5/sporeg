@@ -7,17 +7,18 @@
 #' @export
 #'
 #' @examples
-#' results <- lapply(sporeg::results, data.table::rbindlist, idcol = 'resolution')
-#' results <- data.table::rbindlist(results, idcol = 'iteration')
+#' data(results)
+#' results <- lapply(results, dplyr::bind_rows, .id = 'resolution')
+#' results <- dplyr::bind_rows(results, .id = 'iteration')
 #' results <- results |>
-#' dplyr::left_join(
-#' dplyr::tibble(resolution = 1:4,
-#' res_name = c("100km", "50km", "25km", "10km")),
-#' by = "resolution")
+#'   dplyr::left_join(
+#'     dplyr::tibble(resolution = as.character(1:4),
+#'       res_name = c("100km", "50km", "25km", "10km")),
+#'     by = "resolution")
 #'
 #' df_var <- results |>
-#' dplyr::group_by(res_name) |>
-#' zero_var()
+#'   dplyr::group_by(res_name) |>
+#'   zero_var()
 
 zero_var <- function(df) {
   # Extract zero variance variables first

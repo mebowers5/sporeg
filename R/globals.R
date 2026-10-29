@@ -8,6 +8,7 @@ utils::globalVariables(
     "locType",
     "mu.x",
     "mu.y",
+    "study_yr",
     "speed",
     "trim_data",
     "rrt_pts",

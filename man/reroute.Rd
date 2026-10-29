@@ -7,7 +7,7 @@
 reroute(df, barrier, det_range, epsg)
 }
 \arguments{
-\item{df}{A data frame output from a movement model including ID, time, mu.x, mu.y, and study_yr}
+\item{df}{A data frame output from a movement model including FID, time, mu.x, mu.y, and study_yr}
 
 \item{barrier}{A simple feature polygon object representing a barrier}
 
@@ -27,5 +27,5 @@ df <- sporeg::demo_dets |>
 dplyr::filter(ID \%in\% c("3", "4", "5") & Sex == "Female" & met_seas == "Autumn" & RC == "P") |>
 sf::st_transform(4269)
 
-reroute(df, barrier = sporeg::atlcoast, det_range = 500, epsg = 3857)
+reroute(df, barrier = atlcoast, det_range = 500, epsg = 3857)
 }
