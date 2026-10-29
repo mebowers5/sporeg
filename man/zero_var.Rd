@@ -16,7 +16,6 @@ a data frame object with grid IDs that did not exhibit zero variance
 This function removes grid cells that lacked any variance.
 }
 \examples{
-data(results)
 results <- lapply(results, dplyr::bind_rows, .id = 'resolution')
 results <- dplyr::bind_rows(results, .id = 'iteration')
 results <- results |>

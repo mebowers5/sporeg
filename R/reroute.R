@@ -11,9 +11,12 @@
 #'
 #' @examples
 #'
-#' df <- sporeg::demo_dets |>
-#' dplyr::filter(ID %in% c("3", "4", "5") & Sex == "Female" & met_seas == "Autumn" & RC == "P") |>
-#' sf::st_transform(4269)
+#' df <- demo_dets |>
+#'   dplyr::filter(
+#'     Sex == "Female",
+#'     met_seas == "Autumn",
+#'     RC == "P") |>
+#'   sf::st_transform(3857)
 #'
 #' reroute(df, barrier = atlcoast, det_range = 500, epsg = 3857)
 
@@ -24,12 +27,10 @@ reroute <- function(df, barrier, det_range, epsg) {
 
   # prt_visgraph will build our visual graph network from our land barrier object and
   # return a SpatialLinesNetwork / sfNetwork that has no edges that cross land
-  vis_graph <- barrier |>
-    sf::st_transform(epsg) |>
-    pathroutr::prt_visgraph()
+  vis_graph <- pathroutr::prt_visgraph(barrier |> sf::st_transform(epsg))
 
   track_path <- df |>
-    dplyr::mutate(time = lubridate::ymd_hms(time), ID = as.factor(ID)) |>
+    dplyr::mutate(time, ID = as.factor(ID)) |>
     dplyr::select(ID, time, mu.x, mu.y, study_yr) |>
     sf::st_as_sf(coords = c("mu.x", "mu.y"), epsg) |>
     dplyr::arrange(ID, time)
@@ -48,7 +49,7 @@ reroute <- function(df, barrier, det_range, epsg) {
   # here, we create our re-routed points; the return is a two column data frame with the
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
-  t <- track_path |>
+  tee <- track_path |>
     dplyr::rowwise() |>
     dplyr::mutate(
       rrt_pts = list(pathroutr::prt_reroute(trim_data, barrier, vis_graph))
@@ -58,7 +59,7 @@ reroute <- function(df, barrier, det_range, epsg) {
   # what it now requires. The updated geometry points are passed first (here, `rrt_pts`)
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
-  t <- t |>
+  tee <- tee |>
     dplyr::rowwise() |>
     dplyr::mutate(
       path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
