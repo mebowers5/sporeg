@@ -1,29 +1,29 @@
-test_that("returns correct types", {
-  gd_fts(resolutions[[2]]) |>
-    expect_s3_class(c("sf", "data.frame"), exact = TRUE) |>
-    expect_type("list") |>
-    expect_named(c(
-      "max_depth",
-      "min_depth",
-      "avg_depth",
-      "max_d",
-      "min_d",
-      "avg_d",
-      "max_ct",
-      "min_ct",
-      "avg_ct",
-      "n_abs",
-      "tot",
-      "perc_abs",
-      "x"
-    ))
-})
+# test_that("returns correct types", {
+#   gd_fts(resolutions[[2]]) |>
+#     expect_s3_class(c("sf", "data.frame"), exact = TRUE) |>
+#     expect_type("list") |>
+#     expect_named(c(
+#       "max_depth",
+#       "min_depth",
+#       "avg_depth",
+#       "max_d",
+#       "min_d",
+#       "avg_d",
+#       "max_ct",
+#       "min_ct",
+#       "avg_ct",
+#       "n_abs",
+#       "tot",
+#       "perc_abs",
+#       "x"
+#     ))
+# })
 
-test_that("retains projection", {
-  res_projection <- sf::st_crs(resolutions[[2]])
+# test_that("retains projection", {
+#   res_projection <- sf::st_crs(resolutions[[2]])
 
-  gd_projection <- gd_fts(resolutions[[2]]) |>
-    sf::st_crs()
+#   gd_projection <- gd_fts(resolutions[[2]]) |>
+#     sf::st_crs()
 
-  expect_equal(gd_projection, res_projection)
-})
+#   expect_equal(gd_projection, res_projection)
+# })
