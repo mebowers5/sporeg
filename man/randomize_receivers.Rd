@@ -4,7 +4,7 @@
 \alias{randomize_receivers}
 \title{Generate random receivers within a polygon}
 \usage{
-randomize_receivers(study_area, quantity = 100, receiver_range = 500, view = FALSE)
+randomize_receivers(study_area, quantity, receiver_range, view = FALSE)
 }
 \arguments{
 \item{study_area}{simple feature polygon object that encompasses the entire study site; must be in projected coordinate system for receiver range to be in meters}
