@@ -7,7 +7,6 @@
 #' @export
 #'
 #' @examples
-#' data(results)
 #' results <- lapply(results, dplyr::bind_rows, .id = 'resolution')
 #' results <- dplyr::bind_rows(results, .id = 'iteration')
 #' results <- results |>

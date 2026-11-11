@@ -188,7 +188,7 @@ compare_tracks <- function(
     ) |>
       dplyr::distinct(gid, ID, geometry)
 
-    modified_count <- aggregate(
+    modified_count <- stats::aggregate(
       ID ~ gid,
       data = modified_count,
       FUN = length
@@ -203,7 +203,7 @@ compare_tracks <- function(
     ) |>
       dplyr::distinct(gid, ID, geometry)
 
-    simulated_count <- aggregate(
+    simulated_count <- stats::aggregate(
       ID ~ gid,
       data = simulated_count,
       FUN = length
@@ -406,7 +406,7 @@ compare_tracks <- function(
       ) |>
         dplyr::distinct(gid, ID, geometry)
 
-      modified_count <- aggregate(
+      modified_count <- stats::aggregate(
         ID ~ gid,
         data = modified_count,
         FUN = length
@@ -421,7 +421,7 @@ compare_tracks <- function(
       ) |>
         dplyr::distinct(gid, ID, geometry)
 
-      simulated_count <- aggregate(
+      simulated_count <- stats::aggregate(
         ID ~ gid,
         data = simulated_count,
         FUN = length

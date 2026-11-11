@@ -17,18 +17,9 @@
 #' @export
 #'
 #' @examples
-#'
-#' anims <- 2
-#' study_area <- fo_study_site
-#' theta <- c(0, 1.74)
-#' vmin <- 0.98
-#' vmax <- 1.58
-#' rel_site <- fo_rel_site
-#' crs <- 3857
-#' n_days <- 30
-#' initHeading <- 0
-#'
-#' tracks <- simulate_tracks(study_area, crs, anims, rel_site, initHeading, theta, vmin, vmax, n_days)
+#' tracks <- simulate_tracks(study_area = fo_study_site, epsg = 3857, anims = 2,
+#'   rel_site = fo_rel_site, initHeading = 0, theta = c(0,1.74), vmin = 0.98,
+#'   vmax = 1.58, n_days = 30)
 
 simulate_tracks <- function(
   anims,

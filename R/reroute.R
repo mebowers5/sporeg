@@ -12,8 +12,11 @@
 #' @examples
 #'
 #' df <- demo_dets |>
-#'  sf::st_transform(4269) |>
-#'  dplyr::filter(FID %in% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P")
+#'   dplyr::filter(
+#'     Sex == "Female",
+#'     met_seas == "Autumn",
+#'     RC == "P") |>
+#'   sf::st_transform(3857)
 #'
 #' reroute(df, barrier = atlcoast, det_range = 500, crs = 3857)
 
@@ -29,7 +32,7 @@ reroute <- function(df, barrier, det_range, crs) {
     pathroutr::prt_visgraph()
 
   track_path <- df |>
-    dplyr::mutate(time = lubridate::ymd_hms(time), ID = as.factor(ID)) |>
+    dplyr::mutate(time, ID = as.factor(ID)) |>
     dplyr::select(ID, time, mu.x, mu.y, study_yr) |>
     sf::st_as_sf(coords = c("mu.x", "mu.y"), crs) |>
     dplyr::arrange(ID, time)
@@ -48,7 +51,7 @@ reroute <- function(df, barrier, det_range, crs) {
   # here, we create our re-routed points; the return is a two column data frame with the
   # index location in the original point data and the new geometry. The user can handle
   # updating of those original point data or pass the result on to prt_update_points()
-  t <- track_path |>
+  tee <- track_path |>
     dplyr::rowwise() |>
     dplyr::mutate(
       rrt_pts = list(pathroutr::prt_reroute(trim_data, barrier, vis_graph))
@@ -58,7 +61,7 @@ reroute <- function(df, barrier, det_range, crs) {
   # what it now requires. The updated geometry points are passed first (here, `rrt_pts`)
   # and, then, the original data to be updated. This order should allow for easy piping
   # from prt_reroute()
-  t <- t |>
+  tee <- tee |>
     dplyr::rowwise() |>
     dplyr::mutate(
       path_pts = list(pathroutr::prt_update_points(rrt_pts, trim_data)),
@@ -71,22 +74,21 @@ reroute <- function(df, barrier, det_range, crs) {
 
   # we need to rbind all of our lines and points into single objects that can be plotted
   # Need to maintain "ID" column here - THIS WORKS!
-  t$geom <- do.call(rbind, t$path_lines)
-  t$geom <- sf::st_set_crs(t$geom, crs)
+  tee$geom <- do.call(rbind, tee$path_lines)
+  tee$geom <- sf::st_set_crs(tee$geom, crs)
 
-  t <- t |>
-    dplyr::select(ID, geom)
+  tee <- tee |> dplyr::select(ID, geom)
 
   ### Create grid that maintains row for each grid cell
   #Convert from rowwise_df to sf object
-  t <- t |>
+  tee <- tee |>
     dplyr::rowwise() |>
     dplyr::mutate(geom = sf::st_geometry(geom)) |>
     dplyr::ungroup() |>
     sf::st_as_sf(sf_column_name = "geom")
 
-  tbuff <- t |>
+  teebuff <- tee |>
     sf::st_buffer(det_range, endCapStyle = "ROUND", joinStyle = "ROUND")
 
-  return(tbuff)
+  return(teebuff)
 }

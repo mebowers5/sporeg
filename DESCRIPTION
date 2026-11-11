@@ -17,7 +17,7 @@ Imports:
     momentuHMM,
     pathroutr (>= 0.2.2),
     purrr,
-    sf (>= 1.0-12),
+    sf,
     stats,
     tibble,
     tidyr,

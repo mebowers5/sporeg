@@ -6,6 +6,7 @@
 #'
 #' @return A simple feature multipolygon object with mean depth per grid cell
 #' @export
+
 get_depth <- function(hotspot_grid, depth) {
   alt <- sf::st_join(hotspot_grid, depth, join = sf::st_intersects) |>
     dplyr::group_by(gid) |>
