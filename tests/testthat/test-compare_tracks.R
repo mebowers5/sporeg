@@ -1,36 +1,58 @@
-# test_that("", {
-#   tracks <- simul_trks(
-#     anims = 2,
-#     study_site = fo_study_site,
-#     theta = c(0, 1.74),
-#     vmin = 0.98,
-#     vmax = 1.58,
-#     rel_site = fo_rel_site,
-#     epsg = 3857,
-#     n_days = 30,
-#     initHeading = 0
-#   )
-#   vis_graph <- pathroutr::prt_visgraph(fo_land_barrier)
-#   HSgrid <- grid_res(
-#     100,
-#     study_site = fo_study_site,
-#     epsg = 3857,
-#     what = 'polygons'
-#   )
+tracks <- simulate_tracks(
+  anims = 2,
+  study_area = fo_study_site,
+  theta = c(0, 1.74),
+  vmin = 0.98,
+  vmax = 1.58,
+  rel_site = fo_rel_site,
+  crs = 3857,
+  n_days = 30,
+  initHeading = 0
+)
+vis_graph <- pathroutr::prt_visgraph(fo_land_barrier)
 
-#   sim_trks <- tracks
-#   stations <- fo_stations
-#   land_barrier <- fo_land_barrier
-#   cores <- 2
-#   snap_tolerance <- 650
+hotspot_grid <- create_grid(
+  study_area = fo_study_site,
+  resolution = 50,
+  crs = 3857,
+  what = 'polygons'
+)
 
-#   compare_tracks(
-#     tracks,
-#     fo_stations,
-#     fo_land_barrier,
-#     vis_graph,
-#     HSgrid,
-#     multi_grid = TRUE,
-#     snap_tolerance = 650
-#   )
-# })
+
+test_that("handles one hotspot grid", {
+  out <- compare_tracks(
+    tracks,
+    fo_stations,
+    fo_land_barrier,
+    vis_graph,
+    hotspot_grid,
+    snap_tolerance = 650
+  )
+
+  expect_named(out, c("gid", "simulated_count", "modified_count", "dif"))
+  expect_s3_class(out, "data.frame")
+})
+
+test_that("handles multiple hotspot grids", {
+  hotspot_list <- list(
+    hotspot_grid,
+    create_grid(
+      study_area = fo_study_site,
+      resolution = 100,
+      crs = 3857,
+      what = 'polygons'
+    )
+  )
+
+  out <- compare_tracks(
+    tracks,
+    fo_stations,
+    fo_land_barrier,
+    vis_graph,
+    hotspot_list,
+    snap_tolerance = 650
+  )
+
+  expect_type(out, "list")
+  expect_s3_class(out[[2]], "data.frame")
+})
