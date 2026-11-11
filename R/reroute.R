@@ -4,7 +4,7 @@
 #' @param df A data frame output from a movement model including FID, time, mu.x, mu.y, and study_yr
 #' @param barrier A simple feature polygon object representing a barrier
 #' @param det_range Numeric quantity representing detection range of receivers
-#' @param epsg epsg code for desired coordinated system transformation
+#' @param crs specification of desired coordinate reference system transformation
 #'
 #' @return A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2
 #' @export
@@ -15,23 +15,23 @@
 #'  sf::st_transform(4269) |>
 #'  dplyr::filter(FID %in% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P")
 #'
-#' reroute(df, barrier = atlcoast, det_range = 500, epsg = 3857)
+#' reroute(df, barrier = atlcoast, det_range = 500, crs = 3857)
 
-reroute <- function(df, barrier, det_range, epsg) {
+reroute <- function(df, barrier, det_range, crs) {
   # Testing code, which should be removed.
   # t$path_lines <- t$geom <- NULL
-  # epsg <- 3857
+  # crs <- 3857
 
   # prt_visgraph will build our visual graph network from our land barrier object and
   # return a SpatialLinesNetwork / sfNetwork that has no edges that cross land
   vis_graph <- barrier |>
-    sf::st_transform(epsg) |>
+    sf::st_transform(crs) |>
     pathroutr::prt_visgraph()
 
   track_path <- df |>
     dplyr::mutate(time = lubridate::ymd_hms(time), ID = as.factor(ID)) |>
     dplyr::select(ID, time, mu.x, mu.y, study_yr) |>
-    sf::st_as_sf(coords = c("mu.x", "mu.y"), epsg) |>
+    sf::st_as_sf(coords = c("mu.x", "mu.y"), crs) |>
     dplyr::arrange(ID, time)
 
   # there are multiple paths identified by ID; we'll group and nest for a proper
@@ -72,7 +72,7 @@ reroute <- function(df, barrier, det_range, epsg) {
   # we need to rbind all of our lines and points into single objects that can be plotted
   # Need to maintain "ID" column here - THIS WORKS!
   t$geom <- do.call(rbind, t$path_lines)
-  t$geom <- sf::st_set_crs(t$geom, epsg)
+  t$geom <- sf::st_set_crs(t$geom, crs)
 
   t <- t |>
     dplyr::select(ID, geom)
