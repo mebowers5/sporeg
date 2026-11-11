@@ -1,5 +1,7 @@
 utils::globalVariables(
   c(
+    "mean_position",
+    "rerouted_points",
     "data",
     "x",
     "ID",

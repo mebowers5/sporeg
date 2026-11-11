@@ -23,7 +23,7 @@ This functions creates a line by connecting start and end points.
 }
 \examples{
 
-study_area |>
+fo_study_site |>
   sf::st_transform(4326) |>
   randomize_receivers(100, 500, TRUE)
 }

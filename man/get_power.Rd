@@ -9,14 +9,14 @@ get_power(output, sig_level, power, delta, n = NULL)
 \arguments{
 \item{output}{the resulting data frame from the iterative methods process}
 
+\item{sig_level}{numeric. the desired level of significance to achieve}
+
 \item{power}{numeric. the desired level of power to achieve}
 
 \item{delta}{numeric. the desired effect size to achieve}
 
 \item{n}{integer. the number of replicates/sample size. should be assigned
 \code{NULL} if desiring sample size}
-
-\item{sig.level}{numeric. the desired level of significance to achieve}
 }
 \value{
 A data frame object

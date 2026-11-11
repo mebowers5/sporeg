@@ -9,7 +9,7 @@ grid_counts(df, spatial_grid)
 \arguments{
 \item{df}{sf object of reconstructed, re-routed, optionally buffered tracks created from \code{reroute} function}
 
-\item{sg}{spatial grid created from \code{create_grid} function}
+\item{spatial_grid}{spatial grid created from \code{create_grid} function}
 }
 \value{
 A simple feature object with counts associated with grid cell IDs \code{"gid"}

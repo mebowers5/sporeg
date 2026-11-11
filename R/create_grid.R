@@ -15,7 +15,7 @@
 #' # NOTE: The study area must be in a projected coordinate system (e.g., EPSG: 3857)
 #' # when it is initially fed into the function create_grid
 #'
-#' HS_100km_grid <- create_grid(study_area, 100, "centers", 4269)
+#' HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 4269)
 
 create_grid <- function(study_area, resolution, what, crs) {
   if (sf::st_is_longlat(study_area)) {

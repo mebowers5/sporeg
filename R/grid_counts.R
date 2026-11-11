@@ -2,7 +2,7 @@
 #'
 #' The function allows you to calculate counts per grid cell in demonstrative modeled movement data.
 #' @param df sf object of reconstructed, re-routed, optionally buffered tracks created from `reroute` function
-#' @param sg spatial grid created from `create_grid` function
+#' @param spatial_grid spatial grid created from `create_grid` function
 #'
 #' @return A simple feature object with counts associated with grid cell IDs `"gid"`
 #' @export

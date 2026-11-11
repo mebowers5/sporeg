@@ -22,18 +22,12 @@
 #'   )
 
 change_cutoff <- function(df, depth_limit) {
-  tot <- df |>
-    as.data.frame() |>
+  df |>
+    sf::st_drop_geometry() |>
     dplyr::filter(mean_depth <= depth_limit) |>
-    dplyr::count() |>
-    dplyr::rename(tot = n)
-
-  df <- df |>
-    dplyr::filter(mean_depth <= depth_limit & g_fit == 1) |>
-    dplyr::count()
-
-  df <- merge(tot, df) |>
-    dplyr::mutate(perc = n / tot * 100)
-
-  return(df)
+    dplyr::summarise(
+      tot = dplyr::n(),
+      n = sum(g_fit == 1, na.rm = TRUE),
+      perc = n / tot * 100
+    )
 }

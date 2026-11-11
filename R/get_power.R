@@ -5,7 +5,7 @@
 #'   sd manually and supply it along with `output`. See example.
 #'
 #' @param output the resulting data frame from the iterative methods process
-#' @param sig.level numeric. the desired level of significance to achieve
+#' @param sig_level numeric. the desired level of significance to achieve
 #' @param power numeric. the desired level of power to achieve
 #' @param delta numeric. the desired effect size to achieve
 #' @param n integer. the number of replicates/sample size. should be assigned

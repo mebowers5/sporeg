@@ -136,7 +136,7 @@ compare_tracks <- function(
     modified_tracks <- modified_tracks |>
       dplyr::rowwise() |>
       dplyr::mutate(
-        rerouted_pts = list(pathroutr::prt_reroute(
+        rerouted_points = list(pathroutr::prt_reroute(
           trim_data,
           land_barrier,
           vis_graph
@@ -147,13 +147,16 @@ compare_tracks <- function(
     gc()
 
     # NOTE: previous versions of prt_update_points() had the argument order reversed from
-    # what it now requires. The updated geometry points are passed first (here, `rerouted_pts`)
+    # what it now requires. The updated geometry points are passed first (here, `rerouted_points`)
     # and, then, the original data to be updated. This order should allow for easy piping
     # from prt_reroute()
     modified_tracks <- modified_tracks |>
       dplyr::rowwise() |>
       dplyr::mutate(
-        path_pts = list(pathroutr::prt_update_points(rerouted_pts, trim_data)),
+        path_pts = list(pathroutr::prt_update_points(
+          rerouted_points,
+          trim_data
+        )),
         path_lines = list(
           path_pts |>
             dplyr::summarise(do_union = FALSE) |>
@@ -353,7 +356,7 @@ compare_tracks <- function(
     modified_tracks <- modified_tracks |>
       dplyr::rowwise() |>
       dplyr::mutate(
-        rerouted_pts = list(pathroutr::prt_reroute(
+        rerouted_points = list(pathroutr::prt_reroute(
           trim_data,
           land_barrier,
           vis_graph
@@ -361,13 +364,16 @@ compare_tracks <- function(
       )
 
     # NOTE: previous versions of prt_update_points() had the argument order reversed from
-    # what it now requires. The updated geometry points are passed first (here, `rerouted_pts`)
+    # what it now requires. The updated geometry points are passed first (here, `rerouted_points`)
     # and, then, the original data to be updated. This order should allow for easy piping
     # from prt_reroute()
     modified_tracks <- modified_tracks |>
       dplyr::rowwise() |>
       dplyr::mutate(
-        path_pts = list(pathroutr::prt_update_points(rerouted_pts, trim_data)),
+        path_pts = list(pathroutr::prt_update_points(
+          rerouted_points,
+          trim_data
+        )),
         path_lines = list(
           path_pts |>
             dplyr::summarise(do_union = FALSE) |>
