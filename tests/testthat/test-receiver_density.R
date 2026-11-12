@@ -1,17 +1,24 @@
-# test_that("returns correct types", {
-#   receiver_density <- den_rcvs(res[[1]])
+test_that("returns correct types", {
+  rec_dens <- receiver_density(resolutions[[1]])
 
-#   expect_s3_class(receiver_density, "data.frame")
-#   expect_type(receiver_density, "list")
-#   expect_named(
-#     receiver_density,
-#     c("dn_min", "dn_mean", "dn_max", "c_min", "c_mean", "c_max")
-#   )
-#   expect_s3_class(receiver_density$dn_min, "units")
-#   expect_s3_class(receiver_density$dn_mean, "units")
-#   expect_s3_class(receiver_density$dn_max, "units")
-#   expect_equal(
-#     attr(receiver_density$dn_mean, "units")$denominator,
-#     c("km", "km")
-#   )
-# })
+  expect_s3_class(rec_dens, "data.frame")
+  expect_type(rec_dens, "list")
+  expect_named(
+    rec_dens,
+    c(
+      "density_min",
+      "density_mean",
+      "density_max",
+      "count_min",
+      "count_mean",
+      "count_max"
+    )
+  )
+  expect_s3_class(rec_dens$density_min, "units")
+  expect_s3_class(rec_dens$density_mean, "units")
+  expect_s3_class(rec_dens$density_max, "units")
+  expect_equal(
+    attr(rec_dens$density_mean, "units")$denominator,
+    c("km", "km")
+  )
+})

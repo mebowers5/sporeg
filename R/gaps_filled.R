@@ -24,20 +24,13 @@
 #'   )
 
 gaps_filled <- function(df) {
-  tot <- df |>
-    dplyr::filter(p_a == 0) |>
-    dplyr::count() |>
-    dplyr::rename(tot = n)
-
-  df <- df |>
-    as.data.frame() |>
-    dplyr::select(-x) |>
-    dplyr::filter(g_fit == 1 & p_a == 0) |>
-    dplyr::count() |>
-    merge(tot)
-
   perc <- df |>
-    dplyr::mutate(perc = n / tot * 100)
+    dplyr::filter(p_a == 0) |>
+    dplyr::summarize(
+      n = sum(g_fit == 1, na.rm = TRUE),
+      tot = dplyr::n(),
+      perc = n / tot * 100
+    )
 
   return(perc)
 }

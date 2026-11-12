@@ -1,36 +1,38 @@
-# test_that("returns correct types", {
-#   grid_res(1000, site_depth, 4269, "centers") |>
-#     expect_s3_class(c("sf", "data.frame"), exact = TRUE)
-# })
+test_that("returns correct types", {
+  create_grid(study_site, 1000, "centers", 3857) |>
+    expect_s3_class(c("sf", "data.frame"), exact = TRUE)
+})
 
-# test_that("returns correct input CRS", {
-#   result <- grid_res(1000, site_depth, 4269, "centers")
-#   expect_equal(sf::st_crs(result)$epsg, 4269)
+test_that("returns correct input CRS", {
+  result <- create_grid(study_site, 1000, "centers", 3857)
+  expect_equal(sf::st_crs(result)$epsg, 3857)
 
-#   result <- grid_res(1000, site_depth, 4326, "centers")
-#   expect_equal(sf::st_crs(result)$epsg, 4326)
-# })
+  result <- create_grid(study_site, 1000, "centers", 4326)
+  expect_equal(sf::st_crs(result)$epsg, 4326)
+})
 
-# test_that("returns polygons", {
-#   result <- grid_res(1000, site_depth, 4269, "polygons")
+test_that("returns polygons", {
+  result <- create_grid(study_site, 1000, "polygons", 3857)
 
-#   expect_named(result, c("Id", "gid", "geometry"))
-#   expect_s3_class(result$geometry, c("sfc_MULTIPOLYGON", "sfc"), exact = TRUE)
-# })
+  expect_named(result, c("Id", "gid", "geometry"))
+  expect_s3_class(result$geometry, c("sfc_MULTIPOLYGON", "sfc"), exact = TRUE)
+})
 
-# test_that("returns centers", {
-#   result <- grid_res(1000, site_depth, 4269, "centers")
+test_that("returns centers", {
+  result <- create_grid(study_site, 1000, "centers", 3857)
 
-#   expect_named(result, c("gid", "x"))
-#   expect_s3_class(result$x, c("sfc_POINT", "sfc"), exact = TRUE)
-# })
+  expect_named(result, c("gid", "geometry"))
+  expect_s3_class(result$geometry, c("sfc_POINT", "sfc"), exact = TRUE)
+})
 
-# test_that("errors with incorrect 'what' argument", {
-#   grid_res(1000, site_depth, 4269, "gibberish") |>
-#     expect_error("Error: Not a valid argument for parameter 'what'")
-# })
+test_that("errors with incorrect 'what' argument", {
+  create_grid(study_site, 1000, "gibberish", 3857) |>
+    expect_error("'arg' should be one of \"centers\", \"polygons\"")
+})
 
-# test_that("errors if not in a projected coordinate system", {
-#   grid_res(1000, sf::st_transform(site_depth, 4326), 4269, "centers") |>
-#     expect_error("Study site is not in a projected coordinate system.")
-# })
+test_that("errors if not in a projected coordinate system", {
+  study_site |>
+    sf::st_transform(4326) |>
+    create_grid(1000, "centers", 3857) |>
+    expect_error("Study area is not in a projected coordinate system.")
+})

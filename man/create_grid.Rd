@@ -4,7 +4,7 @@
 \alias{create_grid}
 \title{Create grid}
 \usage{
-create_grid(study_area, resolution, what, crs)
+create_grid(study_area, resolution, what = c("centers", "polygons"), crs)
 }
 \arguments{
 \item{study_area}{simple feature polygon object in which grid cells should be created}

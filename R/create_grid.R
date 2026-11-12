@@ -17,7 +17,13 @@
 #'
 #' HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 4269)
 
-create_grid <- function(study_area, resolution, what, crs) {
+create_grid <- function(
+  study_area,
+  resolution,
+  what = c("centers", "polygons"),
+  crs
+) {
+  what <- match.arg(what)
   if (sf::st_is_longlat(study_area)) {
     stop("Study area is not in a projected coordinate system.")
   }
@@ -35,6 +41,15 @@ create_grid <- function(study_area, resolution, what, crs) {
     dplyr::rename(geometry = x) |>
     sf::st_make_valid() |>
     sf::st_transform(crs)
+
+  if (any(sf::st_is_empty(grid)) || any(!sf::st_is_valid(grid), na.rm = TRUE)) {
+    stop(
+      "CRS transformation has created invalid geometries, possibly because a ",
+      "portion of the provided study area lies outside the bounds of the CRS. ",
+      "Please select a different CRS.",
+      call. = FALSE
+    )
+  }
 
   if (what == "polygons") {
     grid <- grid |>
@@ -54,7 +69,5 @@ create_grid <- function(study_area, resolution, what, crs) {
       sf::st_cast('POINT')
 
     return(grid)
-  } else {
-    stop("Error: Not a valid argument for parameter 'what'")
   }
 }
