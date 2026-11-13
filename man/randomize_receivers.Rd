@@ -19,11 +19,11 @@ randomize_receivers(study_area, quantity, receiver_range, view = FALSE)
 A simple feature geometry object
 }
 \description{
-This functions creates a line by connecting start and end points.
+Generate random receivers within a polygon
 }
 \examples{
 
 fo_study_site |>
   sf::st_transform(4326) |>
-  randomize_receivers(100, 500, TRUE)
+  randomize_receivers(100, 500, FALSE)
 }

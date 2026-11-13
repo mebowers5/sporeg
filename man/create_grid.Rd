@@ -27,5 +27,5 @@ This function creates a grid inside a specified polygon.
 # NOTE: The study area must be in a projected coordinate system (e.g., EPSG: 3857)
 # when it is initially fed into the function create_grid
 
-HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 4269)
+HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 3857)
 }

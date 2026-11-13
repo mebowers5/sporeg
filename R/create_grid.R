@@ -15,7 +15,7 @@
 #' # NOTE: The study area must be in a projected coordinate system (e.g., EPSG: 3857)
 #' # when it is initially fed into the function create_grid
 #'
-#' HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 4269)
+#' HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 3857)
 
 create_grid <- function(
   study_area,
@@ -53,10 +53,12 @@ create_grid <- function(
 
   if (what == "polygons") {
     grid <- grid |>
-      sf::st_cast('MULTIPOLYGON')
+      sf::st_cast('MULTIPOLYGON') |>
+      sf::st_set_agr("constant")
 
     grid <- study_area |>
       sf::st_transform(crs) |>
+      sf::st_set_agr("constant") |>
       sf::st_intersection(grid) |>
       sf::st_as_sf() |>
       dplyr::mutate(gid = seq_along(geometry)) |>
