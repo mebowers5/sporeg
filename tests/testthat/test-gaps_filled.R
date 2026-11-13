@@ -1,7 +1,7 @@
 test_that("returns correct types", {
   result <- gaps_filled(resolutions[[3]])
 
-  expect_s3_class(result, "data.frame", exact = TRUE)
+  expect_s3_class(result, c("sf", "data.frame"), exact = TRUE)
   expect_named(result, c("n", "tot", "perc", "x"))
   expect_s3_class(result$x, "sfc")
 })

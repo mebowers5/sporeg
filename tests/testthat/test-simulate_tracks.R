@@ -8,7 +8,7 @@ test_that("returns correct types", {
     rel_site = fo_rel_site,
     crs = 3857,
     n_days = 30,
-    initHeading = 0
+    initial_heading = 0
   ) |>
     expect_output("Simulating tracks...\n|==")
 
@@ -33,27 +33,23 @@ test_that("data column types are correct", {
     rel_site = fo_rel_site,
     crs = 3857,
     n_days = 30,
-    initHeading = 0
+    initial_heading = 0
   )
 
   expect_s3_class(
     tracks$data[[1]],
-    c("sf", "tbl_df", "tbl", "data.frame"),
+    c("tbl_df", "tbl", "data.frame"),
     exact = TRUE
   )
   expect_named(
     tracks$data[[1]],
     c(
       "uid",
-      "geom",
-      "POINT_Y",
-      "POINT_X",
-      "time",
       "start_x",
       "start_y",
       "end_x",
       "end_y",
-      "x"
+      "geometry"
     )
   )
 })
