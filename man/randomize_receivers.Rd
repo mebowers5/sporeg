@@ -4,10 +4,10 @@
 \alias{randomize_receivers}
 \title{Generate random receivers within a polygon}
 \usage{
-randomize_receivers(study_site, quantity = 100, receiver_range = 500, view)
+randomize_receivers(study_area, quantity, receiver_range, view = FALSE)
 }
 \arguments{
-\item{study_site}{simple feature polygon object that encompasses the entire study site; must be in projected coordinate system for receiver range to be in meters}
+\item{study_area}{simple feature polygon object that encompasses the entire study site; must be in projected coordinate system for receiver range to be in meters}
 
 \item{quantity}{desired number of receivers to generate}
 
@@ -19,11 +19,11 @@ randomize_receivers(study_site, quantity = 100, receiver_range = 500, view)
 A simple feature geometry object
 }
 \description{
-This functions creates a line by connecting start and end points.
+Generate random receivers within a polygon
 }
 \examples{
 
-study_site |>
+fo_study_site |>
   sf::st_transform(4326) |>
-  randomize_receivers(100, 500, TRUE)
+  randomize_receivers(100, 500, FALSE)
 }
