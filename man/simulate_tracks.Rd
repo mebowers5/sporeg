@@ -13,7 +13,7 @@ simulate_tracks(
   rel_site,
   crs,
   n_days,
-  initHeading
+  initial_heading
 )
 }
 \arguments{
@@ -24,9 +24,9 @@ tracks are allowed to be simulated.}
 
 \item{theta}{argument from \code{glatos::crw_in_polygon} function}
 
-\item{vmin}{numeric. minimum velocity from which to sample step length}
+\item{vmin}{numeric. minimum velocity in meters per second from which to sample step length}
 
-\item{vmax}{numeric. maximum velocity from which to sample step length}
+\item{vmax}{numeric. maximum velocity in meters per second from which to sample step length}
 
 \item{rel_site}{simple feature polygon object in which simulated animals are
 "released" or where simulated tracks begin}
@@ -35,7 +35,7 @@ tracks are allowed to be simulated.}
 
 \item{n_days}{integer. number of days that tracks should be simulated}
 
-\item{initHeading}{argument from \code{glatos::crw_in_polygon} function}
+\item{initial_heading}{passed to initHeading in \code{glatos::crw_in_polygon}}
 }
 \value{
 simple feature (multi)linestring object that represents individual simulated tracks
@@ -45,6 +45,6 @@ This function simulates tracks inside a specified polygon.
 }
 \examples{
 tracks <- simulate_tracks(study_area = fo_study_site, crs = 3857, anims = 2,
-  rel_site = fo_rel_site, initHeading = 0, theta = c(0,1.74), vmin = 0.98,
+  rel_site = fo_rel_site, initial_heading = 0, theta = c(0, 1.74), vmin = 0.98,
   vmax = 1.58, n_days = 30)
 }

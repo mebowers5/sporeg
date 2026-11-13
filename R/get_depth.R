@@ -8,9 +8,18 @@
 #' @export
 
 get_depth <- function(hotspot_grid, depth) {
-  alt <- sf::st_join(hotspot_grid, depth, join = sf::st_intersects) |>
-    dplyr::group_by(gid) |>
-    dplyr::summarise(mean_depth = mean(altitude) * -1)
+  row.names(hotspot_grid) <- NULL
 
-  return(alt)
+  hotspot_grid$mean_depth <- sf::st_intersects(hotspot_grid, depth) |>
+    sapply(
+      function(grid_cell) {
+        if (length(grid_cell) == 0) {
+          NA
+        } else {
+          mean(depth[grid_cell, ]$altitude, na.rm = T) * -1
+        }
+      }
+    )
+
+  hotspot_grid[, c("gid", "mean_depth")]
 }

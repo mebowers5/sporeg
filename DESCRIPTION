@@ -13,7 +13,6 @@ Imports:
     doFuture,
     dplyr,
     glatos (>= 0.8.0),
-    lubridate,
     momentuHMM,
     pathroutr (>= 0.2.2),
     purrr,

@@ -8,30 +8,38 @@ compare_tracks(
   tracks,
   stations,
   land_barrier,
-  vis_graph,
   hotspot_grid,
   snap_tolerance,
-  cores = 2
+  cores = 2,
+  vis_graph = NULL
 )
 }
 \arguments{
 \item{tracks}{Tracks to which modeled tracks should be compared}
 
-\item{stations}{A sf object comprised of receiver station locations with a buffer around them that represents the range of the receiver (polygons)}
+\item{stations}{A sf object comprised of receiver station locations with a
+buffer around them that represents the range of the receiver (polygons)}
 
 \item{land_barrier}{A sf polygon of a barrier object around which tracks should be re-routed}
 
-\item{vis_graph}{A visibility graph created from the barrier object @seealso \link[pathroutr:prt_visgraph]{pathroutr::prt_visgraph}}
-
 \item{hotspot_grid}{An sf polygon grid or list of sf polygon grids}
 
-\item{snap_tolerance}{The tolerance (in meters) at which an intersection between a station and a track should snap to the station centroid. It is recommended that the snap_tolerance be equal to the station buffer size.}
+\item{snap_tolerance}{The tolerance (in meters) at which an intersection between
+a station and a track should snap to the station centroid. It is recommended that
+the snap_tolerance be equal to the station buffer size.}
 
 \item{cores}{Number of cores to use during paralllel processing. Defaults to 2.}
+
+\item{vis_graph}{An optional visibility graph created from the barrier object.
+This will be created if not provided, but parallel computations can be speed
+up by supplying this directly.}
 }
 \value{
 A data frame with counts and differences by grid cell ID ("gid")
 }
 \description{
 Compare grid cell counts of simulated and modeled tracks
+}
+\seealso{
+\link[pathroutr:prt_visgraph]{pathroutr::prt_visgraph}
 }

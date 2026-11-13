@@ -7,10 +7,10 @@
 #' @param anims integer. quantity of desired animals to simulate
 #' @param rel_site simple feature polygon object in which simulated animals are
 #'   "released" or where simulated tracks begin
-#' @param initHeading argument from `glatos::crw_in_polygon` function
+#' @param initial_heading passed to initHeading in `glatos::crw_in_polygon`
 #' @param theta argument from `glatos::crw_in_polygon` function
-#' @param vmin numeric. minimum velocity from which to sample step length
-#' @param vmax numeric. maximum velocity from which to sample step length
+#' @param vmin numeric. minimum velocity in meters per second from which to sample step length
+#' @param vmax numeric. maximum velocity in meters per second from which to sample step length
 #' @param n_days integer. number of days that tracks should be simulated
 #'
 #' @return simple feature (multi)linestring object that represents individual simulated tracks
@@ -18,7 +18,7 @@
 #'
 #' @examples
 #' tracks <- simulate_tracks(study_area = fo_study_site, crs = 3857, anims = 2,
-#'   rel_site = fo_rel_site, initHeading = 0, theta = c(0,1.74), vmin = 0.98,
+#'   rel_site = fo_rel_site, initial_heading = 0, theta = c(0, 1.74), vmin = 0.98,
 #'   vmax = 1.58, n_days = 30)
 
 simulate_tracks <- function(
@@ -30,74 +30,48 @@ simulate_tracks <- function(
   rel_site,
   crs,
   n_days,
-  initHeading
+  initial_heading
 ) {
   sim <- base::replicate(n = anims, expr = {
-    initPos <- sf::st_sample(
+    initial_position <- sf::st_sample(
       rel_site$geometry,
       size = 1,
       type = "random",
       exact = TRUE
     ) |>
-      as.data.frame() |>
-      dplyr::mutate(
-        lon = sf::st_coordinates(geometry)[, 1],
-        lat = sf::st_coordinates(geometry)[, 2]
-      )
-    # Sample between minimum and maximum velocity of blacktip sharks to set step
-    #   length per hour for each individual
-    stepLen <- as.numeric(sample(vmin:vmax, 1) * 60 * 60 * 24 / 24)
+      sf::st_coordinates()
 
-    simu <- glatos::crw_in_polygon(
+    # Sample between minimum and maximum velocity to set step length per hour for each individual
+    step_length <- stats::runif(1, vmin, vmax) * 60 * 60
+
+    glatos::crw_in_polygon(
       study_area,
       theta = theta,
-      stepLen = stepLen,
-      initPos = c(initPos$lon, initPos$lat),
+      stepLen = step_length,
+      initPos = c(initial_position[1], initial_position[2]),
       cartesianCRS = crs,
       nsteps = n_days * 24,
-      initHeading = initHeading
-    ) |>
-      sf::st_as_sf()
-
-    return(simu)
+      initHeading = initial_heading
+    )
   })
 
+  names(sim) <- NULL
   simu <- sim |>
-    as.data.frame() |>
-    dplyr::rename_with(~ gsub("geometry\\.", "", .x)) |>
-    dplyr::rename_with(~ gsub("geometry", "0", .x)) |>
-    tidyr::pivot_longer(
-      cols = tidyr::everything(),
-      names_to = "AnimalID",
-      values_to = "geom"
+    lapply(as.data.frame) |>
+    dplyr::bind_rows(.id = "ID") |>
+    dplyr::group_by(ID) |>
+    dplyr::mutate(uid = seq_along(ID))
+
+  simu_coords <- sf::st_coordinates(simu$geometry)
+  simu$start_x <- simu_coords[, 1]
+  simu$start_y <- simu_coords[, 2]
+
+  simu |>
+    dplyr::select(-geometry) |>
+    dplyr::mutate(
+      end_x = dplyr::lead(start_x),
+      end_y = dplyr::lead(start_y)
     ) |>
-    dplyr::mutate(ID = as.numeric(AnimalID) + 1) |>
-    dplyr::group_by(ID) |>
-    dplyr::mutate(uid = seq_along(AnimalID)) #Assign sequential numbers to rows to preserve directionality
-
-  simu <- simu |>
-    dplyr::mutate(
-      POINT_X = sf::st_coordinates(geom)[, 1],
-      POINT_Y = sf::st_coordinates(geom)[, 2]
-    ) |> #Obtain x and y coordinates so that you can force northward and southward movement
-    dplyr::select(uid, ID, geom, POINT_Y, POINT_X) |>
-    dplyr::group_by(ID) |>
-    dplyr::arrange(uid) |>
-    dplyr::mutate(
-      time = seq.POSIXt(
-        from = as.POSIXct("2000-01-01 01:00:00"),
-        by = "1 hour",
-        along.with = uid
-      ), #Make up dates for the row numbers by Iteration and Animal ID
-      start_x = POINT_X,
-      start_y = POINT_Y,
-      end_x = dplyr::lead(POINT_X),
-      end_y = dplyr::lead(POINT_Y)
-    ) |> #Prep data for making lines - ensures proper order
-    sf::st_as_sf()
-
-  #Make lines and unite geometries by uid's so that each line segment maintains time information
-  simu <- simu |>
     dplyr::filter(!is.na(end_y)) |>
     tidyr::nest() |>
     dplyr::mutate(
@@ -105,13 +79,12 @@ simulate_tracks <- function(
         data,
         ~ dplyr::mutate(
           .x,
-          x = purrr::pmap(
+          geometry = purrr::pmap(
             .l = list(start_x, start_y, end_x, end_y),
             .f = make_line
-          )
+          ),
+          geometry = sf::st_as_sfc(geometry, crs = sf::st_crs(rel_site))
         )
       )
     )
-
-  return(simu)
 }
