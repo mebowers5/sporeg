@@ -4,7 +4,7 @@
 \alias{reroute}
 \title{Reroute tracks off a barrier}
 \usage{
-reroute(df, barrier, det_range, epsg)
+reroute(df, barrier, det_range, crs)
 }
 \arguments{
 \item{df}{A data frame output from a movement model including FID, time, mu.x, mu.y, and study_yr}
@@ -13,7 +13,7 @@ reroute(df, barrier, det_range, epsg)
 
 \item{det_range}{Numeric quantity representing detection range of receivers}
 
-\item{epsg}{epsg code for desired coordinated system transformation}
+\item{crs}{specification of desired coordinate reference system transformation}
 }
 \value{
 A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2
@@ -24,8 +24,11 @@ This function provides summary statistics on the densities and counts of receive
 \examples{
 
 df <- demo_dets |>
- sf::st_transform(4269) |>
- dplyr::filter(FID \%in\% c("4", "5", "6") & Sex == "Female" & met_seas == "Autumn" & RC == "P")
+  dplyr::filter(
+    Sex == "Female",
+    met_seas == "Autumn",
+    RC == "P") |>
+  sf::st_transform(3857)
 
-reroute(df, barrier = atlcoast, det_range = 500, epsg = 3857)
+reroute(df, barrier = atlcoast, det_range = 500, crs = 3857)
 }
