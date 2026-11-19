@@ -33,8 +33,8 @@ test_that("works with more than one grouping level", {
 
   expect_s3_class(out, c("sf", "data.frame"))
   expect_true(all(sf::st_geometry_type(out) == "LINESTRING"))
-  expect_shape(out, dim = c(2, 2))
-  expect_equal(out$ID, c(1, 2))
+  expect_shape(out, dim = c(6, 3))
+  expect_equal(out$ID, c(1, 1, 2, 2, 2, 2))
 })
 
 test_that("creates visibility graph if none provided", {
