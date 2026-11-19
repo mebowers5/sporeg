@@ -10,9 +10,10 @@ compare_tracks(
   land_barrier,
   hotspot_grid,
   snap_tolerance,
+  model = "crawl",
   det_range = NULL,
-  cores = getOption("mc.cores"),
-  vis_graph = NULL
+  vis_graph = NULL,
+  ...
 )
 }
 \arguments{
@@ -29,14 +30,16 @@ buffer around them that represents the range of the receiver (polygons)}
 a station and a track should snap to the station centroid. It is recommended that
 the snap_tolerance be equal to the station buffer size.}
 
-\item{det_range}{Numeric quantity representing detection range of receivers}
+\item{model}{Character string naming a built-in movement model (default \code{"crawl"}),
+or a custom function \verb{function(data, ...)}.}
 
-\item{cores}{Number of cores to use during paralllel processing. Defaults to
-2 if the \code{mc.cores} option is not set.}
+\item{det_range}{Numeric quantity representing detection range of receivers}
 
 \item{vis_graph}{An optional visibility graph created from the barrier object.
 This will be created if not provided, but parallel computations can be speed
 up by supplying this directly.}
+
+\item{...}{Additional arguments passed to \link{impute_track}}
 }
 \value{
 A data frame with counts and differences by grid cell ID ("gid")
