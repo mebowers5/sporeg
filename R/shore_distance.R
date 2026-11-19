@@ -5,12 +5,11 @@
 #' @param study_area simple feature polygon object that encompasses the entire study site
 #' @param resolution grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared
 #' @param land_barrier simple feature (multi)polygon object to represent the shoreline
-#' @param crs specification of desired coordinate reference system transformation
 #'
 #' @return A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities
 #' @export
 #'
-shore_distance <- function(sites, study_area, resolution, land_barrier, crs) {
+shore_distance <- function(sites, study_area, resolution, land_barrier) {
   grid_spacing <- resolution * 1000
 
   full_grid <- sf::st_make_grid(
@@ -18,14 +17,13 @@ shore_distance <- function(sites, study_area, resolution, land_barrier, crs) {
     square = T,
     cellsize = c(grid_spacing, grid_spacing)
   ) |> # Create a grid within the bounding box of the study site
-    sf::st_as_sf() |> # Convert to sf object
+    sf::st_as_sf() |> # Convert to sf objects
     dplyr::mutate(gid2 = seq_along(x)) # Create ID column for full grid
 
   grid_centroids <- create_grid(
     study_area,
     resolution,
-    what = "centers",
-    crs
+    what = "centers"
   ) |> # Take the centroids of the grid
     sf::st_as_sf() |> # Convert to sf object
     dplyr::mutate(

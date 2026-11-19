@@ -5,7 +5,6 @@ tracks <- simulate_tracks(
   vmin = 0.98,
   vmax = 1.58,
   rel_site = fo_rel_site,
-  crs = 3857,
   n_days = 30,
   initial_heading = 0
 )
@@ -13,7 +12,6 @@ tracks <- simulate_tracks(
 hotspot_grid <- create_grid(
   study_area = fo_study_site,
   resolution = 50,
-  crs = 3857,
   what = 'polygons'
 )
 
@@ -39,7 +37,6 @@ test_that("handles multiple hotspot grids", {
     create_grid(
       study_area = fo_study_site,
       resolution = 100,
-      crs = 3857,
       what = 'polygons'
     )
   )

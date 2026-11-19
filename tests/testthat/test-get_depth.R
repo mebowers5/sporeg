@@ -2,7 +2,6 @@ test_that("returns correct types", {
   hotspot_grid <- create_grid(
     study_area = fo_study_site,
     resolution = 50,
-    crs = 3857,
     what = 'polygons'
   )
 

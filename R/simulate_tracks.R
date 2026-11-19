@@ -3,7 +3,6 @@
 #' This function simulates tracks inside a specified polygon.
 #' @param study_area simple feature polygon object that encompasses area where
 #'   tracks are allowed to be simulated.
-#' @param crs specification of desired projected coordinate reference system
 #' @param anims integer. quantity of desired animals to simulate
 #' @param rel_site simple feature polygon object in which simulated animals are
 #'   "released" or where simulated tracks begin
@@ -17,7 +16,7 @@
 #' @export
 #'
 #' @examples
-#' tracks <- simulate_tracks(study_area = fo_study_site, crs = 3857, anims = 2,
+#' tracks <- simulate_tracks(study_area = fo_study_site, anims = 2,
 #'   rel_site = fo_rel_site, initial_heading = 0, theta = c(0, 1.74), vmin = 0.98,
 #'   vmax = 1.58, n_days = 30)
 
@@ -28,7 +27,6 @@ simulate_tracks <- function(
   vmin,
   vmax,
   rel_site,
-  crs,
   n_days,
   initial_heading
 ) {
@@ -49,7 +47,6 @@ simulate_tracks <- function(
       theta = theta,
       stepLen = step_length,
       initPos = c(initial_position[1], initial_position[2]),
-      cartesianCRS = crs,
       nsteps = n_days * 24,
       initHeading = initial_heading
     )

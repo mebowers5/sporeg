@@ -10,7 +10,8 @@ compare_tracks(
   land_barrier,
   hotspot_grid,
   snap_tolerance,
-  cores = 2,
+  det_range = NULL,
+  cores = getOption("mc.cores"),
   vis_graph = NULL
 )
 }
@@ -28,7 +29,10 @@ buffer around them that represents the range of the receiver (polygons)}
 a station and a track should snap to the station centroid. It is recommended that
 the snap_tolerance be equal to the station buffer size.}
 
-\item{cores}{Number of cores to use during paralllel processing. Defaults to 2.}
+\item{det_range}{Numeric quantity representing detection range of receivers}
+
+\item{cores}{Number of cores to use during paralllel processing. Defaults to
+2 if the \code{mc.cores} option is not set.}
 
 \item{vis_graph}{An optional visibility graph created from the barrier object.
 This will be created if not provided, but parallel computations can be speed
