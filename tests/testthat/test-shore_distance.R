@@ -8,7 +8,7 @@ test_that("returns correct types", {
     sf::st_union() |>
     sf::st_as_sf()
 
-  result <- shore_distance(sts_pts, fo_study_site, 100, land_barrier, 3857)
+  result <- shore_distance(sts_pts, fo_study_site, 100, land_barrier)
 
   result |>
     expect_s3_class(c("sf", "data.frame")) |>
