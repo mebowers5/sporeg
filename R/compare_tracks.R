@@ -8,12 +8,13 @@
 #' @param snap_tolerance The tolerance (in meters) at which an intersection between
 #'    a station and a track should snap to the station centroid. It is recommended that
 #'    the snap_tolerance be equal to the station buffer size.
+#' @param model Character string naming a built-in movement model (default `"crawl"`),
+#'    or a custom function `function(data, ...)`.
 #' @param det_range Numeric quantity representing detection range of receivers
-#' @param cores Number of cores to use during paralllel processing. Defaults to
-#'   2 if the `mc.cores` option is not set.
 #' @param vis_graph An optional visibility graph created from the barrier object.
 #'   This will be created if not provided, but parallel computations can be speed
 #'   up by supplying this directly.
+#' @param ... Additional arguments passed to [impute_track]
 #'
 #' @seealso [pathroutr::prt_visgraph]
 #'
@@ -25,13 +26,11 @@ compare_tracks <- function(
   land_barrier,
   hotspot_grid,
   snap_tolerance,
+  model = "crawl",
   det_range = NULL,
-  cores = getOption("mc.cores"),
-  vis_graph = NULL
+  vis_graph = NULL,
+  ...
 ) {
-  if (is.null(cores)) {
-    cores <- 2
-  }
   # Maintain detailed time info in lines to derive acoustic telemetry detection data later
   tracks <- tracks |>
     tidyr::unnest(data) |>
@@ -74,33 +73,31 @@ compare_tracks <- function(
   modified_tracks <- modified_tracks |>
     sf::st_drop_geometry()
 
-  #Impute missing locations with continuous time movement model
-  modified_tracks <- momentuHMM::crawlWrap(
-    obsData = modified_tracks,
-    Time.name = "uid",
-    timeStep = 0.25,
-    fixPar = c(NA, NA),
-    theta = c(8, 0),
-    attempts = 100,
-    retrySD = 5,
-    retryFits = 5,
-    ncores = cores,
-    retryParallel = TRUE,
+  # Impute missing locations with selected movement model
+  model_label <- if (is.character(model)) model[1] else "custom model"
+  cat("\nImputing missing locations with ", model_label, "...\n\n", sep = "")
+  if (is.character(model)) {
+    model <- structure(list(), class = paste0("sporeg_", model[1]))
+  }
+  modified_tracks <- impute_track(
+    model = model,
+    data = modified_tracks,
+    ...
   )
+  cat("\nImputation done.\n")
 
-  modified_tracks <- data.frame(modified_tracks$crwPredict) |>
-    dplyr::select(ID, uid, mu.x, mu.y, speed) |>
-    sf::st_as_sf(coords = c("mu.x", "mu.y"), crs = tracks_crs)
+  modified_tracks <- modified_tracks |>
+    sf::st_as_sf(coords = c("x", "y"), crs = tracks_crs)
 
+  # Reroute tracks
   cat("\nRerouting...")
-
   modified_tracks <- reroute(
     modified_tracks,
     barrier = land_barrier,
     det_range = det_range,
     vis_graph = vis_graph
   )
-  cat("DONE\n")
+  cat("\nRerouting done.\n")
 
   # If hotspot_grid is a single data.frame, convert to list for lapply
   if (is.data.frame(hotspot_grid)) {

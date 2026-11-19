@@ -24,6 +24,7 @@ test_that("handles one hotspot grid", {
     fo_land_barrier,
     hotspot_grid,
     snap_tolerance = 650,
+    model = "crawl",
     vis_graph = visgraph
   )
 
@@ -47,6 +48,7 @@ test_that("handles multiple hotspot grids", {
     fo_land_barrier,
     hotspot_list,
     snap_tolerance = 650,
+    model = "crawl",
     vis_graph = visgraph
   )
 
@@ -61,7 +63,8 @@ test_that("creates visibility graph if none provided", {
     fo_stations,
     fo_land_barrier,
     hotspot_grid,
-    snap_tolerance = 650
+    snap_tolerance = 650,
+    model = "crawl",
   ) |>
     expect_output("Creating visibility graph")
 })
