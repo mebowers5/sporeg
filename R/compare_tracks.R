@@ -94,7 +94,7 @@ compare_tracks <- function(
 
   cat("\nRerouting...")
 
-  modified_tracks2 <- reroute(
+  modified_tracks <- reroute(
     modified_tracks,
     barrier = land_barrier,
     det_range = det_range,
