@@ -24,6 +24,7 @@ test_that("handles one hotspot grid", {
     fo_land_barrier,
     hotspot_grid,
     snap_tolerance = 650,
+    model = fake_imputation_model,
     vis_graph = visgraph
   )
 
@@ -47,6 +48,7 @@ test_that("handles multiple hotspot grids", {
     fo_land_barrier,
     hotspot_list,
     snap_tolerance = 650,
+    model = fake_imputation_model,
     vis_graph = visgraph
   )
 
@@ -61,7 +63,42 @@ test_that("creates visibility graph if none provided", {
     fo_stations,
     fo_land_barrier,
     hotspot_grid,
-    snap_tolerance = 650
+    snap_tolerance = 650,
+    model = fake_imputation_model,
   ) |>
     expect_output("Creating visibility graph")
+})
+
+
+test_that("works with crawl", {
+  out_crawl <- compare_tracks(
+    tracks,
+    fo_stations,
+    fo_land_barrier,
+    hotspot_grid,
+    snap_tolerance = 650,
+    model = "crawl",
+    vis_graph = visgraph,
+    attempts = 5,
+    retryFits = 1,
+    retryParallel = FALSE
+  )
+
+  expect_s3_class(out_crawl, "data.frame")
+  expect_named(out_crawl, c("gid", "simulated_count", "modified_count", "dif"))
+})
+
+test_that("works with animotum_ssm", {
+  out_ssm <- compare_tracks(
+    tracks,
+    fo_stations,
+    fo_land_barrier,
+    hotspot_grid,
+    snap_tolerance = 650,
+    model = animotum_ssm(model = "rw"),
+    vis_graph = visgraph
+  )
+
+  expect_s3_class(out_ssm, "data.frame")
+  expect_named(out_ssm, c("gid", "simulated_count", "modified_count", "dif"))
 })
