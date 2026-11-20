@@ -36,7 +36,6 @@ compare_tracks <- function(
   tracks <- tracks |>
     tidyr::unnest(data) |>
     sf::st_as_sf()
-  tracks_crs <- sf::st_crs(tracks)
 
   modified_tracks <- tracks |>
     # Tell sf that attributes are constant in space
@@ -81,9 +80,6 @@ compare_tracks <- function(
     ...
   )
   cat("\nImputation done.\n")
-
-  modified_tracks <- modified_tracks |>
-    sf::st_as_sf(coords = c("x", "y"), crs = tracks_crs)
 
   # Reroute tracks
   cat("\nRerouting...")
