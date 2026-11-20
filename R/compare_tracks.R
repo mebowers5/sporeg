@@ -9,7 +9,8 @@
 #'    a station and a track should snap to the station centroid. It is recommended that
 #'    the snap_tolerance be equal to the station buffer size.
 #' @param model Character string naming a built-in movement model (default `"crawl"`),
-#'    or a custom function `function(data, ...)`.
+#'    a model specification object such as [animotum_ssm], or a custom function
+#'    of the form `function(data, ...)`.
 #' @param det_range Numeric quantity representing detection range of receivers
 #' @param vis_graph An optional visibility graph created from the barrier object.
 #'   This will be created if not provided, but parallel computations can be speed
@@ -70,12 +71,7 @@ compare_tracks <- function(
   modified_tracks$x <- modified_coords[, 1]
   modified_tracks$y <- modified_coords[, 2]
 
-  modified_tracks <- modified_tracks |>
-    sf::st_drop_geometry()
-
-  # Impute missing locations with selected movement model
-  model_label <- if (is.character(model)) model[1] else "custom model"
-  cat("\nImputing missing locations with ", model_label, "...\n\n", sep = "")
+  cat("\nImputing missing locations...\n\n")
   if (is.character(model)) {
     model <- structure(list(), class = paste0("sporeg_", model[1]))
   }

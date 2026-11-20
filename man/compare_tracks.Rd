@@ -31,7 +31,8 @@ a station and a track should snap to the station centroid. It is recommended tha
 the snap_tolerance be equal to the station buffer size.}
 
 \item{model}{Character string naming a built-in movement model (default \code{"crawl"}),
-or a custom function \verb{function(data, ...)}.}
+a model specification object such as \link{animotum_ssm}, or a custom function
+of the form \verb{function(data, ...)}.}
 
 \item{det_range}{Numeric quantity representing detection range of receivers}
 
