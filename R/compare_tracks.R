@@ -100,6 +100,7 @@ compare_tracks <- function(
   tracks <- tracks |>
     dplyr::summarize(geometry = sf::st_union(geometry))
 
+  cat("\nComparing tracks...")
   # Apply function over list of grid cell hotspot_grid's
   results <- lapply(hotspot_grid, FUN = function(hotspot_grid) {
     all_counts <- data.frame(
@@ -114,6 +115,7 @@ compare_tracks <- function(
 
     all_counts
   })
+  cat("\nComparison done.\n")
 
   # If there was only one hotspot grid, extract it from the list.
   if (length(results) == 1) {

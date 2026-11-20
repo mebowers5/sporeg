@@ -58,7 +58,7 @@ impute_track.sporeg_animotum_ssm <- function(model, data, ...) {
   m_tracks <- data |>
     dplyr::transmute(
       id = ID,
-      date = as.POSIXct(uid * 3600 * 24, tz = "UTC"),
+      date = as.POSIXct(uid * 3600, tz = "UTC"),
       lc = "G",
       geometry = mean_position
     )
@@ -68,7 +68,7 @@ impute_track.sporeg_animotum_ssm <- function(model, data, ...) {
   )
   default_arguments <- list(
     model = "crw",
-    time.step = 24
+    time.step = 1
   )
 
   ssm_arguments <- utils::modifyList(default_arguments, unclass(model))
@@ -81,6 +81,6 @@ impute_track.sporeg_animotum_ssm <- function(model, data, ...) {
     sf::st_transform(sf::st_crs(data)) |> # temporary fix for issue #93 in aniMotum
     dplyr::transmute(
       ID = id,
-      uid = as.numeric(date) / 3600 / 24
+      uid = as.numeric(date) / 3600
     )
 }
