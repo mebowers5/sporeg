@@ -30,23 +30,23 @@ simulate_tracks <- function(
   n_days,
   initial_heading
 ) {
-  sim <- base::replicate(n = anims, expr = {
-    initial_position <- sf::st_sample(
-      rel_site$geometry,
-      size = 1,
-      type = "random",
-      exact = TRUE
-    ) |>
-      sf::st_coordinates()
+  initial_positions <- sf::st_sample(
+    rel_site$geometry,
+    size = anims,
+    type = "random",
+    exact = TRUE
+  ) |>
+    sf::st_coordinates()
 
-    # Sample between minimum and maximum velocity to set step length per hour for each individual
-    step_length <- stats::runif(1, vmin, vmax) * 60 * 60
+  # Sample between minimum and maximum velocity to set step length per hour for each individual
+  step_length <- stats::runif(anims, vmin, vmax) * 60 * 60
 
+  sim <- lapply(seq_len(anims), function(i) {
     glatos::crw_in_polygon(
       study_area,
       theta = theta,
-      stepLen = step_length,
-      initPos = c(initial_position[1], initial_position[2]),
+      stepLen = step_length[i],
+      initPos = initial_positions[i, 1:2],
       nsteps = n_days * 24,
       initHeading = initial_heading
     )
