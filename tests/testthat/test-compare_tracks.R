@@ -18,13 +18,13 @@ hotspot_grid <- create_grid(
 visgraph <- pathroutr::prt_visgraph(fo_land_barrier)
 
 test_that("handles one hotspot grid", {
-  out <- compare_tracks(
+  out_crw <- compare_tracks(
     tracks,
     fo_stations,
     fo_land_barrier,
     hotspot_grid,
     snap_tolerance = 650,
-    model = "crawl",
+    model = "crw",
     vis_graph = visgraph
   )
 
