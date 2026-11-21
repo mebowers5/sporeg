@@ -6,7 +6,6 @@
 #'   desired grid cell is to be squared
 #' @param what `"polygons"` for grid cell polygons or `"centers"` for center
 #'   points of grid cells
-#' @param crs specification of desired coordinate reference system transformation
 #'
 #' @return grid comprised of polygons or points depending on `what` parameter
 #' @export
@@ -15,13 +14,12 @@
 #' # NOTE: The study area must be in a projected coordinate system (e.g., EPSG: 3857)
 #' # when it is initially fed into the function create_grid
 #'
-#' HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 3857)
+#' HS_100km_grid <- create_grid(fo_study_site, 100, "centers")
 
 create_grid <- function(
   study_area,
   resolution,
-  what = c("centers", "polygons"),
-  crs
+  what = c("centers", "polygons")
 ) {
   what <- match.arg(what)
   if (sf::st_is_longlat(study_area)) {
@@ -39,17 +37,7 @@ create_grid <- function(
     sf::st_as_sf() |>
     dplyr::mutate(gid = seq_along(x)) |>
     dplyr::rename(geometry = x) |>
-    sf::st_make_valid() |>
-    sf::st_transform(crs)
-
-  if (any(sf::st_is_empty(grid)) || any(!sf::st_is_valid(grid), na.rm = TRUE)) {
-    stop(
-      "CRS transformation has created invalid geometries, possibly because a ",
-      "portion of the provided study area lies outside the bounds of the CRS. ",
-      "Please select a different CRS.",
-      call. = FALSE
-    )
-  }
+    sf::st_make_valid()
 
   if (what == "polygons") {
     grid <- grid |>
@@ -57,7 +45,6 @@ create_grid <- function(
       sf::st_set_agr("constant")
 
     grid <- study_area |>
-      sf::st_transform(crs) |>
       sf::st_set_agr("constant") |>
       sf::st_intersection(grid) |>
       sf::st_as_sf() |>

@@ -4,7 +4,7 @@
 \alias{create_grid}
 \title{Create grid}
 \usage{
-create_grid(study_area, resolution, what = c("centers", "polygons"), crs)
+create_grid(study_area, resolution, what = c("centers", "polygons"))
 }
 \arguments{
 \item{study_area}{simple feature polygon object in which grid cells should be created}
@@ -14,8 +14,6 @@ desired grid cell is to be squared}
 
 \item{what}{\code{"polygons"} for grid cell polygons or \code{"centers"} for center
 points of grid cells}
-
-\item{crs}{specification of desired coordinate reference system transformation}
 }
 \value{
 grid comprised of polygons or points depending on \code{what} parameter
@@ -27,5 +25,5 @@ This function creates a grid inside a specified polygon.
 # NOTE: The study area must be in a projected coordinate system (e.g., EPSG: 3857)
 # when it is initially fed into the function create_grid
 
-HS_100km_grid <- create_grid(fo_study_site, 100, "centers", 3857)
+HS_100km_grid <- create_grid(fo_study_site, 100, "centers")
 }

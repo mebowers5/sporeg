@@ -4,7 +4,7 @@
 \alias{shore_distance}
 \title{Distance to shore and density of receivers}
 \usage{
-shore_distance(sites, study_area, resolution, land_barrier, crs)
+shore_distance(sites, study_area, resolution, land_barrier)
 }
 \arguments{
 \item{sites}{a simple feature (multi)point object representing receiver locations}
@@ -14,8 +14,6 @@ shore_distance(sites, study_area, resolution, land_barrier, crs)
 \item{resolution}{grid cell resolution in km. one-sided length of grid cell, assumes desired grid cell is to be squared}
 
 \item{land_barrier}{simple feature (multi)polygon object to represent the shoreline}
-
-\item{crs}{specification of desired coordinate reference system transformation}
 }
 \value{
 A simple feature multipolygon object with information on distance to shore from grid cell center, receiver presence/absence, counts, and densities

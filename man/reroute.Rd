@@ -4,16 +4,18 @@
 \alias{reroute}
 \title{Reroute tracks off a barrier}
 \usage{
-reroute(df, barrier, det_range, crs)
+reroute(df, barrier, det_range = NULL, vis_graph = NULL)
 }
 \arguments{
-\item{df}{A data frame output from a movement model including FID, time, mu.x, mu.y, and study_yr}
+\item{df}{A spatial data frame consisting of track points}
 
 \item{barrier}{A simple feature polygon object representing a barrier}
 
 \item{det_range}{Numeric quantity representing detection range of receivers}
 
-\item{crs}{specification of desired coordinate reference system transformation}
+\item{vis_graph}{An optional visibility graph created from the barrier object.
+This will be created if not provided, but parallel computations can be speed
+up by supplying this directly.}
 }
 \value{
 A data frame object with minimum, mean, and maximum of receiver densities and counts in km^-2
@@ -30,5 +32,5 @@ df <- demo_dets |>
     RC == "P") |>
   sf::st_transform(3857)
 
-reroute(df, barrier = atlcoast, det_range = 500, crs = 3857)
+reroute(df, barrier = atlcoast, det_range = 500)
 }

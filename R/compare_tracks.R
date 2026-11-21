@@ -8,7 +8,9 @@
 #' @param snap_tolerance The tolerance (in meters) at which an intersection between
 #'    a station and a track should snap to the station centroid. It is recommended that
 #'    the snap_tolerance be equal to the station buffer size.
-#' @param cores Number of cores to use during paralllel processing. Defaults to 2.
+#' @param det_range Numeric quantity representing detection range of receivers
+#' @param cores Number of cores to use during paralllel processing. Defaults to
+#'   2 if the `mc.cores` option is not set.
 #' @param vis_graph An optional visibility graph created from the barrier object.
 #'   This will be created if not provided, but parallel computations can be speed
 #'   up by supplying this directly.
@@ -23,17 +25,13 @@ compare_tracks <- function(
   land_barrier,
   hotspot_grid,
   snap_tolerance,
-  cores = 2,
+  det_range = NULL,
+  cores = getOption("mc.cores"),
   vis_graph = NULL
 ) {
-  if (is.null(vis_graph)) {
-    cat("Creating visibility graph...\n")
-
-    vis_graph <- pathroutr::prt_visgraph(land_barrier)
-
-    cat("DONE\n")
+  if (is.null(cores)) {
+    cores <- 2
   }
-
   # Maintain detailed time info in lines to derive acoustic telemetry detection data later
   tracks <- tracks |>
     tidyr::unnest(data) |>
@@ -94,31 +92,15 @@ compare_tracks <- function(
     dplyr::select(ID, uid, mu.x, mu.y, speed) |>
     sf::st_as_sf(coords = c("mu.x", "mu.y"), crs = tracks_crs)
 
-  modified_tracks <- split(modified_tracks, modified_tracks$ID)
-
   cat("\nRerouting...")
 
-  rerouted <- modified_tracks |>
-    lapply(function(.) {
-      # the track cannot start or end within the land barrier; prt_trim() trims those out
-      trimmed_points <- pathroutr::prt_trim(., land_barrier)
-
-      # here, we create our re-routed points; the return is a two column data frame with the
-      # index location in the original point data and the new geometry. The user can handle
-      # updating of those original point data or pass the result on to prt_update_points()
-      trimmed_points |>
-        pathroutr::prt_reroute(land_barrier, vis_graph) |>
-        pathroutr::prt_update_points(trimmed_points) |>
-        sf::st_coordinates() |>
-        sf::st_linestring()
-    })
-
-  cat("DONE\n")
-
-  modified_tracks <- sf::st_sf(
-    ID = names(modified_tracks),
-    geometry = sf::st_sfc(rerouted, crs = tracks_crs)
+  modified_tracks <- reroute(
+    modified_tracks,
+    barrier = land_barrier,
+    det_range = det_range,
+    vis_graph = vis_graph
   )
+  cat("DONE\n")
 
   # If hotspot_grid is a single data.frame, convert to list for lapply
   if (is.data.frame(hotspot_grid)) {
