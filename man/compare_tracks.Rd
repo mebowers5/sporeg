@@ -40,7 +40,7 @@ of the form \verb{function(data, ...)}.}
 This will be created if not provided, but parallel computations can be speed
 up by supplying this directly.}
 
-\item{...}{Additional arguments passed to \link{impute_track}}
+\item{...}{Additional arguments passed to \link{call_imputor}}
 }
 \value{
 A data frame with counts and differences by grid cell ID ("gid")

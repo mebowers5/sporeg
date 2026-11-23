@@ -2,7 +2,7 @@ test_that("returns sf object in input CRS", {
   test_data <- fake_track()
   crawl <- structure(list(), class = "sporeg_crawl")
 
-  out <- impute_track(
+  out <- call_imputor(
     model = crawl,
     data = test_data,
     timeStep = 0.5,
@@ -21,7 +21,7 @@ test_that("overrides arguments via dots", {
   test_data <- fake_track()
   crawl <- structure(list(), class = "sporeg_crawl")
 
-  out_coarse <- impute_track(
+  out_coarse <- call_imputor(
     model = crawl,
     data = test_data,
     timeStep = 1,
@@ -30,7 +30,7 @@ test_that("overrides arguments via dots", {
     retryParallel = FALSE
   )
 
-  out_fine <- impute_track(
+  out_fine <- call_imputor(
     model = crawl,
     data = test_data,
     timeStep = 0.25,

@@ -15,7 +15,7 @@
 #' @param vis_graph An optional visibility graph created from the barrier object.
 #'   This will be created if not provided, but parallel computations can be speed
 #'   up by supplying this directly.
-#' @param ... Additional arguments passed to [impute_track]
+#' @param ... Additional arguments passed to [call_imputor]
 #'
 #' @seealso [pathroutr::prt_visgraph]
 #'
@@ -74,7 +74,7 @@ compare_tracks <- function(
   if (is.character(model)) {
     model <- structure(list(), class = paste0("sporeg_", model[1]))
   }
-  modified_tracks <- impute_track(
+  modified_tracks <- call_imputor(
     model = model,
     data = modified_tracks,
     ...
