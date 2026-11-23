@@ -42,7 +42,7 @@ simulate_tracks <- function(
   step_length <- stats::runif(anims, vmin, vmax) * 60 * 60
 
   sim <- lapply(seq_len(anims), function(i) {
-    glatos::crw_in_polygon(
+    crw_in_polygon(
       study_area,
       theta = theta,
       stepLen = step_length[i],

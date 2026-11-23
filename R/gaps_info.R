@@ -25,16 +25,36 @@
 
 gaps_info <- function(df) {
   df <- df |>
-    dplyr::filter(g_fit == 1 & p_a == 0) |>
-    dplyr::mutate(d_shore_km = d_shore / 1000) |>
-    dplyr::summarise(
-      max_depth = max(na.omit(mean_depth)),
-      min_depth = min(na.omit(mean_depth)),
-      avg_depth = mean(na.omit(mean_depth)),
-      max_d = max(na.omit(d_shore_km)),
-      min_d = min(na.omit(d_shore_km)),
-      avg_d = mean(na.omit(d_shore_km))
+    dplyr::filter(g_fit == 1 & p_a == 0)
+
+  if (nrow(df) == 0) {
+    warning("No gaps found.")
+    hold <- data.frame(
+      max_depth = numeric(),
+      min_depth = numeric(),
+      avg_depth = numeric(),
+      max_d = numeric(),
+      min_d = numeric(),
+      avg_d = numeric()
     )
 
-  return(df)
+    geom_col <- attr(df, "sf_column")
+    hold[[geom_col]] <- sf::st_geometry(df)[0]
+    hold <- sf::st_sf(hold, sf_column_name = geom_col)
+
+    return(hold)
+  } else {
+    df <- df |>
+      dplyr::mutate(d_shore_km = d_shore / 1000) |>
+      dplyr::summarise(
+        max_depth = max(mean_depth, na.rm = T),
+        min_depth = min(mean_depth, na.rm = T),
+        avg_depth = mean(mean_depth, na.rm = T),
+        max_d = max(d_shore_km, na.rm = T),
+        min_d = min(d_shore_km, na.rm = T),
+        avg_d = mean(d_shore_km, na.rm = T)
+      )
+
+    return(df)
+  }
 }
