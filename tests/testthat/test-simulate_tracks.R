@@ -1,13 +1,14 @@
 test_that("returns correct types", {
   tracks <- simulate_tracks(
     anims = 2,
+    start_area = fo_rel_site,
     study_area = fo_study_site,
+    n_days = 30,
+    # Arguments passed to `glatos::crw_in_polygon`
+    initHead = 0,
     theta = c(0, 1.74),
     vmin = 0.98,
-    vmax = 1.58,
-    rel_site = fo_rel_site,
-    n_days = 30,
-    initial_heading = 0
+    vmax = 1.58
   ) |>
     expect_output("Simulating tracks...\n|==")
 
@@ -25,13 +26,13 @@ test_that("returns correct types", {
 test_that("data column types are correct", {
   tracks <- simulate_tracks(
     anims = 2,
+    start_area = fo_rel_site,
     study_area = fo_study_site,
+    n_days = 30,
+    initHead = 0,
     theta = c(0, 1.74),
     vmin = 0.98,
-    vmax = 1.58,
-    rel_site = fo_rel_site,
-    n_days = 30,
-    initial_heading = 0
+    vmax = 1.58
   )
 
   expect_s3_class(

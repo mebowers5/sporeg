@@ -79,8 +79,13 @@ call_simulator.sporeg_crw_in_polygon <- function(
   })
 }
 
-# Note, these currently do not work.
 
+#' Configure arguments for `aniMotum::sim()`. **Currently does not work.**
+#'
+#' @param ... Default arguments forwarded to [aniMotum::sim()].
+#'
+#' @return An object of class `"sporeg_animotum_sim"`.
+#' @export
 #' @export
 animotum_sim <- function(model = "crw", ...) {
   structure(c(list(model = model), list(...)), class = "sporeg_animotum_sim")

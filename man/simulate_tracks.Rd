@@ -23,6 +23,11 @@ simulate_tracks(
 tracks are allowed to be simulated.}
 
 \item{n_days}{integer. number of days that tracks should be simulated}
+
+\item{model}{Character string naming a built-in simulation model (default
+\code{"crw_in_polygon"}) or a custom function of the form \verb{function(data, ...)}.}
+
+\item{...}{Additional arguments passed to functions called by \link{call_simulator}}
 }
 \value{
 simple feature (multi)linestring object that represents individual simulated tracks
@@ -31,7 +36,8 @@ simple feature (multi)linestring object that represents individual simulated tra
 This function simulates tracks inside a specified polygon.
 }
 \examples{
-tracks <- simulate_tracks(study_area = fo_study_site, anims = 2,
-  start_area = fo_rel_site, initial_heading = 0, theta = c(0, 1.74), vmin = 0.98,
-  vmax = 1.58, n_days = 30)
+tracks <- simulate_tracks(anims = 2, start_area = fo_rel_site,
+  study_area = fo_study_site, n_days = 30,
+  # Arguments passed to `glatos::crw_in_polygon`
+  initHead = 0, theta = c(0, 1.74), vmin = 0.98, vmax = 1.58)
 }
