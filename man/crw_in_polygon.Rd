@@ -4,18 +4,7 @@
 \alias{crw_in_polygon}
 \title{Configure arguments for \code{glatos::crw_in_polygon()}}
 \usage{
-crw_in_polygon(
-  polyg,
-  theta = c(0, 10),
-  stepLen = 100,
-  initPos = c(NA, NA),
-  initHeading = NA,
-  nsteps = 30,
-  inputCRS = NA,
-  cartesianCRS = NA,
-  sp_out = TRUE,
-  show_progress = TRUE
-)
+crw_in_polygon(...)
 }
 \arguments{
 \item{...}{Default arguments forwarded to \code{\link[glatos:crw_in_polygon]{glatos::crw_in_polygon()}} (e.g.,
