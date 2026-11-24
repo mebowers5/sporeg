@@ -74,6 +74,7 @@ compare_tracks <- function(
   if (is.character(model)) {
     model <- structure(list(), class = paste0("sporeg_", model[1]))
   }
+
   modified_tracks <- call_imputor(
     model = model,
     data = modified_tracks,
