@@ -11,7 +11,7 @@ test_that("works with custom model dots", {
     )
   }
 
-  out <- impute_track(model = custom_model, data = test_data, nudge = 10)
+  out <- call_imputor(model = custom_model, data = test_data, nudge = 10)
 
   expect_s3_class(out, "sf")
   expect_true(all(c("ID", "uid") %in% names(out)))
@@ -26,5 +26,5 @@ test_that("errors on unknown S3 model classes", {
   test_data <- fake_track()
   bad_model <- structure(list(), class = "sporeg_nonexistent")
 
-  expect_error(impute_track(model = bad_model, data = test_data))
+  expect_error(call_imputor(model = bad_model, data = test_data))
 })

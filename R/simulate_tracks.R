@@ -4,53 +4,50 @@
 #' @param study_area simple feature polygon object that encompasses area where
 #'   tracks are allowed to be simulated.
 #' @param anims integer. quantity of desired animals to simulate
-#' @param rel_site simple feature polygon object in which simulated animals are
+#' @param start_area simple feature polygon object in which simulated animals are
 #'   "released" or where simulated tracks begin
-#' @param initial_heading passed to initHeading in `glatos::crw_in_polygon`
-#' @param theta argument from `glatos::crw_in_polygon` function
-#' @param vmin numeric. minimum velocity in meters per second from which to sample step length
-#' @param vmax numeric. maximum velocity in meters per second from which to sample step length
 #' @param n_days integer. number of days that tracks should be simulated
+#' @param model Character string naming a built-in simulation model (default
+#'    `"crw_in_polygon"`) or a custom function of the form `function(data, ...)`.
+#' @param ... Additional arguments passed to functions called by [call_simulator]
 #'
 #' @return simple feature (multi)linestring object that represents individual simulated tracks
 #' @export
 #'
 #' @examples
-#' tracks <- simulate_tracks(study_area = fo_study_site, anims = 2,
-#'   rel_site = fo_rel_site, initial_heading = 0, theta = c(0, 1.74), vmin = 0.98,
-#'   vmax = 1.58, n_days = 30)
+#' tracks <- simulate_tracks(anims = 2, start_area = fo_rel_site,
+#'   study_area = fo_study_site, n_days = 30,
+#'   # Arguments passed to `glatos::crw_in_polygon`
+#'   initHead = 0, theta = c(0, 1.74), vmin = 0.98, vmax = 1.58)
 
 simulate_tracks <- function(
   anims,
+  start_area,
   study_area,
-  theta,
-  vmin,
-  vmax,
-  rel_site,
   n_days,
-  initial_heading
+  model = "crw_in_polygon",
+  ...
 ) {
-  sim <- base::replicate(n = anims, expr = {
-    initial_position <- sf::st_sample(
-      rel_site$geometry,
-      size = 1,
-      type = "random",
-      exact = TRUE
-    ) |>
-      sf::st_coordinates()
+  initial_positions <- sf::st_sample(
+    start_area$geometry,
+    size = anims,
+    type = "random",
+    exact = TRUE
+  ) |>
+    sf::st_coordinates()
 
-    # Sample between minimum and maximum velocity to set step length per hour for each individual
-    step_length <- stats::runif(1, vmin, vmax) * 60 * 60
+  if (is.character(model)) {
+    model <- structure(list(), class = paste0("sporeg_", model[1]))
+  }
 
-    glatos::crw_in_polygon(
-      study_area,
-      theta = theta,
-      stepLen = step_length,
-      initPos = c(initial_position[1], initial_position[2]),
-      nsteps = n_days * 24,
-      initHeading = initial_heading
-    )
-  })
+  sim <- call_simulator(
+    model = model,
+    anims = anims,
+    study_area = study_area,
+    n_days = n_days,
+    initial_positions = initial_positions,
+    ...
+  )
 
   names(sim) <- NULL
   simu <- sim |>
@@ -80,7 +77,7 @@ simulate_tracks <- function(
             .l = list(start_x, start_y, end_x, end_y),
             .f = make_line
           ),
-          geometry = sf::st_as_sfc(geometry, crs = sf::st_crs(rel_site))
+          geometry = sf::st_as_sfc(geometry, crs = sf::st_crs(start_area))
         )
       )
     )

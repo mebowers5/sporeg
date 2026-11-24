@@ -4,9 +4,9 @@ tracks <- simulate_tracks(
   theta = c(0, 1.74),
   vmin = 0.98,
   vmax = 1.58,
-  rel_site = fo_rel_site,
+  start_area = fo_rel_site,
   n_days = 30,
-  initial_heading = 0
+  initHeading = 0
 )
 
 hotspot_grid <- create_grid(
