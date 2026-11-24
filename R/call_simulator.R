@@ -78,3 +78,47 @@ call_simulator.sporeg_crw_in_polygon <- function(
     do.call(glatos::crw_in_polygon, crw_arguments)
   })
 }
+
+# Note, these currently do not work.
+
+#' @export
+animotum_sim <- function(model = "crw", ...) {
+  structure(c(list(model = model), list(...)), class = "sporeg_animotum_sim")
+}
+
+#' @export
+call_simulator.sporeg_animotum_sim <- function(
+  model,
+  anims,
+  study_area = NULL,
+  n_days,
+  initial_positions = NULL,
+  ...
+) {
+  if (!requireNamespace("aniMotum", quietly = TRUE)) {
+    stop(
+      "'aniMotum' must be installed to use `model = 'animotum_ssm'`.",
+      call. = FALSE
+    )
+  }
+
+  # needs input in km
+  initial_positions <- initial_positions / 1000
+
+  lapply(seq_len(anims), function(i) {
+    sim_arguments <- build_arguments(
+      model,
+      mandatory = list(
+        N = n_days * 24,
+        start = list(
+          initial_positions[i, 1:2],
+          as.POSIXct(0, tz = "UTC")
+        ),
+        ts = 1
+      ),
+      dots = list(...)
+    )
+
+    do.call(aniMotum::sim, sim_arguments)
+  })
+}
